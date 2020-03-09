@@ -1,2 +1,2 @@
 # LeetCode
-慢慢刷～
+Practice, Practice, Practice
