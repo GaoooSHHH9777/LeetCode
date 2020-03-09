@@ -1,5 +1,6 @@
 // Runtime: 0 ms, faster than 100.00% of Java online submissions for Two Sum II - Input array is sorted.
 // Memory Usage: 43.2 MB, less than 5.22% of Java online submissions for Two Sum II - Input array is sorted.
+
 class Solution {
     public int[] twoSum(int[] numbers, int target) {
         if(numbers.length < 2){
