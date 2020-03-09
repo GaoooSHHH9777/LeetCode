@@ -1,0 +1,92 @@
+//Runtime: 15 ms, faster than 99.64% of Java online submissions for 3Sum.
+//Memory Usage: 45.9 MB, less than 94.70% of Java online submissions for 3Sum.
+class Solution {
+                // 这个是能用的！只不过太慢了，就超过5%用户。保留不删掉是因为里面很多值得借鉴思考的细节！
+    // public List<List<Integer>> threeSum(int[] nums) {
+    //     if(nums.length < 3){
+    //         return Collections.emptyList();     // 注意：这一步不能return null，不然空集的情况下就错了！
+    //                                             //      平时写代码也有这种场景！回忆一下keyword-dubbo的Arrays.asList()
+    //     }
+    
+    //     Set<List<Integer>> result = new LinkedHashSet<>();      // LinkedHashSet用于有序结果，可以借鉴
+
+    //     Arrays.sort(nums);
+
+    //     for(int i=0; i<nums.length-2; i++){     // 注意：length-2，最后的两次循环是没必要的，因为就根本没有3个index可用
+    //         if (nums[i] > 0) {                  // 注意：因为已经sort了，所以如果当前index的值>0，3-sum就肯定不可能<=0
+    //             return new ArrayList<>(result);                      
+    //         }
+
+    //         int target = 0 - nums[i];
+
+    //         int left = i+1;                     // 注意：i+1, left=i的这一下是没必要的
+    //         int right = nums.length-1;
+
+    //         while(left < right){
+    //             int twoSum = nums[left] + nums[right];
+    //             if(twoSum == target){
+    //                 result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+    //             }
+
+    //             if(twoSum > target){            // 注意：这里写else if就超时了，必须写if。不知道为什么
+    //                 right--;
+    //             }else{
+    //                 left++;
+    //             }
+    //         }
+    //     }
+        
+    //     return new ArrayList<>(result);
+    // }
+
+
+    public List<List<Integer>> threeSum(int[] nums) {
+        if (nums == null || nums.length <= 2) {
+            return Collections.emptyList();
+        }
+
+        List<List<Integer>> result = new LinkedList<>();
+
+        Arrays.sort(nums);
+
+        for (int i = 0; i < nums.length - 2; i++) {
+            // 加速1：c为非负数，就不能满足a+b+c=0了
+            if (nums[i] > 0) {
+                return result;
+            }
+            // 加速2：跳过计算过的数据，同时防止结果重复
+            if (i != 0 && nums[i] == nums[i-1]) {               // 注意：主要是防止结果重复，因为没有用LinkedHashSet了！
+                continue;
+            }
+
+            int target = 0 - nums[i];
+
+            int left = i + 1;
+            int right = nums.length - 1;
+            while (left < right) {
+                int sum = nums[left] + nums[right];
+                if (sum == target) {
+                    result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    
+                    // 加速3：跳过计算过的数据，同时防止结果重复
+                    // 注意：去掉的话，不仅重复计算无用功，而且结果又会重复出现，就错掉了！
+                    // 这一步有点像归并排序的最后一个步骤～
+                    while (left < right && nums[left] == nums[left+1]) {
+                        left++;
+                    }
+                    while (left < right && nums[right] == nums[right-1]) {
+                        right--;
+                    }
+                }
+                
+                if (sum > target) {
+                    right--;
+                } else {
+                    left++;
+                }
+            }
+        }
+
+        return result;
+    }
+}
