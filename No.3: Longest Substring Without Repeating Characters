@@ -1,0 +1,29 @@
+// Runtime: 6 ms, faster than 82.74% of Java online submissions for Longest Substring Without Repeating Characters.
+// Memory Usage: 41.8 MB, less than 5.20% of Java online submissions for Longest Substring Without Repeating Characters.
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        if(s.length() == 0 || s == null){           // 养成习惯：判断空值
+            return 0;
+        }
+
+        Map<Character, Integer> map = new HashMap<>();
+        int max = 0;
+
+        for(int left=0, right=0; right<s.length(); right++){
+            if(map.containsKey(s.charAt(right))){
+                /**
+                 *  这里map.get(s.charAt(right))+1的原因：定位新的window
+                 *      因为right已经+1了，在新位置，如果旧的window包含了这个s.charAt(right)，left就应该走到这个旧值的右边一位，不然window里面会出现两个s.charAt(right)
+                 *      假设adbccba。
+                 *      下标0123456，运行到left=0 & right=3，window=adbc，接下来马上要撞c了。下一个循环right=4时，map.get(s.charAt(4))=3，此时如果把left定在3，肯定不对，window==cc了就，所以left=map.get()+1，这样的话window=c，当right=5之后window=cb，一切正常，继续走max的比较逻辑即可
+                 */
+                left = Math.max(left, map.get(s.charAt(right)) + 1);
+            }
+
+            map.put(s.charAt(right), right);
+            max = Math.max(max, right-left+1);      // 例：2~4的是3个位置，然而4-2=2，所以+1
+        }
+
+        return max;
+    }
+}
