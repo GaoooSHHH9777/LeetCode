@@ -1,0 +1,41 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+// Runtime: 1 ms, faster than 100.00% of Java online submissions for Add Two Numbers.
+// Memory Usage: 41.7 MB, less than 90.91% of Java online submissions for Add Two Numbers.
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+
+        int sum = 0;
+
+        while(l1 != null || l2 != null){      // 别写.next!=null这种逻辑！
+            sum /= 10;                        // 处理进位～
+
+            // 判断null再sum+=的话，即使两条链表长度不一致也没关系了
+            if(l1 != null){
+                sum += l1.val;
+                l1 = l1.next;
+            }
+            if(l2 != null){
+                sum += l2.val;
+                l2 = l2.next;
+            }
+
+            current.next = new ListNode(sum % 10);
+            current = current.next;
+        }
+
+        if(sum/10 == 1){           // 若两个最后的数相加>10，它不会走循环的sum /=10
+            current.next = new ListNode(1);       // 所以要单独处理一下
+        }
+
+        return dummyHead.next;
+    }
+}
