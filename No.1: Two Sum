@@ -1,5 +1,6 @@
 // Runtime: 1 ms, faster than 99.88% of Java online submissions for Two Sum.
 // Memory Usage: 41.7 MB, less than 5.65% of Java online submissions for Two Sum.
+
 class Solution {
     public int[] twoSum(int[] nums, int target) {
         Map<Integer, Integer> map = new HashMap<>();
