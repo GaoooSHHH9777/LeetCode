@@ -40,10 +40,10 @@ class Solution {
 
         while(head != null){
             // 每次考虑下一个位置的node就行，一开始总在思考后面两个位置的node，所以写不对
-            ListNode temp1 = head.next;
+            ListNode realNext = head.next;
             head.next = bubblePointer;
             bubblePointer = head;           // 就是这一步使得它逐步地：tail -> head
-            head = temp1;
+            head = realNext;
         }
 
         return bubblePointer;               // 最终，它已经是head了，输出即可
