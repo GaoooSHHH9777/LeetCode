@@ -16,28 +16,34 @@ class Solution {
     // 没做出来。思路有，但是死活不知道怎么写，越写越复杂、越写越乱
     
     Map<Integer, Integer> inorderMap = new HashMap<>();
-    
+    int[] preorder;
+    int[] inorder;
+
     public TreeNode buildTree(int[] preorder, int[] inorder) {
+        this.preorder = preorder;
+        this.inorder = inorder;
+
         for(int i=0; i<inorder.length; i++){
             inorderMap.put(inorder[i], i);
         }
         
-        return recursive(preorder, 0, preorder.length-1, inorder, 0, inorder.length-1);
+        return recursive(0, preorder.length-1, 0, inorder.length-1);
     }
     
-    private TreeNode recursive(int[] preorder, int preStart, int preEnd, int[] inorder, int inStart, int inEnd){
+    private TreeNode recursive(int preStart, int preEnd, int inStart, int inEnd){
         if(preStart > preEnd || inStart > inEnd){
             return null;
         }
 
-        TreeNode root = new TreeNode(preorder[preStart]);
-        int inRoot = inorderMap.get(root.val);
-        int numsLeft = inRoot - inStart;
+        TreeNode currentRoot = new TreeNode(preorder[preStart]);       // 从前序arr中读取当前这次递归的root，即最左侧没用过的数字。（第一次是pre[0]，往后就不一定是哪个了，所以要靠一个preStart参数来标记）
+        int rootIndexOfIn = inorderMap.get(currentRoot.val);                   // 获取这个root-value在中序arr中的index，方便后面的递归使用，即分别需要index-1和index+1的位置
+        int leftBranchNums = rootIndexOfIn - inStart;
 
         // 这两个递归里的参数很需要琢磨
-        root.left = recursive(preorder, preStart+1, preStart+numsLeft, inorder, inStart, inRoot-1);
-        root.right = recursive(preorder, preStart+numsLeft+1, preEnd, inorder, inRoot+1, inEnd);
+        // TODO... 也许可以有一个offset-limit的写法（in和pre的offset不一样，但是limit一样）
+        currentRoot.left = recursive(preStart+1, preStart+leftBranchNums, inStart, rootIndexOfIn-1);
+        currentRoot.right = recursive(preStart+leftBranchNums+1, preEnd, rootIndexOfIn+1, inEnd);
 
-        return root;
+        return currentRoot;
     }
 }
