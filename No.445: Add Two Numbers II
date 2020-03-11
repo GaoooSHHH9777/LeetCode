@@ -1,0 +1,58 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 3 ms, faster than 73.87% of Java online submissions for Add Two Numbers II.
+// Memory Usage: 41.3 MB, less than 73.53% of Java online submissions for Add Two Numbers II.
+    
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        // 可以反转链表来做，也可以用stack来做
+        Stack<Integer> s1 = new Stack<>();
+        Stack<Integer> s2 = new Stack<>();
+
+        while(l1 != null) {
+            s1.push(l1.val);
+            l1 = l1.next;
+        }
+        while(l2 != null) {
+            s2.push(l2.val);
+            l2 = l2.next;
+        }
+
+        // 和另一个“两数之和”的最主要区别是：链表的顺序
+        //      那道题的链表头部是结果的最低位（数字是反序的），而这道题的链表头部是最高位（正序的）
+        //      由此的差别是：那道题直接往后进位就可以了，输出dummyHead.next即可。但是这里同样做就会输出反向的结果！
+        //          所以需要记录下来每次计算的结果，让一个代表更高位数字的node（取名before）去指向它
+        ListNode current = new ListNode(0);
+        
+        int sum = 0;
+
+        while(!s1.isEmpty() || !s2.isEmpty()){
+            sum /= 10;
+            
+            if(!s1.isEmpty()){
+                sum += s1.pop();
+            }
+            if(!s2.isEmpty()){
+                sum += s2.pop();
+            }
+            
+            current.val = sum % 10;
+            ListNode before = new ListNode(0);
+            before.next = current;
+            current = before;
+        }
+        
+        if(sum / 10 == 1){
+            current.val = 1;
+        }
+        
+        return current.val==0 ? current.next : current;
+    }
+}
