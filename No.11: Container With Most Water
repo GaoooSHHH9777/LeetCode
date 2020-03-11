@@ -1,0 +1,25 @@
+// Runtime: 2 ms, faster than 95.52% of Java online submissions for Container With Most Water.
+// Memory Usage: 41.6 MB, less than 5.77% of Java online submissions for Container With Most Water.
+
+class Solution {
+    public int maxArea(int[] height) {
+        int max = 0;
+
+        int left = 0;
+        int right = height.length-1;
+        
+        while(left < right){
+            int shorter = Math.min(height[left], height[right]);
+            max = Math.max(max, (right-left) * shorter);
+            
+            // 谁比较小，谁移动。移动方向：朝中间靠拢
+            if(height[left] == shorter){
+                left++;
+            }else{
+                right--;
+            }
+        }
+
+        return max;
+    }
+}
