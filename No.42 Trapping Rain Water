@@ -1,0 +1,165 @@
+// Runtime: 1 ms, faster than 93.48% of Java online submissions for Trapping Rain Water.
+// Memory Usage: 38.8 MB, less than 56.17% of Java online submissions for Trapping Rain Water.
+
+class Solution {
+        // 一共五种解。四种是算法上的常规思路（暴力、动态规划、双指针、栈）；还有一种直接按行（层）进行计算的方式，也是个巧解的好思路
+
+        // 最直观的暴力算法。暴力在每次都要重复计算left-max和right-max，实则无需重复计算
+    // public int trap(int[] height) {
+    //     int sumArea = 0;
+        
+    //     // 与坐标轴构成的槽是无效的。i -> (1, length-2)
+    //     for (int i=1; i<height.length-1; i++) {
+    //         // 总的来说，需要左右都有比当前木板高的木板，才能形成槽
+    //         //      始终要对“当前位置在整体上来说是否能形成槽”进行判断
+    //         //          因为每次都只管当前index一个位置，所以是个准确计算的方式
+
+    //         //找出左边最高
+    //         int max_left = 0;
+    //         for (int j = i - 1; j >= 0; j--) {
+    //             if (height[j] > max_left) {
+    //                 max_left = height[j];
+    //             }
+    //         }
+            
+    //         //找出右边最高
+    //         int max_right = 0;
+    //         for (int j = i + 1; j < height.length; j++) {
+    //             if (height[j] > max_right) {
+    //                 max_right = height[j];
+    //             }
+    //         }
+            
+    //         // 较短的木板
+    //         int shorter = Math.min(max_left, max_right);
+
+    //         // 较短的木板是否长于当前木板（如果是，那肯定长的也是，槽就可以形成）
+    //         //      如果当前木板长于（形成峰）或者等于（可能形成平原）那个短木板的长度，那肯定不行
+    //         if (shorter > height[i]) {
+    //             sumArea += (shorter - height[i]);
+    //         }
+    //     }
+                                   
+    //     return sumArea;
+    //  }
+
+        // 动态规划。如上所述，省去了每次的重复计算
+    // public int trap(int[] height) {
+    //     int sumArea = 0;
+
+    //     // 用数组保存下每个index经历过的max-val，省去重复计算
+    //     int[] max_left = new int[height.length];
+    //     int[] max_right = new int[height.length];
+        
+    //     // 注意边界条件：因为i需要-1和+1，所以分别初始化为1和length-2。这个和底下的“与坐标轴的槽无效”逻辑无关
+    //     for (int i=1; i<height.length-1; i++) {
+    //         max_left[i] = Math.max(max_left[i-1], height[i-1]);
+    //     }
+    //     for (int i=height.length-2; i>0; i--) {     // 这里>0或者>=0都可以的（暂不知道为何）
+    //         max_right[i] = Math.max(max_right[i+1], height[i+1]);
+    //     }
+        
+    //     // 与坐标轴构成的槽是无效的。i -> (1, length-2)
+    //     for (int i=1; i<height.length-1; i++) {
+    //         // 总的来说，需要左右都有比当前木板高的木板，才能形成槽
+    //         //      始终要对“当前位置在整体上来说是否能形成槽”进行判断
+    //         //          因为每次都只管当前index一个位置，所以是个准确计算的方式
+            
+    //         // 拿到左max和右max两者里较短的木板（盛水肯定以较短的为准）
+    //         int shorter = Math.min(max_left[i], max_right[i]);
+
+    //         // 较短的木板是否长于当前木板（如果是，那肯定长的也是，槽就可以形成）
+    //         //      如果当前木板长于（形成峰）或者等于（可能形成平原）那个短木板的长度，那肯定不行
+    //         if (shorter > height[i]) {
+    //             sumArea += (shorter - height[i]);
+    //         }
+    //     }
+                                   
+    //     return sumArea;
+    //  }
+
+        // 双指针 & 动态规划II的中间变迁步骤（方便理解阅读真正的双指针方法）
+        //      如果不采用双指针，那么不可能同时去掉max_left和max_right这两个arr，因为max_left是从左向右，而max_right是从右向左。在下边实质进行计算的for循环里是从左向右进行的单个for循环，怎么可能反向算？那就要双指针了
+    // public int trap(int[] height) {
+    //     int sum = 0;
+    //     int max_left = 0;
+    //     int[] max_right = new int[height.length];
+    //     for (int i = height.length - 2; i >= 0; i--) {
+    //         max_right[i] = Math.max(max_right[i + 1], height[i + 1]);
+    //     }
+    //     for (int i = 1; i < height.length - 1; i++) {
+    //         max_left = Math.max(max_left, height[i - 1]);
+    //         int min = Math.min(max_left, max_right[i]);
+    //         if (min > height[i]) {
+    //             sum = sum + (min - height[i]);
+    //         }
+    //     }
+    //     return sum;
+    // }
+
+        // 双指针！
+        // 一定程度上来说，也可以叫动态规划II。因为动态规划数组里的部分“远距离数据”不需要保存，实质上只需要保存last-index的left｜right-max就可以了
+    public int trap(int[] height) {
+        int sum = 0;
+
+        int max_left = 0;
+        int max_right = 0;
+
+        // 这两个分别替代了动态规划里面两个初始化arr循环的“i”
+        int left = 1;
+        int right = height.length-2;
+
+        while(left <= right){
+        // for (int i=1; i<height.length-1; i++) {         // 原解是这一行而不是上面那行while，但是i压根没用到，于是试着改写一下
+            if (height[left-1] < height[right+1]) {        // 左longest短于右longest，那就动态地update变量“max_left”。如方法头部注释所述，动态规划的数组其他部分都砍掉了，结果依赖于上一个index（可能是左也可能是右，看需要而定，既然走到这里了那就是左，因为左是shorter）
+                max_left = Math.max(max_left, height[left-1]);
+
+                // 新增面积的话，肯定需要为正数，这个不用多解释
+                if (max_left > height[left]) {
+                    sum += (max_left - height[left]);
+                }
+
+                left++;
+            } else {
+                max_right = Math.max(max_right, height[right+1]);
+                if (max_right > height[right]) {
+                    sum += (max_right - height[right]);
+                }
+
+                right--;
+            }
+        }
+
+        return sum;
+    }
+
+        // 栈解法，先作了解，暂不深入研究
+        //      题解说类似于“No.20: 有效的括号”
+        //      “时间复杂度：虽然 while 循环里套了一个 while 循环，但是考虑到每个元素最多访问两次，入栈一次和出栈一次，所以时间复杂度是 O(n)”      -------->    根据击败比例来说，似乎是O(n^2)，因为只能击败31.95%
+        //      “空间复杂度：O(n)。栈的空间。”
+//     public int trap(int[] height) {
+//         Stack<Integer> stack = new Stack<>();
+
+//         int sum = 0;
+//         int current = 0;
+
+//         while (current < height.length) {
+//             //如果栈不空并且当前指向的高度大于栈顶高度就一直循环
+//             while (!stack.empty() && height[current] > height[stack.peek()]) {
+//                 int h = height[stack.peek()]; //取出要出栈的元素
+//                 stack.pop(); //出栈
+//                 if (stack.empty()) { // 栈空就出去
+//                     break; 
+//                 }
+//                 int distance = current - stack.peek() - 1; //两堵墙之前的距离。
+//                 int min = Math.min(height[stack.peek()], height[current]);
+//                 sum = sum + distance * (min - h);
+//             }
+
+//             stack.push(current); //当前指向的墙入栈
+//             current++; //指针后移
+//         }
+
+//         return sum;
+//     }
+}
