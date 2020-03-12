@@ -1,0 +1,37 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Remove Nth Node From End of List.
+// Memory Usage: 37.6 MB, less than 6.37% of Java online submissions for Remove Nth Node From End of List.
+
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        
+        ListNode dummyHead = new ListNode(6666);
+        dummyHead.next = head;
+        
+        ListNode slowNode = dummyHead;
+        
+        // 注意：看上去是两个循环，不符合"one pass"，但是实际上是符合的！！！
+        //      因为以fast-point（即head，简化了没有多开一个fast变量）为参照来说，仅仅就是把输入的链表head -> tail跑了一遍，没有第二轮的pass/loop
+        //          如果要对文字琢磨的话，ons pass != one loop～
+        for (int i=0; i<n; i++) {
+            head = head.next;
+        }
+        
+        while (head != null) {
+            head = head.next;
+            slowNode = slowNode.next;
+        }
+        
+        slowNode.next = slowNode.next.next;
+        
+        return dummyHead.next;
+    }
+}
