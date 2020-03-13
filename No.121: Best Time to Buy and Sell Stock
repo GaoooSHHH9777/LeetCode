@@ -1,0 +1,59 @@
+// Runtime: 1 ms, faster than 96.89% of Java online submissions for Best Time to Buy and Sell Stock.
+// Memory Usage: 42.3 MB, less than 5.31% of Java online submissions for Best Time to Buy and Sell Stock.
+
+class Solution {
+        // 暴力解
+    // public int maxProfit(int[] prices) {
+    //     int max = 0;
+        
+    //     for(int i=1; i<prices.length; i++){
+    //         int lowest = Integer.MAX_VALUE;
+    //         for(int j=0; j<i; j++){
+    //             lowest = Math.min(lowest, prices[j]);
+    //         }
+            
+    //         max = Math.max(max, prices[i]-lowest);
+    //     }
+        
+    //     return max;
+    // }
+
+        // 动态规划1.0，击败96.89%。注意判空，不然输入空数组会报错的（27行，空数组的第0个位置肯定不对）
+//     public int maxProfit(int[] prices) {
+//         if(prices.length == 0 || prices == null){
+//             return 0;
+//         }
+        
+//         int max = 0;
+        
+//         int[] lowest = new int[prices.length];
+//         lowest[0] = prices[0];
+//         for(int i=1; i<lowest.length; i++){
+//             lowest[i] = Math.min(prices[i], lowest[i-1]);
+//         }
+
+//         for(int i=1; i<prices.length; i++){
+//             max = Math.max(max, prices[i]-lowest[i-1]);
+//         }
+        
+//         return max;
+//     }
+    
+        // 动态规划2.0
+    public int maxProfit(int[] prices) {
+        if(prices.length == 0 || prices == null){
+            return 0;
+        }
+        
+        int max = 0;
+        
+        int lowest = prices[0];
+
+        for(int i=1; i<prices.length; i++){
+            lowest = Math.min(lowest, prices[i]);
+            max = Math.max(max, prices[i]-lowest);
+        }
+        
+        return max;
+    }
+}
