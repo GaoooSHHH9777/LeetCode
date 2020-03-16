@@ -1,27 +1,30 @@
 // Runtime: 0 ms, faster than 100.00% of Java online submissions for Maximum Subarray.
-// Memory Usage: 42.1 MB, less than 5.16% of Java online submissions for Maximum Subarray.
+// Memory Usage: 41.9 MB, less than 5.16% of Java online submissions for Maximum Subarray.
 
 class Solution {
-    
-    // ！！！！！
-    //      自己思考没做出来，思路差得远呢。
-    //      这是0(n)的解法，分而治之、动态规划都没用上，还是抄来的。。。。。。。
-    
+        // 动态规划2.0（一个变量的dp）
     public int maxSubArray(int[] nums) {
-        int maxSum = nums[0];
-        int currentSum = 0;
-
-        for(int i=0; i<nums.length; i++){
-            if(currentSum < 0){
-                // 归0是因为“不要之前这一块了，从新位置开始重新找max-sum连续子数组”
-                // 即便数组全部小于0，导致currentSum变量次次循环都归0也没有关系，因为maxSum这个变量会记录下来数组中最大的负数，即“离0最近的负数”
-                currentSum = 0;
+        int len = nums.length;
+        
+        int max = nums[0];
+        
+        int maxBefore = nums[0];
+        
+        for(int i=1; i<len; i++){
+            if(maxBefore >= 0){
+                maxBefore += nums[i];
+            }else{
+                maxBefore = nums[i];
             }
-
-            currentSum += nums[i];
-            maxSum = Math.max(maxSum, currentSum);
+            
+            max = Math.max(max, maxBefore);
         }
-
-        return maxSum;
+        
+        return max;
     }
+    
+        // 分而治之
+//     public int maxSubArray(int[] nums) {
+        
+//     }
 }
