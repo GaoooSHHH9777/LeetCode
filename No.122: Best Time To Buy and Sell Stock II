@@ -1,0 +1,37 @@
+// Runtime: 1 ms, faster than 92.33% of Java online submissions for Best Time to Buy and Sell Stock II.
+// Memory Usage: 42.5 MB, less than 5.71% of Java online submissions for Best Time to Buy and Sell Stock II.
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        int res = 0;
+        
+        for (int i=1; i<prices.length; i++) {
+            res += Math.max(prices[i] - prices[i-1], 0);
+        }
+        
+        return res;
+    }
+    
+        // 动态规划。比较慢，只能超过9.92%，但是思路挺好
+//     public int maxProfit(int[] prices) {
+//         if (prices.length < 2) {
+//             return 0;
+//         }
+        
+//         // 0：持有现金
+//         // 1：持有股票
+//         // 状态转移：0 → 1 → 0 → 1 → 0 → 1 → 0
+//         int[][] dp = new int[prices.length][2];
+
+//         dp[0][0] = 0;
+//         dp[0][1] = -prices[0];
+
+//         for (int i=1; i <prices.length; i++) {
+//             // 这两行调换顺序也是可以的
+//             dp[i][0] = Math.max(dp[i-1][0], dp[i-1][1] + prices[i]);
+//             dp[i][1] = Math.max(dp[i-1][1], dp[i-1][0] - prices[i]);
+//         }
+        
+//         return dp[dp.length-1][0];
+//     }
+}
