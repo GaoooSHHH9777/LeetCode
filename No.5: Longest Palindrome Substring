@@ -1,0 +1,134 @@
+// 动态规划
+// Runtime: 107 ms, faster than 27.01% of Java online submissions for Longest Palindromic Substring.
+// Memory Usage: 43.1 MB, less than 6.86% of Java online submissions for Longest Palindromic Substring.
+
+// Manacher
+// Runtime: 41 ms, faster than 44.97% of Java online submissions for Longest Palindromic Substring.
+// Memory Usage: 38.3 MB, less than 34.28% of Java online submissions for Longest Palindromic Substring.
+
+class Solution {
+    public String longestPalindrome(String s) {
+        int len = s.length();
+        if (len < 2) {
+            return s;
+        }
+
+        boolean[][] dp = new boolean[len][len];
+
+        // 初始化（可以不用）
+        // for (int i = 0; i < len; i++) {
+        //     dp[i][i] = true;
+        // }
+
+        int maxLen = 1;
+        int start = 0;
+
+        
+        /**
+         *  这个双重for循环有三种写法，可以回头琢磨
+         */
+        
+        // for (int j=1; j<len; j++) {
+        //     for (int i=0; i<j; i++) {
+        // for (int j = 1; j < len; j++) {
+        //     for (int i = j - 1; i >= 0; i--) {
+        for (int i = len - 1; i >= 0; i--) {
+            for (int j = i; j < len; j++) {
+//                 if (s.charAt(i) == s.charAt(j)) {
+//                     if (j-i < 3) {        // 长度为1或者2的字符串，只要满足s.charAt(i) == s.charAt(j)，肯定是回文
+//                         dp[i][j] = true;
+//                     } else {                // 长度达到3的话，就得看“左右往内挤一格”是不是回文。这是本题动态规划方法省去的计算步骤
+//                         dp[i][j] = dp[i+1][j-1];
+//                     }
+//                 } else {
+//                     dp[i][j] = false;
+//                 }
+
+//                 // 只要 dp[i][j] == true 成立，就表示子串 s[i, j] 是回文，此时记录回文长度和起始位置
+//                 if (dp[i][j]) {
+//                     int curLen = j-i+1;
+//                     if (curLen > maxLen) {
+//                         maxLen = curLen;
+//                         start = i;
+//                     }
+//                 }
+                
+                // 上面注释掉的代码可以用以下的来表示，但是可读性会超级差
+                dp[i][j] = s.charAt(i) == s.charAt(j) && (j-i < 3 || dp[i+1][j-1]);
+                if (dp[i][j] && j-i+1 > maxLen) {
+                    maxLen = j-i+1;
+                    start = i;
+                }
+            }
+        }
+        
+        // 使用index来记录，而不是每次发现最长的都直接s.substring，那样更耗时
+        return s.substring(start, start+maxLen);
+    }
+    
+    
+        // 中心扩散方法。也是O(n^2)，暂不借鉴
+//     public String longestPalindrome(String s) {
+    
+//     }
+    
+    
+        // Manacher算法，本质上还是基于中心扩散方法。仅需O(n)（但是实际上也没有超过绝大多数题解？），有时间再看
+//     public String longestPalindrome(String s) {
+//         int len = s.length();
+//         if (len < 2) {
+//             return s;
+//         }
+//         String str = addBoundaries(s, '#');
+//         int sLen = 2 * len + 1;
+//         int maxLen = 1;
+
+//         int start = 0;
+//         for (int i = 0; i < sLen; i++) {
+//             int curLen = centerSpread(str, i);
+//             if (curLen > maxLen) {
+//                 maxLen = curLen;
+//                 start = (i - maxLen) / 2;
+//             }
+//         }
+//         return s.substring(start, start + maxLen);
+//     }
+
+//     private int centerSpread(String s, int center) {
+//         int len = s.length();
+//         int i = center - 1;
+//         int j = center + 1;
+//         int step = 0;
+//         while (i >= 0 && j < len && s.charAt(i) == s.charAt(j)) {
+//             i--;
+//             j++;
+//             step++;
+//         }
+//         return step;
+//     }
+
+
+//     /**
+//      * 创建预处理字符串
+//      *
+//      * @param s      原始字符串
+//      * @param divide 分隔字符
+//      * @return 使用分隔字符处理以后得到的字符串
+//      */
+//     private String addBoundaries(String s, char divide) {
+//         int len = s.length();
+//         if (len == 0) {
+//             return "";
+//         }
+//         if (s.indexOf(divide) != -1) {
+//             throw new IllegalArgumentException("参数错误，您传递的分割字符，在输入字符串中存在！");
+//         }
+//         StringBuilder stringBuilder = new StringBuilder();
+//         for (int i = 0; i < len; i++) {
+//             stringBuilder.append(divide);
+//             stringBuilder.append(s.charAt(i));
+//         }
+//         stringBuilder.append(divide);
+//         return stringBuilder.toString();
+//     }
+}
