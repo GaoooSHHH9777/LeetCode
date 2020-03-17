@@ -1,0 +1,38 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Binary Tree Inorder Traversal.
+// Memory Usage: 37.7 MB, less than 5.11% of Java online submissions for Binary Tree Inorder Traversal.
+
+class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        if(root == null){
+            return new ArrayList<>();
+        }
+
+        List<Integer> res = new ArrayList<>();
+        
+        Stack<TreeNode> stack = new Stack<>();
+        
+        while(!stack.empty() || root!=null){
+            while(root!=null){              // 一直把left塞塞塞塞塞
+                stack.add(root);
+                root = root.left;
+            }
+            
+            root = stack.pop();             // 塞完了再pop（此时是自树底向上的）
+            res.add(root.val);
+            
+            root = root.right;
+        }
+
+        return res;
+    }
+}
