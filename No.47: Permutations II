@@ -1,0 +1,64 @@
+// Runtime: 1 ms, faster than 99.45% of Java online submissions for Permutations II.
+// Memory Usage: 41.8 MB, less than 10.45% of Java online submissions for Permutations II.
+
+class Solution {
+        // HashSet去重，仅击败13.4%，应该是需要剪枝
+//     public List<List<Integer>> permuteUnique(int[] nums) {
+//         Set<List<Integer>> res = new HashSet<>();        // 和No.46的唯一区别，就是把List改为Set
+        
+//         dfs(nums, res, new ArrayList<>(), new boolean[nums.length]);
+        
+//         return new ArrayList<>(res);
+//     }
+    
+//     private void dfs(int[] nums, Set<List<Integer>> res, List<Integer> current, boolean[] used){
+//         if(current.size() == nums.length){
+//             res.add(new ArrayList<>(current));
+            
+//             return;
+//         }
+        
+//         for(int i=0; i<nums.length; i++){
+//             if(!used[i]){
+//                 current.add(nums[i]);
+//                 used[i] = true;
+//                 dfs(nums, res, current, used);
+//                 used[i] = false;
+//                 current.remove(current.size()-1);
+//             }
+//         }
+//     }
+    
+        // 先排序，依靠(num[i] == num[i-1] && !used[i-1])这个逻辑来剪枝
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        
+        Arrays.sort(nums);
+        
+        dfs(nums, res, new ArrayList<>(), new boolean[nums.length]);
+        
+        return new ArrayList<>(res);
+    }
+    
+    private void dfs(int[] nums, List<List<Integer>> res, List<Integer> current, boolean[] used){
+        if(current.size() == nums.length){
+            res.add(new ArrayList<>(current));
+            
+            return;
+        }
+        
+        for(int i=0; i<nums.length; i++){
+            // if(used[i] || (i > 0 && nums[i] == nums[i-1] && used[i-1])){     // used[i-1]或者!used[i-1]都能过，但是前者只能击败63%，后者99%
+            if(used[i] || (i > 0 && nums[i] == nums[i-1] && !used[i-1])){
+                continue;
+            }
+            
+            current.add(nums[i]);
+            used[i] = true;
+            dfs(nums, res, current, used);
+            used[i] = false;                                        // ！！！所以要用!used[i-1]，因为这里被重置了啊！！一次for i=0之后你觉得for i=1看到的used[0]是什么？当然是false啊
+            current.remove(current.size()-1);
+        }
+    }
+    
+}
