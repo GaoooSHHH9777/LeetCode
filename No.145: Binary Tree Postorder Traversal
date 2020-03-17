@@ -1,0 +1,113 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Binary Tree Postorder Traversal.
+// Memory Usage: 38 MB, less than 5.63% of Java online submissions for Binary Tree Postorder Traversal.
+    
+class Solution {
+    
+    /**
+     * 前中后序都可以按照这个模版写：
+     *
+     * while(!stack.isEmpty() || !cur==null){
+     *      if(!cur==null){
+     *
+     *      }else{
+     *
+     *      }
+     * }
+     *
+     */
+    
+        // 两个栈，比较清晰的思路，可惜一开始没想通
+    // public List<Integer> postorderTraversal(TreeNode root) {
+    //     List<Integer> res = new ArrayList<>();
+        
+    //     if(root == null){
+    //         return res;
+    //     }
+
+    //     Stack<TreeNode> stack1 = new Stack<>();
+    //     Stack<TreeNode> stack2 = new Stack<>();
+        
+    //     // 就很简单的逻辑：既然我需要“左-右-根”，那我的反序是不是“根-右-左”？而已知前序是“根-左-右”，我把前序稍微改装下写成“根-右-左”，然后反序（即stack-pop）到stack2里面，再逐一pop，不就完成了？
+    //     stack1.push(root);
+    //     while(!stack1.isEmpty()){
+    //         // 注意：这两行不能合并成一行，因为要保存current变量！前序不需要保存current变量是因为直接就把它塞到输出res里面了
+    //         TreeNode current = stack1.pop();
+    //         stack2.push(current);
+            
+    //         if(current.left != null){
+    //             stack1.push(current.left);
+    //         }
+    //         if(current.right != null){
+    //             stack1.push(current.right);
+    //         }
+    //     }
+        
+    //     while(!stack2.isEmpty()){
+    //         res.add(stack2.pop().val);
+    //     }
+        
+    //     return res;
+    // }
+    
+        // 一个栈（投机取巧方式）。投机取巧的地方在于：逆序输出。和两个栈的原理类似，先在栈里形成“右-左-根”的形式，然后result.add(0, node.val)，就逆序输出了。它不是严谨的后序遍历
+//     public List<Integer> postorderTraversal(TreeNode root) {
+//         List<Integer> res = new ArrayList<Integer>();
+//         if(root == null){
+//             return res;
+//         }
+        
+//         Stack<TreeNode> stack = new Stack<TreeNode>();
+//         stack.push(root);
+        
+//         while(!stack.isEmpty()){
+//             TreeNode node = stack.pop();
+//             if(node.left != null) stack.push(node.left);
+//             if(node.right != null) stack.push(node.right);
+            
+//             res.add(0, node.val);                        // 这里是关键，逆序输出
+//         }     
+        
+//         return res;
+//     }
+    
+        // 一个栈（正经方式）。回头再理解，有点绕，暂时不掌握
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if(root == null){
+            return res;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        TreeNode c = null;
+        
+        while(!stack.isEmpty()){
+            c = stack.peek();
+            if(c.left != null && (c.left != root && c.right != root)){
+                stack.push(c.left);
+                c = c.left;
+            }else if(c.right != null && c.right != root){
+                stack.push(c.right);
+                c = c.right;
+            }else{
+                root = c;
+                TreeNode tmp = stack.pop();
+                res.add(tmp.val);
+            }
+        }
+
+        return res;
+    }
+    
+        // 还有一种Morris解法
+}
