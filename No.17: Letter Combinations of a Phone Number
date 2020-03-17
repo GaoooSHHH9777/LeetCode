@@ -1,0 +1,37 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Letter Combinations of a Phone Number.
+// Memory Usage: 38 MB, less than 6.16% of Java online submissions for Letter Combinations of a Phone Number.
+
+class Solution {
+    
+	public List<String> letterCombinations(String digits) {
+        if (digits == null || digits.length() == 0){
+            return new ArrayList<String>();
+        }
+        
+	    String[] arr = {" "," ","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+        
+        List<String> res = new ArrayList<String>();
+        
+        DFS(digits, res, new StringBuilder(), 0, arr);
+        
+        return res;
+	}
+    
+	public void DFS(String input, List<String> result, StringBuilder current, int start, String[] arr) {
+        if (current.length() == input.length()){
+            result.add(current.toString());
+        
+            return;
+        }
+        
+        // 单个数字在“数字键盘上”对应的“字符们”，如2-abc、3-def
+        String singleNumValues = arr[input.charAt(start) - '0'];        // 最后的-'0'这个操作是为了char -> int
+        
+        for (int i=0; i<singleNumValues.length(); i++) {
+            current.append(singleNumValues.charAt(i));
+            
+            DFS(input, result, current, start+1, arr);          // start+1就是指“input的下一个数字”了，比如input=2345、本次是3，那下次就是4了，后面是5
+            current.deleteCharAt(current.length()-1);           // 回溯，返回树的上一层，和全排列一样的道理
+        }
+    }
+}
