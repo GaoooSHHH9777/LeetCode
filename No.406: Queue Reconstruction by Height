@@ -1,0 +1,30 @@
+// Runtime: 7 ms, faster than 57.50% of Java online submissions for Queue Reconstruction by Height.
+// Memory Usage: 42.5 MB, less than 91.49% of Java online submissions for Queue Reconstruction by Height.
+
+class Solution {
+    
+    // 总的来说，它之所以是“贪心”，是因为“每一轮我只考虑当前的身高放哪”，而“并不考虑上次和下次会怎么样”
+    
+    // 输入:
+    // [7,0], [4,4], [7,1], [5,0], [6,1], [5,2]
+    // sort之后:
+    // [7,0], [7,1], [6,1], [5,0], [5,2], [4,4]
+    // 再一个一个add
+    // [7,0]
+    // [7,0], [7,1]
+    // [7,0], [6,1], [7,1]
+    // [5,0], [7,0], [6,1], [7,1]
+    // [5,0], [7,0], [5,2], [6,1], [7,1]
+    // [5,0], [7,0], [5,2], [6,1], [4,4], [7,1]
+    
+    public int[][] reconstructQueue(int[][] people) {
+        Arrays.sort(people, (o1, o2) -> o1[0] == o2[0] ? o1[1] - o2[1] : o2[0] - o1[0]);
+
+        LinkedList<int[]> list = new LinkedList<>();
+        for (int[] i : people) {
+            list.add(i[1], i);              // i[1]是index，i是arr里实际的[height, prevHighers]
+        }
+
+        return list.toArray(new int[list.size()][2]);
+    }
+}
