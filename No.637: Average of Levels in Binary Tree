@@ -1,0 +1,106 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 循环-bfs
+// Runtime: 1 ms, faster than 100.00% of Java online submissions for Average of Levels in Binary Tree.
+// Memory Usage: 42.9 MB, less than 8.00% of Java online submissions for Average of Levels in Binary Tree.
+
+// 递归-dfs
+// Runtime: 1 ms, faster than 100.00% of Java online submissions for Average of Levels in Binary Tree.
+// Memory Usage: 42.6 MB, less than 12.00% of Java online submissions for Average of Levels in Binary Tree.
+    
+class Solution {
+        // 手撕的queue-bfs
+//     public List<Double> averageOfLevels(TreeNode root) {
+//         List<Double> res = new ArrayList<>();
+//         if(root == null){
+//             return res;
+//         }
+        
+//         Queue<TreeNode> queue = new LinkedList<>();
+//         queue.add(root);
+        
+//         while(!queue.isEmpty()){
+//             // 这里不需要维护一个thisLayer的List了，因为不需要输出序列，直接用一个sum来计算就可以。原本没有发现这个问题，而ArrayList.add()及其扩容肯定会影响性能，所以只能击败75%，现在可以击败100%了
+//             long thisLayerSum = 0;          // 用int会整型溢出的！
+            
+//             int size = queue.size();        // 这个size可以在底下add(thisLayerSum/size)的时候复用
+//             for(int i=0; i<size; i++){
+//                 TreeNode current = queue.poll();
+//                 thisLayerSum += current.val;
+                
+//                 if(current.left != null){ 
+//                     queue.add(current.left);
+//                 }
+//                 if(current.right != null){
+//                     queue.add(current.right);
+//                 }
+//             }
+            
+//             // 下面两行可以合并成一行，只不过在定义thisLayerSum的时候就不能用long了，要直接用double
+//             double thisLayerAvg = (double) thisLayerSum / size; 
+//             res.add(thisLayerAvg);
+//         }
+        
+//         return res;
+//     }
+    
+    public List<Double> averageOfLevels(TreeNode root) {
+        // list answer for sum all value in same level
+        List<Double> res = new ArrayList<>();
+        if(root == null){
+            return res;
+        }
+        
+        // 关键是这步，加入一个list来记录每一层的数量
+        // 单个list是可以形成<key, value>的，即key=index，value=list.get(key)。而且比起map来说有序+省空间，何乐而不为呢？
+        List<Integer> count = new ArrayList<>();
+        
+        dfs(root, res, count, 0);
+        
+        // answer will be answer[level] / counter[level]
+        // 这里要作计算才能真正得到结果。否则的话，在递归里面怎么同时计算sum/size？需要这样一个全局的步骤去操作它
+        //      正常的逻辑是用一个sum数组去记录，然后再一个个index除count[i]得res的各个位置。不过这在程序中是属于可以优化掉的空间，所以直接操作res就可以（即先把res当作sum数组，再直接在res上和count[i]进行除法，直接获得结果
+        for (int i=0; i<res.size(); i++){
+            res.set(i, res.get(i)/count.get(i));
+        }
+        
+        return res;
+    }
+    
+    private void dfs(TreeNode cur, List<Double> res, List<Integer> count, int layer) {
+        if (cur == null){
+            return;
+        }
+        
+        // 这里不需要return！！！和No.107犯一样的错误！
+        // if (layer < res.size()) {
+        //     res.set(layer, res.get(layer)+cur.val);     // 往深层都会顺序加入，第layer层就在list的第layer个index
+        //     count.set(layer, count.get(layer)+1);       // 往深层都会顺序加入，第layer层就在list的第layer个index
+        // } else {
+        //     //先用当前结点去初始化sum和count数组中表示本层的那个单元
+        //     res.add(1.0 * cur.val);                     // 往深层都会顺序加入，第layer层就在list的第layer个index
+        //     count.add(1);                               // 往深层都会顺序加入，第layer层就在list的第layer个index
+        // }
+        
+        // 实际上layer==res.size()就足够，不需要>=。但是>=更方便底下的else逻辑理解
+        if (layer >= res.size()) {      // 当layer==res.size()的时候，都是“遍历到了新一层的第一个新节点”，所以去“初始化一个位置”。思考一下size=0、layer=0、root加入的时候，以及root加入之后size=1、layer=1、root.left/right加入的时候。因为count这个list的size是记录的树深度，所以layer从0开始对应下标即可，新的layer+1也就需要的index+1，这么想就顺很多
+            // "先用当前结点去初始化sum和count数组中表示本层的那个单元"
+            res.add(1.0 * cur.val);                     // 往深层都会顺序加入，第layer层就在list的第layer个index
+            count.add(1);                               // 往深层都会顺序加入，第layer层就在list的第layer个index
+        } else {        // 新layer的第二个节点开始，就是layer<res.size()了呀，比如最顶上root下来的那一层，root.left初始化了list，root.right就会走进这个逻辑里面来～计算好sum和result即可
+            res.set(layer, res.get(layer)+cur.val);     // 往深层都会顺序加入，第layer层就在list的第layer个index
+            count.set(layer, count.get(layer)+1);       // 往深层都会顺序加入，第layer层就在list的第layer个index
+        }
+        
+        dfs(cur.left, res, count, layer+1);
+        dfs(cur.right, res, count, layer+1);
+    }
+}
