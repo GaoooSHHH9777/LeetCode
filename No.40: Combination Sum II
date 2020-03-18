@@ -1,0 +1,69 @@
+// Runtime: 2 ms, faster than 99.41% of Java online submissions for Combination Sum II.
+// Memory Usage: 39.1 MB, less than 67.37% of Java online submissions for Combination Sum II.
+
+class Solution {
+        // 用set的话，击败71.46%，能手撕
+//     public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+//         Set<List<Integer>> res = new HashSet<>();
+
+//         // [10,1,2,7,6,1,5] -> [1,1,2,5,6,7,10]
+//         Arrays.sort(candidates);
+        
+//         dfs(candidates, res, new ArrayList<>(), 0, target);
+
+//         return new ArrayList<>(res);
+//     }
+
+//     private void dfs(int[] candidates, Set<List<Integer>> res, List<Integer> current, int currentIndex, int needCalculate){
+//         if(needCalculate == 0){
+//             res.add(new ArrayList<>(current));
+//             return;
+//         }
+        
+//         for(int i=currentIndex; i<candidates.length; i++){
+//             if(candidates[i] > needCalculate) {      // 与No.39一样的剪枝步骤
+//                 break;
+//             }
+    
+           // 这里肯定还有一步(xxx && candidates[i]==candidates[i-1])的判断，但是没能写对
+            
+//             current.add(candidates[i]);
+//             dfs(candidates, res, current, i+1, needCalculate-candidates[i]);        // 比起上一题No.39，把i换成了i+1，因为不可以重复使用当前的。不过这只是第一步，还需要解决两个相同数如[1,1]得出重复结果的问题。用set肯定能解决，但并不是个聪明的方法
+//             current.remove(current.size()-1);
+//         }
+//     }
+    
+    
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+
+        Arrays.sort(candidates);
+        
+        dfs(candidates, res, new ArrayList<>(), 0, target);
+
+        return new ArrayList<>(res);
+    }
+
+    private void dfs(int[] candidates, List<List<Integer>> res, List<Integer> current, int currentIndex, int needCalculate){
+        if(needCalculate == 0){
+            res.add(new ArrayList<>(current));
+            return;
+        }
+        
+        // 大剪枝与小剪枝
+        for(int i=currentIndex; i<candidates.length; i++){
+            if(candidates[i] > needCalculate) {     // 这是大剪枝
+                break;
+            }
+            
+            // 自己写的逻辑是"i>0"，但实际上是需要"i>currentIndex"。。。。。。。
+            if (i>currentIndex && candidates[i]==candidates[i-1]) {     // 这是小剪枝～
+                continue;
+            }
+            
+            current.add(candidates[i]);
+            dfs(candidates, res, current, i+1, needCalculate-candidates[i]);
+            current.remove(current.size()-1);
+        }
+    }
+}
