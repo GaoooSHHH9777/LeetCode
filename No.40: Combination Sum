@@ -1,0 +1,91 @@
+// Runtime: 2 ms, faster than 99.56% of Java online submissions for Combination Sum.
+// Memory Usage: 41.7 MB, less than 5.19% of Java online submissions for Combination Sum.
+    
+class Solution {
+        // 自己直接手撕的解法，用的是加法逻辑，击败74.99%。currentIndex变量很好地阻止了2+2+3=7之后重复计算2+3+2=7、3+2+2=7的过程！否则的话又要用set去重了，估计又是击败5%
+//     public List<List<Integer>> combinationSum(int[] candidates, int target) {
+//         List<List<Integer>> res = new ArrayList<>();
+        
+//         dfs(candidates, target, res, new ArrayList<>(), 0, 0);
+
+//         return res;
+//     }
+
+//     private void dfs(int[] candidates, int target, List<List<Integer>> res, List<Integer> current, int currentIndex, int currentSum){
+//         if(currentSum > target){
+//             return;
+//         }
+//         if(currentSum == target){
+//             res.add(new ArrayList<>(current));
+//             return;
+//         }
+        
+//         for(int i=currentIndex; i<candidates.length; i++){
+//             currentSum += candidates[i];
+//             current.add(candidates[i]);
+//             dfs(candidates, target, res, current, i, currentSum);
+//             currentSum -= candidates[i];
+//             current.remove(current.size()-1);
+//         }
+//     }
+    
+        // 对应的减法逻辑（未剪枝，效率还是一样的）
+//     public List<List<Integer>> combinationSum(int[] candidates, int target) {
+//         List<List<Integer>> res = new ArrayList<>();
+        
+//         dfs(candidates, res, new ArrayList<>(), 0, target);
+
+//         return res;
+//     }
+
+//     private void dfs(int[] candidates, List<List<Integer>> res, List<Integer> current, int currentIndex, int needCalculate){
+//         if(needCalculate < 0){
+//             return;
+//         }
+//         if(needCalculate == 0){
+//             res.add(new ArrayList<>(current));
+//             return;
+//         }
+        
+//         for(int i=currentIndex; i<candidates.length; i++){
+//             // needCalculate -= candidates[i];      // 这行和下面的+=可以不用，直接dfs(needCalculate-candidates[i])就可以了，也不用+=恢复
+//             current.add(candidates[i]);
+//             dfs(candidates, res, current, i, needCalculate-candidates[i]);
+//             // needCalculate += candidates[i];
+//             current.remove(current.size()-1);
+//         }
+//     }
+    
+        // 剪枝的减解法，击败99.56%
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+
+        Arrays.sort(candidates);        // 这行是关键！！
+        
+        dfs(candidates, res, new ArrayList<>(), 0, target);
+
+        return res;
+    }
+
+    private void dfs(int[] candidates, List<List<Integer>> res, List<Integer> current, int currentIndex, int needCalculate){
+        // if(needCalculate < 0){      // 有了下面for循环的判断，这里可以不判断了
+        //     return;
+        // }
+        if(needCalculate == 0){
+            res.add(new ArrayList<>(current));
+            return;
+        }
+        
+        for(int i=currentIndex; i<candidates.length; i++){
+            // Arrays.sort()已经排过序了！
+            //      假设[1,2,3,4,5]，已遍历[1,2]之后，现在needCalculate=2，你觉得还需要再比对[3,4,5]这几个吗？
+            if (candidates[i] > needCalculate) {
+                break;
+            }
+            
+            current.add(candidates[i]);
+            dfs(candidates, res, current, i, needCalculate-candidates[i]);      // 直接dfs(needCalculate-candidates[i])就可以了，也不用+=恢复
+            current.remove(current.size()-1);
+        }
+    }
+}
