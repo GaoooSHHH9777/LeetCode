@@ -1,0 +1,84 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 循环-bfs
+// Runtime: 1 ms, faster than 85.37% of Java online submissions for Binary Tree Level Order Traversal II.
+// Memory Usage: 39.1 MB, less than 5.00% of Java online submissions for Binary Tree Level Order Traversal II.
+
+// 递归-dfs
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Binary Tree Level Order Traversal II.
+// Memory Usage: 39.2 MB, less than 5.00% of Java online submissions for Binary Tree Level Order Traversal II.
+    
+class Solution {
+        // 循环queue，bfs
+//     public List<List<Integer>> levelOrderBottom(TreeNode root) {
+//         List<List<Integer>> res = new ArrayList<>();
+//         if(root == null){
+//             return res;
+//         }
+        
+//         Queue<TreeNode> queue = new LinkedList<>();
+//         queue.add(root);
+        
+//         while(!queue.isEmpty()){
+//             List<Integer> thisLayer = new ArrayList<>();  
+            
+//             int size = queue.size();        // 同样地，这个size要记录下来
+//             for (int i=0; i<size; i++) {
+//                 TreeNode node = queue.poll();  
+//                 thisLayer.add(node.val);  
+                
+//                 if (node.left != null) {  
+//                     queue.add(node.left);  
+//                 }
+//                 if (node.right != null) {  
+//                     queue.add(node.right);  
+//                 }  
+//             }  
+            
+//             /**
+//              * 本题和No.102只有这一行不同：反序输出（和后序遍历的“投机取巧一个栈”很像）
+//              */
+//             // res.add(thisLayer);      // 这是No.102的解法
+//             res.add(0, thisLayer);      // 这是No.107的解法
+//         }
+        
+//         return res;
+//     }
+    
+        // 递归，dfs
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+
+        dfs(root, res, 0);
+        
+        return res;
+    }
+    
+    private void dfs(TreeNode current, List<List<Integer>> res, int layer){
+        if(current == null){
+            return;
+        }
+        if(layer == res.size()){
+            /**
+             * 记住：list.add(something)是加在最后一个，list.add(0, something)是加在第一个，刚好相反！
+             */
+            // res.add(new LinkedList<Integer>());      // 这是No.102的解法
+            res.add(0, new LinkedList<Integer>());      // 这是No.107的解法
+        }
+        
+        // res.get(layer).add(current.val);             // 这是No.102的解法
+        res.get(res.size()-1-layer).add(current.val);   // 这是No.107的解法。res.size()-1再减去layer，就是找到对应layer在res里的位置
+
+        // 不需要传递thisLayer这样一个list，因为只要去res里面“寻址”就可以了。如果要“分叉着给thisLayer逐个添加int”，显得比较繁琐
+        dfs(current.left, res, layer+1);
+        dfs(current.right, res, layer+1);
+    }
+}
