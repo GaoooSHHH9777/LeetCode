@@ -1,0 +1,74 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 递归
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Symmetric Tree.
+// Memory Usage: 37.6 MB, less than 74.15% of Java online submissions for Symmetric Tree.
+
+// 循环
+// Runtime: 1 ms, faster than 27.72% of Java online submissions for Symmetric Tree.
+// Memory Usage: 38.1 MB, less than 71.43% of Java online submissions for Symmetric Tree.
+
+class Solution {
+    
+    /**
+     * 核心思想：把树从中间“劈成两半”，最高层是root和root比（current和mirror都是root），往下就是current.left和mirror.right比（默认current为左，mirror为右）
+     */
+    
+        // 递归
+//     public boolean isSymmetric(TreeNode root) {
+//         return recursive(root, root);
+//     }
+
+//     private boolean recursive(TreeNode current, TreeNode mirror){
+//         if(current==null && mirror==null){
+//             return true;
+//         }
+//         if(current==null || mirror==null){
+//             return false;
+//         }
+        
+//         if(current.val != mirror.val){
+//             return false;
+//         }
+        
+//         return recursive(current.left, mirror.right) && recursive(current.right, mirror.left);
+//     }
+    
+        // 循环（慢很多）
+    public boolean isSymmetric(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        queue.add(root);
+        
+        while(!queue.isEmpty()){
+            TreeNode current = queue.poll();
+            TreeNode mirror = queue.poll();
+            
+            if(current==null && mirror==null){
+                continue;
+            }
+            if(current==null || mirror==null){
+                return false;
+            }
+            
+            if(current.val != mirror.val){
+                return false;
+            }
+            
+            queue.add(current.left);
+            queue.add(mirror.right);
+            queue.add(current.right);
+            queue.add(mirror.left);
+        }
+        
+        return true;
+    }
+}
