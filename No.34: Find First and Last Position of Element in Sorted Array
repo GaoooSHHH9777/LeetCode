@@ -1,0 +1,46 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Find First and Last Position of Element in Sorted Array.
+// Memory Usage: 42.7 MB, less than 100.00% of Java online submissions for Find First and Last Position of Element in Sorted Array.
+
+class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int[] res = new int[2];
+        
+        res[0] = searchRangeInternal(nums, target, true);        
+        res[1] = searchRangeInternal(nums, target, false);
+        
+        return res;
+    }
+    
+    private int searchRangeInternal(int[] nums, int target, boolean searchFirstIndex) {
+        int result = -1;
+        
+        int left = 0;
+        int right = nums.length-1;
+        
+        // 不能写left < right，会漏firstIndex
+        while(left <= right) {
+            int mid = (left+right)/2;
+            
+            /**
+             * middle < target  --->  向右半边搜索
+             * middle > target  --->  向左半边搜索
+             * middle = target  --->  若在找firstIndex则向左半边搜索，若在找lastIndex(endIndex)则向右半边搜索
+             */
+            if (nums[mid] < target) {
+                left = mid+1;
+            } else if(nums[mid] > target) {
+                right = mid-1;
+            } else {
+                result = mid;
+                
+                if (searchFirstIndex) {         // 若在找firstIndex则向左半边搜索。言下之意就是看看左边还有没有同样的值，保证"first"
+                    right = mid-1;
+                } else {                        // 反之则向右半边搜索，看看右边还有没有同样的值"last"
+                    left = mid+1;
+                }
+            }
+        }
+        
+        return result;
+    }
+}
