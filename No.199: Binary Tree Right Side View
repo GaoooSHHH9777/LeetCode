@@ -1,0 +1,151 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 循环bfs-queue
+// Runtime: 1 ms, faster than 77.36% of Java online submissions for Binary Tree Right Side View.
+// Memory Usage: 38.1 MB, less than 5.88% of Java online submissions for Binary Tree Right Side View.
+
+// 递归dfs
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Binary Tree Right Side View.
+// Memory Usage: 38.2 MB, less than 5.88% of Java online submissions for Binary Tree Right Side View.
+
+class Solution {
+    
+    /**
+     *  击败77%已经是1ms了，在中文版leetcode可以击败98.5%，有可能是运气问题。
+     *      不过呢，递归dfs确实可以做到击败100%，一定程度上来说它就是比循环bfs-queue要快
+     */
+    
+        // 循环bfs-queue，手撕，击败77%
+//     public List<Integer> rightSideView(TreeNode root) {
+//         List<Integer> res = new LinkedList<>();     // 用LinkedList，不然ArrayList扩容的时间复杂度震荡会影响
+//         if(root == null){
+//             return res;
+//         }
+        
+//         List<List<Integer>> layers = new LinkedList<>();
+            
+//         Queue<TreeNode> queue = new LinkedList<>();
+//         queue.add(root);
+        
+//         while(!queue.isEmpty()){
+//             List<Integer> thisLayer = new LinkedList<>();
+            
+//             int size = queue.size();
+//             for(int i=0; i<size; i++){
+//                 TreeNode current = queue.poll();
+//                 thisLayer.add(current.val);
+                
+//                 if(current.left != null){
+//                     queue.add(current.left);
+//                 }
+//                 if(current.right != null){
+//                     queue.add(current.right);
+//                 }
+//             }
+            
+//             layers.add(thisLayer);
+//         }
+        
+//         for(int i=0; i<layers.size(); i++){
+//             List<Integer> thisLayer = layers.get(i);
+//             res.add(thisLayer.get(thisLayer.size()-1));
+//         }
+        
+//         return res;
+//     }
+    
+        // 优化后的bfs-queue，不过还是击败77%
+//     public List<Integer> rightSideView(TreeNode root) {
+//         List<Integer> res = new LinkedList<>();     // 用LinkedList，不然ArrayList扩容的时间复杂度震荡会影响
+//         if(root == null){
+//             return res;
+//         }
+            
+//         Queue<TreeNode> queue = new LinkedList<>();
+//         queue.add(root);
+        
+//         while(!queue.isEmpty()){
+//             int size = queue.size();
+//             for(int i=0; i<size; i++){
+//                 TreeNode current = queue.poll();
+                
+//                 // 注意这步。不需要维护一个thisLayer的list，只需要把每行的最后一个加入res即可，而这个“最后一个”是可以得出来的，因为queue里的总是本层的所有node（在本次循环的之前就已经加入到queue），所以是可以知道有多少个node的，即count=size()-1
+//                 if(i == size-1){
+//                     res.add(current.val);
+//                 }
+                
+//                 if(current.left != null){
+//                     queue.add(current.left);
+//                 }
+//                 if(current.right != null){
+//                     queue.add(current.right);
+//                 }
+//             }
+//         }
+        
+//         return res;
+//     }
+    
+        // 递归dfs，手撕，击败77%。res的ArrayList改LinkedList可以击败100%
+//     public List<Integer> rightSideView(TreeNode root) {
+//         List<Integer> res = new LinkedList<>();     // 用LinkedList，不然ArrayList扩容的时间复杂度震荡会影响
+//         if(root == null){
+//             return res;
+//         }
+        
+//         dfs(root, res, 0);
+        
+//         return res;
+//     }
+    
+//     private void dfs(TreeNode cur, List<Integer> res, int layer){
+//         if(cur == null){
+//             return;
+//         }
+        
+//         // 这一步要是忘记了，就去和102、107、637联合一起想想吧，精髓
+//         if(layer == res.size()){
+//             res.add(cur.val);
+//         }else{
+//             res.set(layer, cur.val);
+//         }
+        
+//         dfs(cur.left, res, layer+1);
+//         dfs(cur.right, res, layer+1);
+//     }
+    
+        // 优化后的递归dfs，击败100%。哪怕res用ArrayList也是击败100%。重点在于“先right，后left”
+    public List<Integer> rightSideView(TreeNode root) {
+        // List<Integer> res = new ArrayList<>();
+        List<Integer> res = new LinkedList<>();
+        if(root == null){
+            return res;
+        }
+        
+        dfs(root, res, 0);
+        
+        return res;
+    }
+    
+    private void dfs(TreeNode cur, List<Integer> res, int layer){
+        if(cur == null){
+            return;
+        }
+        
+        if(layer == res.size()){
+            res.add(cur.val);
+        }
+        
+        // 注意这个顺序！！！先right后left。当走到上面if(layer == res.size())的时候，一定是right触发它，直接加入就可以了！！！
+        dfs(cur.right, res, layer+1);
+        dfs(cur.left, res, layer+1);
+    }
+}
