@@ -1,5 +1,6 @@
 # Write your MySQL query statement below
 
+# 有更高效、高超的解法，但是先理解这种基础解法吧
 # Runtime: 617 ms, faster than 59.84% of MySQL online submissions for Rank Scores.
 # Memory Usage: 0B, less than 100.00% of MySQL online submissions for Rank Scores.
 
