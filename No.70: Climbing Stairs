@@ -1,0 +1,57 @@
+// 暴力解
+// 超过时间限制。Last executed input：45
+
+// 动态规划1.0
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Climbing Stairs.
+// Memory Usage: 36.6 MB, less than 5.26% of Java online submissions for Climbing Stairs.
+
+// 动态规划2.0
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Climbing Stairs.
+// Memory Usage: 36.5 MB, less than 5.26% of Java online submissions for Climbing Stairs.
+
+class Solution {
+    
+        // 当然，还有线性代数的解法（斐波那契数列的两种线性代数解法），不作深入了
+    
+        // 暴力解，超过时间限制
+//     public int climbStairs(int n) {
+//         if(n==0 || n==1){
+//             return 1;
+//         }
+//         if(n == 2){
+//             return 2;
+//         }
+
+//         return climbStairs(n-1) + climbStairs(n-2);
+//     }
+    
+        // 动态规划1.0。注意变量：arr[1]=2还是1、i<n还是i<=n、return arr[n-1]还是return arr[n]
+//     public int climbStairs(int n) {
+//         int[] arr = new int[n+1];
+//         arr[0] = 1;
+//         // arr[1] = 2;
+//         arr[1] = 1;
+
+//         // for(int i=2; i<n; i++){
+//         for(int i=2; i<=n; i++){
+//             arr[i] = arr[i-1] + arr[i-2];
+//         }
+
+//         // return arr[n-1];
+//         return arr[n];
+//     }
+    
+        // 动态规划2.0。还是要注意变量～细节问题
+    public int climbStairs(int n) {
+        int a = 1;
+        int b = 1;
+        
+        for(int i=2; i<=n; i++){
+            int temp = a+b;
+            a = b;
+            b = temp;
+        }
+
+        return b;
+    }
+}
