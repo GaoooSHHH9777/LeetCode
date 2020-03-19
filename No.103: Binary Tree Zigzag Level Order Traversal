@@ -1,0 +1,112 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 循环-bfs-queue
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Binary Tree Zigzag Level Order Traversal.
+// Memory Usage: 38.2 MB, less than 5.77% of Java online submissions for Binary Tree Zigzag Level Order Traversal.
+
+// 递归-dfs
+// Runtime: 1 ms, faster than 71.75% of Java online submissions for Binary Tree Zigzag Level Order Traversal.
+// Memory Usage: 38.5 MB, less than 5.77% of Java online submissions for Binary Tree Zigzag Level Order Traversal.
+    
+class Solution {
+        // 循环-bfs-queue，逻辑想错了没写成功，错误在于“反转了进入queue的顺序”，实则“始终顺序进入，只要控制输出的顺序即可”，见第45行注释的内容
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> res = new LinkedList<>();
+        if(root == null){
+            return res;
+        }
+        
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        
+        // 用boolean-reverse或者int-layer都行
+        int layer = 0;
+        
+        while(!queue.isEmpty()){
+            List<Integer> thisLayer = new LinkedList<>();
+            
+            int size = queue.size();
+            for(int i=0; i<size; i++){
+                TreeNode current = queue.poll();
+                if(layer%2 == 0){
+                    thisLayer.add(current.val);
+                }else{
+                    thisLayer.add(0, current.val);
+                }
+                
+                // 从来都不需要反转进入queue的顺序！！！只要在poll的时候管好输出顺序就行了！
+                if(current.left != null){
+                    queue.add(current.left);
+                }
+                if(current.right != null){
+                    queue.add(current.right);
+                }
+            }
+            
+            layer++;
+            res.add(thisLayer);
+        }
+        
+        return res;
+    }
+
+        // 递归dfs，手撕（逐步调试才成功的），1ms击败71.75%（在中文版1ms是击败98.56%）
+//     public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+//         List<List<Integer>> res = new LinkedList<>();
+//         if(root == null){
+//             return res;
+//         }
+        
+//         dfs(root, res, 0);
+        
+//         return res;
+//     }
+    
+//     private void dfs(TreeNode cur, List<List<Integer>> res, int layer){
+//         if(cur == null){
+//             return;
+//         }
+        
+// //         if(layer == res.size()){
+// //             List<Integer> newLayer = new LinkedList();
+// //             newLayer.add(cur.val);
+
+// //             res.add(newLayer);
+// //         }else{
+// //             List<Integer> newLayer = res.get(layer);
+            
+// //             if(layer%2 == 0){       // 奇数层正常输出
+// //                 newLayer.add(cur.val);
+// //             }else{                  // 偶数层反序输出
+// //                 newLayer.add(0, cur.val);
+// //             }
+            
+// //             res.set(layer, newLayer);
+// //         }
+        
+//         // 上面的代码可以简化成以下。细节自己想，很好理解的，就是把一些共同的代码逻辑抽出来而已。不过正常写的话还是走上面的代码靠谱，下面的只为“简洁、巧妙”
+//         if(layer >= res.size()){
+//             res.add(new LinkedList());
+//         }
+        
+//         List<Integer> newLayer = res.get(layer);
+//         if(layer%2 == 0){       // 奇数层正常输出
+//             newLayer.add(cur.val);
+//         }else{                  // 偶数层反序输出
+//             newLayer.add(0, cur.val);
+//         }   
+        
+//         res.set(layer, newLayer);
+
+//         dfs(cur.left, res, layer+1);
+//         dfs(cur.right, res, layer+1);
+//     }
+}
