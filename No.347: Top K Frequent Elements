@@ -1,0 +1,101 @@
+// 优先队列+map，时间复杂度O(NlogK)
+// Runtime: 12 ms, faster than 46.11% of Java online submissions for Top K Frequent Elements.
+// Memory Usage: 42.5 MB, less than 7.76% of Java online submissions for Top K Frequent Elements.
+
+// 桶排序思想，O(N)
+// Runtime: 9 ms, faster than 89.78% of Java online submissions for Top K Frequent Elements.
+// Memory Usage: 42.5 MB, less than 7.76% of Java online submissions for Top K Frequent Elements.
+
+// TreeMap
+// Runtime: 10 ms, faster than 78.43% of Java online submissions for Top K Frequent Elements.
+// Memory Usage: 42.6 MB, less than 7.76% of Java online submissions for Top K Frequent Elements.
+
+class Solution {
+        // 优先队列+map，时间复杂度0(NlogK)。手撕差点，注意PriorityQueue的定义方式～这个写对就行了
+//     public List<Integer> topKFrequent(int[] nums, int k) {
+//         List<Integer> res = new LinkedList<>();
+        
+//         Map<Integer, Integer> map = new HashMap<>();
+//         PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> map.get(a) - map.get(b));     // PriorityQueue的定义方式：map.get()
+        
+//         for(int i=0; i<nums.length; i++){
+//             if(!map.containsKey(nums[i])){
+//                 map.put(nums[i], 1);
+//             }else{
+//                 map.put(nums[i], map.get(nums[i])+1);
+//             }
+//         }
+        
+//         for(int n: map.keySet()){
+//             pq.add(n);
+            
+//             if(pq.size() > k){
+//                 pq.poll();
+//             }
+//         }
+        
+//         while(!pq.isEmpty()){
+//             res.add(pq.poll());
+//         }
+        
+//         return res;
+//     }
+    
+        // 桶排序思想，O(N)
+//     public List<Integer> topKFrequent(int[] nums, int k) {
+//         List<Integer> res = new LinkedList<>();
+        
+//         // map也需要的。用个TreeMap应该也能很好地解决
+//         Map<Integer, Integer> map = new HashMap<>();
+//         for(int i=0; i<nums.length; i++){
+//             if(!map.containsKey(nums[i])){
+//                 map.put(nums[i], 1);
+//             }else{
+//                 map.put(nums[i], map.get(nums[i])+1);
+//             }
+//         }
+        
+//         List<Integer>[] list = new List[nums.length+1];
+//         for(int key : map.keySet()){
+//             int i = map.get(key);
+//             if(list[i] == null){
+//                list[i] = new ArrayList();
+//             }
+            
+//             list[i].add(key);
+//         }
+        
+//         // 倒序遍历数组获取出现顺序从大到小的排列
+//         for(int i = list.length - 1;i >= 0 && res.size() < k;i--){
+//             if(list[i] == null) continue;
+//             res.addAll(list[i]);
+//         }
+        
+//         return res;
+//     }
+    
+        // TreeMap
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int n: nums){
+            map.put(n, map.getOrDefault(n,0)+1);
+        }
+        
+        TreeMap<Integer, List<Integer>> freqMap = new TreeMap<>();
+        for(int num : map.keySet()){
+           int freq = map.get(num);
+           if(!freqMap.containsKey(freq)){
+               freqMap.put(freq, new LinkedList<>());
+           }
+           freqMap.get(freq).add(num);
+        }
+        
+        List<Integer> res = new ArrayList<>();
+        while(res.size()<k){
+            Map.Entry<Integer, List<Integer>> entry = freqMap.pollLastEntry();
+            res.addAll(entry.getValue());
+        }
+        
+        return res;
+    }
+}
