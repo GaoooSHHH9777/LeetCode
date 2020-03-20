@@ -1,0 +1,70 @@
+// 手撕，纯粹就调API
+// Runtime: 12 ms, faster than 64.68% of Java online submissions for Kth Largest Element in a Stream.
+// Memory Usage: 44.4 MB, less than 96.67% of Java online submissions for Kth Largest Element in a Stream.
+
+// 优化解，注意人家在构造器里直接调这个写的add()方法了呀。。。
+// Runtime: 11 ms, faster than 97.21% of Java online submissions for Kth Largest Element in a Stream.
+// Memory Usage: 44.4 MB, less than 96.67% of Java online submissions for Kth Largest Element in a Stream.
+
+class KthLargest {
+        // 手撕，纯粹就调API
+//     private int k;
+//     private PriorityQueue<Integer> pq;
+
+//     public KthLargest(int k, int[] nums) {
+//         this.k = k;
+        
+//         pq = new PriorityQueue<>();
+//         for(int i=0; i<nums.length; i++){
+//             pq.add(nums[i]);
+//             if(pq.size() > k){
+//                 pq.poll();
+//             }
+//         }
+//     }
+    
+//     public int add(int val) {
+//         pq.add(val);
+//         if(pq.size() > k){
+//             pq.poll();
+//         }
+
+//         return pq.peek();
+//     }
+    
+        // 优化解，注意人家在构造器里直接调这个写的add()方法了呀。。。
+    private int k;
+	private PriorityQueue<Integer> pq;
+    
+	public KthLargest(int k, int[] nums) {
+		this.k = k;
+        
+        // 在初始化的时候直接限制size，然后入队时不需要手动判断size和poll()操作
+		pq = new PriorityQueue<>(k);
+		for(int num: nums) {
+			add(num);           // 注意：用的不是pq.add()，而是自己写的add()方法了。。。。。。。。。。。。
+		}
+	}
+
+        // 关键在于：不是无脑地往pq里面加数据，然后导致pq里的node换来换去的操作，而是先判断是否可以进
+        //      要么没满，那直接加进去；要么val>peek()，把里面的小值换出来
+        //          主要是对于“pq满了”之后的操作，手撕的代码是“我无脑加进去，这个新加的有可能会被吐回出来”，优化的代码是“判断它会不会吐回来，会的话我就不加了”！
+	public int add(int val) {
+        // 这里的逻辑不能拆出来，不然第一次add()会空指针的！
+        if (pq.size() < k) {
+            pq.add(val);
+        } else if (val > pq.peek()) {
+            // 下面两行先后顺序没关系
+            pq.poll();
+            pq.add(val);
+        }
+		
+		return pq.peek();
+	}
+}
+
+/**
+ * Your KthLargest object will be instantiated and called as such:
+ * KthLargest obj = new KthLargest(k, nums);
+ * int param_1 = obj.add(val);
+ */
