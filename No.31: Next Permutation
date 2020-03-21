@@ -1,0 +1,49 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Next Permutation.
+// Memory Usage: 39.3 MB, less than 50.00% of Java online submissions for Next Permutation.
+
+class Solution {
+    
+    /**
+     * 题意比较崎岖，借一个解释：
+     *      “下一个排列”的定义是：给定数字序列的字典序中下一个更大的排列。如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。
+     */
+    public void nextPermutation(int[] nums) {
+        // 从后向左找到第一个“下降”的数字
+        int i = nums.length-2;
+        while (i>=0 && nums[i+1] <= nums[i]) {
+            i--;
+        }
+        
+        // 如果存在这么一个数字，就进入循环，否则的话跳过if语句直接交换整个数组。即3,2,1 -> 1,2,3（看借的题意注释）
+        if (i >= 0) {
+            // 记录这个“逆序方向第一个下降的数”，作为target
+            int target = nums[i];
+            
+            int j = nums.length-1;
+            while (j >= 0 && nums[j] <= target) {
+                j--;
+            }
+            
+            swap(nums, i, j);       // 目的就是确定“一个范围”而已
+        }
+        
+        reverse(nums, i+1);     // 从i开始往右（不包括i），一整个范围内进行“反转”
+    }
+
+    private void reverse(int[] nums, int start) {
+        int i = start;
+        int j = nums.length-1;
+        
+        while (i < j) {
+            swap(nums, i, j);
+            i++;
+            j--;
+        }
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
