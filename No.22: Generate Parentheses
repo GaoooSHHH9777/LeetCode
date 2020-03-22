@@ -1,0 +1,32 @@
+// Runtime: 1 ms, faster than 84.17% of Java online submissions for Generate Parentheses.
+// Memory Usage: 39.6 MB, less than 20.00% of Java online submissions for Generate Parentheses.
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new LinkedList<>();
+
+        dfs(res, "", n, 0, 0);
+
+        return res;
+    }
+
+    private void dfs(List<String> res, String cur, int target, int doneLeft, int doneRight) {
+        // doneLeft/doneRight的意思是“已完成的左括号/右括号”
+        if (doneLeft==target && doneRight==target) {
+            res.add(cur);
+            return;
+        }
+
+        // 剪枝。简单来说就是，右括号不能比左括号先出现，即")"先于"("出现
+        if (doneLeft < doneRight) {
+            return;
+        }
+
+        if (doneLeft < target) {
+            dfs(res, cur+"(", target, doneLeft+1, doneRight);
+        }
+        if (doneRight < target) {
+            dfs(res, cur+")", target, doneLeft, doneRight+1);
+        }
+    }
+}
