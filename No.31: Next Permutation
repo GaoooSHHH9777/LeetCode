@@ -6,28 +6,44 @@ class Solution {
     /**
      * 题意比较崎岖，借一个解释：
      *      “下一个排列”的定义是：给定数字序列的字典序中下一个更大的排列。如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。
+     *      将一个 尽可能小的「大数」 与前面的「小数」交换。比如 123465，下一个排列应该把 5 和 4 交换而不是把 6 和 4 交换
+     *      将「大数」换到前面后，需要将「大数」后面的所有数重置为升序，升序排列就是最小的排列。以 123465 为例：首先按照上一步，交换 5 和 4，得到 123564；然后需要将 5 之后的数重置为升序，得到 123546。显然 123546 比 123564 更小，123546 就是 123465 的下一个排列
      */
+    
+    // 只要不是5,4,3,2,1这样一直都是left>right的数组，那么一定存在“下一个排列”～
+    
     public void nextPermutation(int[] nums) {
         // 从后向左找到第一个“下降”的数字
         int i = nums.length-2;
-        while (i>=0 && nums[i+1] <= nums[i]) {
-            i--;
+        for (; i>=0; i--){
+            if (nums[i] < nums[i+1]) {
+                break;
+            }
         }
         
-        // 如果存在这么一个数字，就进入循环，否则的话跳过if语句直接交换整个数组。即3,2,1 -> 1,2,3（看借的题意注释）
-        if (i >= 0) {
+        // 若i = -1，表示该数组为单调递减序列，直接交换整个数组。即3,2,1 -> 1,2,3（看题意注释）
+        // 否则，从后往前扫描找到找到第一个下标j使得nums[j] > nums[i]，交换两数且不破坏nums(i, nums.length)的单调性；
+        if (i != -1) {
             // 记录这个“逆序方向第一个下降的数”，作为target
             int target = nums[i];
             
-            int j = nums.length-1;
-            while (j >= 0 && nums[j] <= target) {
-                j--;
+            for (int j=nums.length-1; j>i; j--){
+                if (nums[j] > target) {
+                    swap(nums, i, j);
+                    
+                    break;
+                }
             }
-            
-            swap(nums, i, j);       // 目的就是确定“一个范围”而已
         }
         
+        // 翻转nums(i, nums.length)使其成为单调增序列。
         reverse(nums, i+1);     // 从i开始往右（不包括i），一整个范围内进行“反转”
+        
+        //         for (int j = 1; j <= (len - i - 1) / 2; j++) {
+        //     int tmp = nums[j + i];
+        //     nums[j + i] = nums[len - j];
+        //     nums[len - j] = tmp;
+        // }
     }
 
     private void reverse(int[] nums, int start) {
