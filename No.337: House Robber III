@@ -1,0 +1,88 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 循环
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for House Robber III.
+// Memory Usage: 41.2 MB, less than 13.89% of Java online submissions for House Robber III.
+
+// 递归
+// Runtime: 395 ms, faster than 31.80% of Java online submissions for House Robber III.
+// Memory Usage: 39.5 MB, less than 61.11% of Java online submissions for House Robber III.
+
+class Solution {
+    
+    /**
+     *  并不是“二叉树层序遍历 + 打家劫舍1.0”，思考如下树结构：
+     *         1
+     *       /   \
+     *      2     3
+     *     / \   / \ 
+     *    4   5 6   7
+     *  如果我要看2、6、7位置上的sum，这还是“隔层的层序遍历和”吗？这张图2、6、7位置对应的并不是最优解，但是也没说一定会给有序的二叉树呀？看题目给的例子
+     *      实际上，是要不断地求“子问题的最优解”，是一个“自底向上”的过程，所以是动态规划的解决方式
+     */
+    
+        // 循环
+    public int rob(TreeNode root) {
+        int[] res = robRecursion(root);
+        
+        return Math.max(res[0], res[1]);
+    }
+
+    /**
+     *  对于每个node，都存在“选”和“不选”两种情况，取两者的较大值
+     *      1. rob，则左右子树不能选                                           ->   作为当前节点的res[0]
+     *      2. notrob，则选左右子树的最优解（左最优+右最优，左右孩子不是必选！！）    ->   作为当前节点的res[1]
+     */
+    private int[] robRecursion(TreeNode node) {
+        if (node == null){      // 为null时，选于不选都是0
+            return new int[]{0, 0};
+        }
+        
+        // 类似于后序遍历，先考虑左右子树的情况，再去处理根节点
+        int[] leftRes = robRecursion(node.left);
+        int[] rightRes = robRecursion(node.right);
+        
+        // 选了根节点的情况，左右孩子是不选的
+        int rob = node.val + leftRes[1] + rightRes[1];       // 这里写1还是0，取决于底下return的第一个位置是rob还是notrob～
+        
+        // 不选根节点的情况，即“左子树的最优解 + 右子树的最优解”
+        //      问题的关键在于：左右孩子可选可不选！！！要取左右孩子“选”或“不选”两者情况的较大值，把这两个较大值加起来，就得到了“不选当前curNode”的res。至于curNode的max，那得看“选当前curNode”的res和"不选当前curNode"的res哪个大了，取max～
+        //          不用去过多地考虑“下一层的下一层”，因为那个归“下一层”管。当前层只需要管好“当前层的下一层”即可
+        int notrob = Math.max(leftRes[0], leftRes[1])           // 左最优。即取得“选左”和“不选左”的max
+                     + Math.max(rightRes[0], rightRes[1]);      // 右最优。即取得“选右”和“不选右”的max
+        
+        return new int[]{rob, notrob};      // 0-选择当前节点的最大情况，1-不选当前节点的最大情况
+    }
+    
+        // 递归
+//     public int rob(TreeNode root) {
+//         if(root == null) return 0;
+//         if(root.left==null && root.right==null) return root.val;
+        
+//         int left=0, right=0;
+//         int subleft=0, subright=0;
+    
+//         if(root.left != null){
+//             left = rob(root.left);
+//             subleft = rob(root.left.left) + rob(root.left.right);
+//         }
+
+//         if(root.right != null){
+//             right = rob(root.right);
+//             subright = rob(root.right.left) + rob(root.right.right);
+//         }
+
+//         int sum1 = left+right;
+//         int sum2 = subleft+subright+root.val;
+
+//         return (sum1>sum2) ? sum1 : sum2;
+//     }
+}
