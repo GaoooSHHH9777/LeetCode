@@ -1,0 +1,49 @@
+// 手撕解法
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Search Insert Position.
+// Memory Usage: 39.2 MB, less than 100.00% of Java online submissions for Search Insert Position.
+
+// 另一种写法
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Search Insert Position.
+// Memory Usage: 38.9 MB, less than 100.00% of Java online submissions for Search Insert Position.
+
+class Solution {
+        // 手撕解法
+//     public int searchInsert(int[] nums, int target) {
+//         int left = 0;
+//         int right = nums.length-1;
+        
+//         while(left <= right){        // 这里必须是<=
+//             int mid = (left+right)/2;
+//             if(nums[mid] < target){
+//                 left = mid+1;
+//             }else if(nums[mid] > target){
+//                 right = mid-1;
+//             }else{
+//                 // left = mid;
+//                 // break;
+//                 return mid;     // 干嘛要上面这么写呢。。直接return不就好了。。
+//             }
+//         }
+
+//         return left;
+//     }
+    
+        // 另一种写法。不同点在于"high = nums.length"、"low < high而不是<="、以及">="的判断做法～
+    public int searchInsert(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length;     // 注意！！这里是length，不是length-1
+        
+        while(low < high) {
+            // int mid = (low + high) >>> 1;        // 这么写也是可以的
+            int mid = low+(high-low)/2;
+            
+            if (nums[mid] >= target) {
+                high = mid; // high always decreases (even high-low==1)
+            }else{
+                low = mid+1; // low always increases
+            }
+        }
+        
+        return low;
+    }
+}
