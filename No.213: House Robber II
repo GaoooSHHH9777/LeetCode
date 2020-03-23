@@ -1,0 +1,24 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for House Robber II.
+// Memory Usage: 37.2 MB, less than 6.67% of Java online submissions for House Robber II.
+
+class Solution {
+    public int rob(int[] nums) {
+        if(nums.length == 0) return 0;
+        if(nums.length == 1) return nums[0];
+        
+        // 拆为两个arr，[first, final-1] & [second, final]。两个res求max就行
+        return Math.max(myRob(Arrays.copyOfRange(nums, 0, nums.length - 1)), 
+                        myRob(Arrays.copyOfRange(nums, 1, nums.length)));
+    }
+    
+    private int myRob(int[] nums) {
+        int pre = 0, cur = 0, tmp;
+        for(int num : nums) {
+            tmp = cur;
+            cur = Math.max(pre + num, cur);
+            pre = tmp;
+        }
+        
+        return cur;
+    }
+}
