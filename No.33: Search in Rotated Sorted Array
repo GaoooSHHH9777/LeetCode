@@ -43,47 +43,47 @@ class Solution {
 //         }
 //     }
 
-    // 优化解1.0，不递归，两个循环。优化点在于“二分法找point，而不是O(n)”
-public int search(int[] nums, int target) {
-    if(nums.length == 0){
+        // 优化解1.0，不递归，两个循环。优化点在于“二分法找point，而不是O(n)”
+    public int search(int[] nums, int target) {
+        if(nums.length == 0){
+            return -1;
+        }
+
+        int start = 0, end = nums.length-1;
+        // 二分找“point”
+        while (start < end) {           // 这里写"<="那就死循环了。。
+            int mid = start+(end-start)/2;
+            if (nums[mid] > nums[end]){
+                start = mid+1;
+            }else{
+                end = mid;
+            }
+        }
+        int minIdx = start;
+        // if (target == nums[minIdx]){            // 要是恰巧minIndex对应的数字就是要找的数字，直接返回～可以省略，不是主体代码，不过思想可以借鉴
+        //     return minIdx;
+        // }
+
+        int len = nums.length;
+        /**
+         *  确定left和right。首先，arr分为左半边和右半边，左半边：(0, minIdx-1)、右半边：(minIdx, nums.length-1)
+         *      对于left，如果target小于等于arr的最后一个，那target肯定落在“arr的右半边”里面
+         *      对于right，如果target大于arr的最后一个，那target肯定落在“arr的左半边”里面
+         *          可以对照[3,4,5,6,0,1,2]，target=1和target=4来想～
+         */
+        int left = (target <= nums[len-1]) ? minIdx : 0;
+        int right = (target > nums[len-1]) ? minIdx : len-1;
+
+        // 最常规的二分写法了，注意left <= right，一定要有"="！
+        while (left <= right) {
+            int mid = left+(right-left)/2;
+            if (nums[mid] == target) return mid;
+            else if (target > nums[mid]) left = mid + 1;
+            else right = mid - 1;
+        }
+
         return -1;
     }
-
-    int start = 0, end = nums.length-1;
-    // 二分找“point”
-    while (start < end) {           // 这里写"<="那就死循环了。。
-        int mid = start+(end-start)/2;
-        if (nums[mid] > nums[end]){
-            start = mid+1;
-        }else{
-            end = mid;
-        }
-    }
-    int minIdx = start;
-    // if (target == nums[minIdx]){            // 要是恰巧minIndex对应的数字就是要找的数字，直接返回～可以省略，不是主体代码，不过思想可以借鉴
-    //     return minIdx;
-    // }
-
-    int len = nums.length;
-    /**
-     *  确定left和right。首先，arr分为左半边和右半边，左半边：(0, minIdx-1)、右半边：(minIdx, nums.length-1)
-     *      对于left，如果target小于等于arr的最后一个，那target肯定落在“arr的右半边”里面
-     *      对于right，如果target大于arr的最后一个，那target肯定落在“arr的左半边”里面
-     *          可以对照[3,4,5,6,0,1,2]，target=1和target=4来想～
-     */
-    int left = (target <= nums[len-1]) ? minIdx : 0;
-    int right = (target > nums[len-1]) ? minIdx : len-1;
-    
-    // 最常规的二分写法了，注意left <= right，一定要有"="！
-    while (left <= right) {
-        int mid = left+(right-left)/2;
-        if (nums[mid] == target) return mid;
-        else if (target > nums[mid]) left = mid + 1;
-        else right = mid - 1;
-    }
-
-    return -1;
-}
     
         // 优化解2.0，不递归，一个循环
         //      总的来说，如果数组一分为二，假设一定存在过旋转，那么两个数组一定是“一个单调递增、一个单调递增后还会单调递减”
