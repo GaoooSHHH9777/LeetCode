@@ -1,0 +1,61 @@
+// DP1.0
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for House Robber.
+// Memory Usage: 36.9 MB, less than 5.26% of Java online submissions for House Robber.
+
+// DP2.0
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for House Robber.
+// Memory Usage: 37.1 MB, less than 5.26% of Java online submissions for House Robber.
+
+class Solution {
+        // DP1.0
+//     public int rob(int[] nums) {
+//         int len = nums.length;
+//         if(len == 0){
+//             return 0;
+//         }
+//         if(len == 1){
+//             return nums[0];
+//         }
+        
+//         int[] curMax = new int[len];
+//         curMax[0] = nums[0];
+//         // curMax[1] = nums[1];
+//         curMax[1] = Math.max(nums[0], nums[1]);         // 用这种写法，不然[2,1]这种输入怎么办
+        
+//         for(int i=2; i<len; i++){
+//             curMax[i] = Math.max(curMax[i-2]+nums[i], curMax[i-1]);
+//         }
+        
+//         return curMax[len-1];
+//     }
+    
+        // DP2.0。这个双变量dp逻辑有点绕，想不出来就多想想，也许变量名称可以有更好的
+    public int rob(int[] nums) {
+        int len = nums.length;
+        if(len == 0){
+            return 0;
+        }
+        if(len == 1){
+            return nums[0];
+        }
+        
+        int rob = 0;        // 表示“上次已抢”，即“本次不可用”，需要把它在循环里过渡，过渡给"notrob"。即对于next来说，本次抢了之后不可用再抢，但对于next的next来说，本次抢了之后并不影响
+        int notrob = 0;     // 表示"上次不抢"，即“本次可用”
+        
+        /**
+         *  如果想不通这个循环，可以借鉴下跳台阶的dp2.0代码。它们实质上都是在利用n-2和n-2进行“交替前进”
+         *      int temp = a+b;
+         *      a = b;
+         *      b = temp;
+         */
+        for(int i=0; i<len; i++){
+            // 始终处于一个"rob和notrob交替滚动"的状态
+            int tmp = rob;
+            rob = Math.max(rob, notrob+nums[i]);
+            notrob = tmp;
+        }
+        
+        // return Math.max(prev1, prev2);
+        return rob;           // 不需要比较了，直接返回prev1即可，因为最新的max总是存在prev1上！
+    }
+}
