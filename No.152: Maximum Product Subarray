@@ -1,0 +1,26 @@
+// Runtime: 1 ms, faster than 98.62% of Java online submissions for Maximum Product Subarray.
+// Memory Usage: 38.9 MB, less than 9.76% of Java online submissions for Maximum Product Subarray.
+
+class Solution {
+    public int maxProduct(int[] nums) {
+        int max = Integer.MIN_VALUE;
+        int curMax = 1;
+        int curMin = 1;
+
+        for(int i=0; i<nums.length; i++){
+            if(nums[i] < 0){        // swap一下curMin和curMax，因为要乘一个负数
+                int temp = curMax;
+                curMax = curMin;
+                curMin = temp;
+            }
+            
+            // 为什么需要和nums[i]进行对比呢？想一想[0,2]这个输入，0*2=0，但是此时的curMax应该为0吗？
+            curMax = Math.max(nums[i], curMax*nums[i]);
+            curMin = Math.min(nums[i], curMin*nums[i]);
+            
+            max = Math.max(max, curMax);
+        }
+        
+        return max;
+    }
+}
