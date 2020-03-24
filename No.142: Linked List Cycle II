@@ -1,0 +1,109 @@
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+
+// HashSet，O(n)
+// Runtime: 3 ms, faster than 26.61% of Java online submissions for Linked List Cycle II.
+// Memory Usage: 41.7 MB, less than 6.32% of Java online submissions for Linked List Cycle II.
+
+// 双指针，两个循环
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Linked List Cycle II.
+// Memory Usage: 41.2 MB, less than 6.32% of Java online submissions for Linked List Cycle II.
+
+// 双指针，一个循环（实际上是一个循环嵌套了另一个循环）
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Linked List Cycle II.
+// Memory Usage: 41 MB, less than 6.32% of Java online submissions for Linked List Cycle II.
+
+public class Solution {
+    
+    /**
+     *  这题的关键在于“为什么凭着相遇节点就肯定能找到环的入口？？？”
+     *      假设非环部分的长度是x，从环起点到相遇点的长度是y，环的长度是c，走了n1圈
+     *          慢指针path_slow经过了x+n1*c+y，快指针path_fast经过了2(x+n1*c+y)，是正好2倍关系的
+     *          而path_fast肯定比path_slow多绕了n2圈，即path_fast - path_slow = x+n1*c+y = n2*c   ----->   x+y = (n2-n1)*c
+     *              啥意思呢？我们不需要知道n1是几圈、n2是几圈（不重要，反正只要都是整数都行）。关键是：x+y是c的整数倍！！
+     *              既然已知相遇点（它离环入口走出了y步，还差x步能走完一个c的长度），怎么制造一个x的长度出来？
+     *                  那当然就是从head重新一起数x步就可以了！
+     *                  但是呢，我们并不知道x、y、c究竟都是多少（也不需要知道）。幸运的是我们知道“head和meet-point都差x步到环的入口”
+     *                      那么就直接看他们什么时候相遇就行了，那就是环的入口～
+     */
+    
+        // HashSet，O(n)
+//     public ListNode detectCycle(ListNode head) {
+//         Set<ListNode> visited = new HashSet<ListNode>();
+
+//         ListNode node = head;        // 加个变量是因为题目要求“不能修改给定的链表”。直接用head遍历当然是可行的，不过要注意“最好不对入参进行修改”
+//         while (node != null) {
+//             if (visited.contains(node)) {
+//                 return node;
+//             }
+    
+//             visited.add(node);
+//             node = node.next;
+//         }
+
+//         return null;
+//     }
+    
+        // 双指针，两个循环，和环形链表1的思想比较像
+    public ListNode detectCycle(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        
+        // 在第一阶段，找出列表中是否有环（No.141: 环形链表1的过程）
+        //      如果没有环，可以直接返回null退出
+        //      如果有环，根据相遇节点来寻找“环的入口”
+        while (true) {
+            if (fast==null || fast.next==null){
+                return null;
+            }
+            
+            slow = slow.next;
+            fast = fast.next.next;
+            
+            if (fast == slow){
+                break;
+            }
+        }
+        
+        // 这里用slow或者fast去赋值都没关系，一样的
+        fast = head;    // 此时，“一个节点是相遇节点”、“一个节点是初始的头节点”
+        
+        while (slow != fast) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        
+        return fast;
+    }
+    
+        // 双指针，一个循环（实际上是一个循环嵌套了另一个循环）
+//     public ListNode detectCycle(ListNode head) {
+//         ListNode slow = head;
+//         ListNode fast = head;
+        
+//         while(fast!=null && fast.next!=null) {
+//             slow = slow.next;
+//             fast = fast.next.next;
+            
+//             if (slow == fast) {
+//                 while (slow != head) {
+//                     head = head.next;
+//                     slow = slow.next;
+//                 }
+                
+//                 return slow;				
+//             }
+//         }			
+        
+//         return null;
+//     }
+}
