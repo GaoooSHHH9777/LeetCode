@@ -1,0 +1,129 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// 优先队列
+// Runtime: 4 ms, faster than 81.13% of Java online submissions for Merge k Sorted Lists.
+// Memory Usage: 41.5 MB, less than 39.35% of Java online submissions for Merge k Sorted Lists.
+
+// 分而治之
+// Runtime: 2 ms, faster than 97.89% of Java online submissions for Merge k Sorted Lists.
+// Memory Usage: 42 MB, less than 32.79% of Java online submissions for Merge k Sorted Lists.
+
+class Solution {
+    
+        // 暴力解法：遍历所有链表，值存到一个数组里，然后排序、遍历，生成大链表。O(nlogn)
+    
+        // 优先队列
+//     public ListNode mergeKLists(ListNode[] lists) {
+//         if (lists == null || lists.length == 0){
+//             return null;
+//         }
+        
+//         PriorityQueue<ListNode> queue = new PriorityQueue<>((n1, n2) -> n1.val - n2.val);
+        
+//         ListNode dummy = new ListNode(0);
+//         ListNode cur = dummy;
+        
+//         for (ListNode node: lists) {
+//             if (node != null){          // 得加这个判断，不然有个用例[[]]过不了
+//                 queue.add(node);        // 先把头全都加进去（pq会自动排好序的）
+//             }
+//         }
+        
+//         while (!queue.isEmpty()) {
+//             cur.next = queue.poll();
+//             cur = cur.next;
+            
+//             if (cur.next != null){
+//                 queue.add(cur.next);
+//             }
+//         }
+        
+//         return dummy.next;
+//     }
+    
+    
+        /**
+         *  引入下面的方法之前，先想一个问题：可以从No.21借鉴到什么？
+         *      很清楚的是：肯定可以一个一个来，即“将<合并k个链表>的问题，转化成<合并2个链表k-1次>这个问题”。那就是No.21: 合并两个有序链表（easy）的简单升级版了
+         *      但是呢，很明显可以想象到，它不可能是一道hard的解法。优化点在哪呢？实际上，有些步骤重复做了非常多遍，会“额外倒腾很久”。简而言之，对一些节点的遍历、排序次数太多了！
+         *          这个时候就要看下面这个方法了，“分而治之”、“自底向上”地解决这个问题～
+         */ 
+    
+        // 分而治之。即“对链表数组分而治之”，啥意思呢？
+        //      如果把每个链表想像成一个树的node，那就是“cur节点的两个子节点合并，cur兄弟节点的两个子节点合并，cur再和cur的兄弟节点合并，返回给上层结果”，这样就构成了“分而治之”。。。
+        //      确切地说，就是归并排序的思想！！只不过归并排序是将分段的小arr进行合并，这里是将两根链表进行合并
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0){
+            return null;
+        }
+    
+        return merge(lists, 0, lists.length-1);
+    }
+
+    private ListNode merge(ListNode[] lists, int left, int right) {
+        if (left == right) {
+            return lists[left];
+        }
+        
+        int mid = left + (right - left) / 2;
+        ListNode l1 = merge(lists, left, mid);
+        ListNode l2 = merge(lists, mid+1, right);
+        
+        return mergeTwoLists(l1, l2);
+    }
+
+        // 借鉴的代码。写的是递归的“No.21”
+//     private ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+//         if (l1 == null) return l2;
+//         if (l2 == null) return l1;
+    
+//         if (l1.val < l2.val) {
+//             l1.next = mergeTwoLists(l1.next, l2);
+//             return l1;
+//         } else {
+//             l2.next = mergeTwoLists(l1,l2.next);
+//             return l2;
+//         }
+//     }
+        
+        // 自己的代码。沿用的循环式“No.21”
+    private ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if (l1 == null) {
+            return l2;
+        }
+        if (l2 == null) {
+            return l1;
+        }
+
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+
+        while(l1 != null && l2 != null){
+            if(l1.val <= l2.val){
+                current.next = new ListNode(l1.val);
+                l1 = l1.next;
+            }else{
+                current.next = new ListNode(l2.val);
+                l2 = l2.next;
+            }
+            
+            current = current.next;
+        }
+
+        if(l1 != null){
+            current.next = l1;
+        }
+        if(l2 != null){
+            current.next = l2;
+        }
+
+        return dummyHead.next;
+    }
+}
