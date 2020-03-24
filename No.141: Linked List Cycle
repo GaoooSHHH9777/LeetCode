@@ -1,0 +1,62 @@
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+
+// HashSet，O(n)
+// Runtime: 3 ms, faster than 20.67% of Java online submissions for Linked List Cycle.
+// Memory Usage: 41.7 MB, less than 5.71% of Java online submissions for Linked List Cycle.
+
+// 快慢指针，O(N+K) -> 最坏O(n)
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Linked List Cycle.
+// Memory Usage: 41.2 MB, less than 5.71% of Java online submissions for Linked List Cycle.
+
+public class Solution {
+        // HashSet，O(n)
+//     public boolean hasCycle(ListNode head) {
+//         Set<ListNode> nodesSeen = new HashSet<>();
+        
+//         while (head != null) {
+//             if (nodesSeen.contains(head)) {
+//                 return true;
+//             } else {
+//                 nodesSeen.add(head);
+//             }
+            
+//             head = head.next;
+//         }
+        
+//         return false;
+//     }
+    
+        // 快慢指针，O(N+K) -> 最坏O(n)，即链表中无环的时候，fast指针把链表走了一遍。其他情况都是快指针走了N、慢指针走了K，所以N+K
+        //      思想就是“想象两个人一个快一个慢，在一个环形跑道上跑步，（只要不限制长度，即无穷地进行）是不是迟早相遇？”
+    public boolean hasCycle(ListNode head) {
+        if (head==null || head.next==null) {
+            return false;
+        }
+        
+        ListNode slow = head;
+        ListNode fast = head.next;
+        
+        while (true) {
+            if (fast==null || fast.next==null) {
+                return false;
+            }
+            
+            if(fast == slow){
+                return true;
+            }
+            
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+    }
+}
