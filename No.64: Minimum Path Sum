@@ -1,0 +1,62 @@
+// 动态规划1.0，二维dp数组
+// Runtime: 2 ms, faster than 86.91% of Java online submissions for Minimum Path Sum.
+// Memory Usage: 42.4 MB, less than 81.08% of Java online submissions for Minimum Path Sum.
+
+// 动态规划2.0，一维dp数组
+// Runtime: 2 ms, faster than 86.91% of Java online submissions for Minimum Path Sum.
+// Memory Usage: 42.3 MB, less than 83.78% of Java online submissions for Minimum Path Sum.
+
+class Solution {
+        // 动态规划1.0，二维dp数组。理论上来说，这个解法也可以不新建dp[][]数组，而是直接在原数组上修改，但是看到有说法认为直接修改入参并不是一个好的行为～
+//     public int minPathSum(int[][] grid) {
+//         // row和col并不一定等长！！！如果都是int len=grid.length那就没了
+//         int row = grid.length;
+//         int col = grid[0].length;       // 注意这个求列数量的方式～
+        
+//         int[][] dp = new int[row][col];
+//         dp[0][0] = grid[0][0];
+        
+//         for(int i=1; i<col; i++){
+//             dp[0][i] = dp[0][i-1] + grid[0][i];
+//         }
+//         for(int j=1; j<row; j++){
+//             dp[j][0] = dp[j-1][0] + grid[j][0];
+//         }
+        
+//         for(int j=1; j<row; j++){
+//             for(int i=1; i<col; i++){
+//                 dp[j][i] = Math.min(dp[j-1][i], dp[j][i-1]) + grid[j][i];
+//             }
+//         }
+        
+//         return dp[row-1][col-1];
+//     }
+    
+        // 动态规划2.0，一维dp数组
+        //      为什么可以用一位数组代替二维数组呢？其实回头看一下二维数组dp的写入方式，每次也都是只在用一个一维数组
+    public int minPathSum(int[][] grid) {
+        int row = grid.length;
+        int col = grid[0].length;
+        
+        int[] dp = new int[col];
+        dp[0] = grid[0][0];                         // 初始化第一个位置
+        
+        for (int j=0; j<row; j++) {                 // 目前是第j行
+            for (int i=0; i<col; i++) {             // 目前是第i列（同一行，都在第j行）
+                /**
+                 *  因为每一个j循环（一行）走完，dp数组都会保留这一行的所有结果
+                 *      当j+1行走入时，会先触发(j != 0 && i == 0) -> (dp[i] = grid[j][i] + dp[i])。即j+1行的第一列的值有了、且已知上一行的所有结果（除了上一行的第一列），那对于这一行遍历过去的每一个新的[y][x]来说，已知[y-1][x]和[y][x-1]，不就可以计算出[y][x]的min了吗～
+                 */
+                if(j == 0 && i != 0){               // 最上面的那行。数字由第一行的加过来，如例题就是<1,3,1>
+                    dp[i] = grid[j][i] + dp[i-1];
+                }else if(j != 0 && i == 0){         // 最左边的那列。数字由第一列的加下来，如题例就是<1,1,4>
+                    dp[i] = grid[j][i] + dp[i];
+                }else if(j != 0 && i != 0){         // 处于中间的格子
+                    dp[i] = grid[j][i] + Math.min(dp[i], dp[i-1]);
+                }
+            }
+        }
+        
+        return dp[col-1];       // 最终返回这个就可以，因为会保留“最后一次循环的最后一个位置”的结果，即出口的结果
+    }
+}
