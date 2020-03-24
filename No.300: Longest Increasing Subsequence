@@ -1,0 +1,82 @@
+// dp，O(n^2)
+// Runtime: 12 ms, faster than 36.24% of Java online submissions for Longest Increasing Subsequence.
+// Memory Usage: 37.6 MB, less than 34.00% of Java online submissions for Longest Increasing Subsequence.
+
+// dp + binarySearch，O(nlogn)
+// Runtime: 1 ms, faster than 85.73% of Java online submissions for Longest Increasing Subsequence.
+// Memory Usage: 37.4 MB, less than 34.00% of Java online submissions for Longest Increasing Subsequence.
+
+class Solution {
+        // dp，O(n^2)
+//     public int lengthOfLIS(int[] nums) {
+//         int len = nums.length;
+//         if(len < 2){
+//             return len;
+//         }
+        
+//         int[] dp = new int[len];
+//         for(int i=0; i<len; i++){
+//             dp[i] = 1;
+//         }
+        
+//         int max = 1;
+        
+//         for (int i=1; i<len; i++) {
+//             for (int j=0; j<i; j++) {
+//                 if (nums[j] < nums[i]) {
+//                     dp[i] = Math.max(dp[i], dp[j]+1);
+//                 }
+//             }
+            
+//             max = Math.max(max, dp[i]);
+//         }
+        
+//         return max;
+//     }
+    
+        // dp + binarySearch，O(nlogn)
+        //      主要思想：如果arr为[1,5,3,?,?,?,?...]，前三个为[1,5,3]，那么遍历完3之后，既然不能取[1,5,3]，那么取[1,3]比取[1,5]肯定更容易“在arr的后半段中找到一个更长的序列”
+        //      再举个例子，arr前4位为[10,9,2,5]，那么“len=1的最小尾部”会经历“10 -> 9 -> 2 ->”，然后len=2的的尾巴变成“5”（因为len=1的尾巴是2）
+        //          那么目的就是“始终保持每个尾部元素值最小”，实现方式为“考虑维护一个列表tails，其中每个元素tails[k]的值代表长度为k+1的子序列尾部元素的值”
+        //          tails列表一定是递增的（关键！不然无法用二分法），那么每轮计算tails[k]时，就可以使用二分法，查找需要更新的尾部元素值的对应索引i。
+        //              https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-dong-tai-gui-hua-2/
+    public int lengthOfLIS(int[] nums) {
+        int len = nums.length;
+        if (len < 2) {
+            return len;
+        }
+
+        // tail 数组的定义：长度为 i+1 的上升子序列的末尾最小是几
+        int[] tails = new int[len];      // 初始化长度为len，不然的话“万一整个数组都是单调递增”呢？当然了，返回的结果肯定不是tail.length，会有一个变量res来记录，返回那个即可
+
+        int res = 0;
+        
+        // 时间复杂度O(nlogn)
+        for(int i=0; i<len; i++) {      // O(n)，遍历整个arr
+            int cur = nums[i];
+
+            int left = 0;
+            int right = res;
+            
+            // 大前提：“tail数组是单调递增的！！！”
+            while(left < right) {       // O(logn)，遍历tails数组。目的是“看看新的数字cur可不可以替换其中的某个位置”
+                int mid = (left + right) / 2;
+                if(tails[mid] < cur){
+                    left = mid + 1;
+                }else{                  // 如果区间中不存在tails[i] > cur（即一直都走上面的if逻辑），那么right会一直不变～
+                    right = mid;
+                }
+            }
+            
+            // 区间中存在tails[i] > cur：将第一个满足tails[i] > cur执行tails[i] = cur；因为“[1,3]比[1,5]更有可能产生长序列”
+            tails[left] = cur;          // 注意是left，不是i
+            
+            // 区间中不存在tails[i] > cur：意味着nums[k]可以接在前面所有长度的子序列之后，则新子序列长度为res+1。
+            if(right == res){
+                res++;
+            }
+        }
+        
+        return res;
+    }
+}
