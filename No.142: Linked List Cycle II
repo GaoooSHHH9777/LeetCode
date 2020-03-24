@@ -34,6 +34,7 @@ public class Solution {
      *                  那当然就是从head重新一起数x步就可以了！
      *                  但是呢，我们并不知道x、y、c究竟都是多少（也不需要知道）。幸运的是我们知道“head和meet-point都差x步到环的入口”
      *                      那么就直接看他们什么时候相遇就行了，那就是环的入口～
+     *                      在它们相遇时，head距离原点是x步，meet-point距离原点是x+n*c步，肯定是相遇的
      */
     
         // HashSet，O(n)
