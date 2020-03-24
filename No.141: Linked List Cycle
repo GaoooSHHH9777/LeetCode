@@ -51,12 +51,13 @@ public class Solution {
                 return false;
             }
             
+            slow = slow.next;
+            fast = fast.next.next;
+            
+            // 这个判断写上面写下面都可以过。写下面了，因为和No.142: 环形链表II的思路模式更一致
             if(fast == slow){
                 return true;
             }
-            
-            slow = slow.next;
-            fast = fast.next.next;
         }
     }
 }
