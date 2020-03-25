@@ -1,0 +1,56 @@
+class Solution {
+    public int myAtoi(String str) {
+        int len = str.length();
+
+        // 去除前导空格
+        int index = 0;
+        while (index < len) {
+            if (str.charAt(index) != ' ') {
+                break;
+            }
+            
+            index++;
+        }
+        if (index == len) {             // 如果全部都是空格
+            return 0;
+        }
+
+        // 第1个“真正的字符”是不是符号
+        //      如果是符号，记录正负，index+1，迎接后面的“数字们”
+        //      如果不是符号，不需要index+1，直接就可以进入后面的遍历环节
+        int sign = 1;
+        char realFirst = str.charAt(index);
+        if (realFirst == '+') {
+            sign = 1;
+            index++;
+        } else if (realFirst == '-') {
+            sign = -1;
+            index++;
+        }
+
+        int res = 0;        // 题目说了不可以用long。“假设我们的环境只能存储 32 位大小的有符号整数”
+        for(int i=index; i<len; i++){
+            char currChar = str.charAt(i);
+            // 判断合法性
+            if (currChar > '9' || currChar < '0') {
+                break;
+            }
+
+            // 题目说：假设我们的环境只能存储 32 位大小的有符号整数，那么其数值范围为 [−2^31,  2^31 − 1]。如果数值超过这个范围，请返回  INT_MAX (2^31 − 1) 或 INT_MIN (−2^31) 。
+            //      因此，需要提前判断乘以 10 以后是否越界
+            int curr = (currChar - '0');
+            if (res > Integer.MAX_VALUE / 10 || (res == Integer.MAX_VALUE / 10 && curr > Integer.MAX_VALUE % 10)) {     // *10会直接溢出，或者*10+curr会溢出
+                if(sign == 1){
+                    return Integer.MAX_VALUE;
+                }else{
+                    return  Integer.MIN_VALUE;
+                }
+            }
+
+            // 每一步都把符号位乘进去
+            res = res*10 + curr;         // currChar-'0'  --->   char转int
+        }
+
+        return sign * res;
+    }
+}
