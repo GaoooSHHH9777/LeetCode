@@ -26,11 +26,12 @@ class Solution {
 			return head;
 		}
         
-		ListNode cur = reverseList(head.next);
-		head.next.next = head;
-		head.next = null;
+        // 如果忘记了，去看https://leetcode-cn.com/problems/reverse-linked-list/solution/dong-hua-yan-shi-206-fan-zhuan-lian-biao-by-user74/
+		ListNode cur = reverseList(head.next);        // 先一直往前顶，直到尾（next=null）。递归函数每次返回的cur必定是最后一个节点
+		head.next.next = head;                              // head的下一个节点指向head。咋理解呢？比如4 -> 5，要怎么样让5指回给4呢？4.next=5，要变成5.next=4的话，那不就是4.next.next=4吗？然后，一定要把4.next这个索引消除掉，不然的话4 <-> 5，就形成链表环了！！
+		head.next = null;                                   // head的next要为null啊，不然“旧的next指引”没有消除啊，会链表环的
         
-		return cur;
+		return cur;                                         // 每次都返回cur，即最后一个节点
 	}
     
         // 递归2，两个方法
