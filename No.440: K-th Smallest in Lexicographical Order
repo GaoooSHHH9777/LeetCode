@@ -1,0 +1,49 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for K-th Smallest in Lexicographical Order.
+// Memory Usage: 36.6 MB, less than 100.00% of Java online submissions for K-th Smallest in Lexicographical Order.
+
+class Solution {
+	public int findKthNumber(int n, int k) {
+        // 因为从1开始，所以字典序最小的是1。同时，它也是第一个遍历的前缀
+    	int prefix = 1;
+    	int count = 1;                                     // 表示已找过前count个字典序排位的数
+        
+        // 循环退出的时候，count=k
+    	while(count < k) {
+    		int curPrefixSum = sum(n, prefix);             // 当前prefix能够用掉多少个“count”
+    		if(count + curPrefixSum > k) {                 // 即“第k个就在这个前缀下”。以题例来说，比如我要找字典序第2个，发现以1为前缀竟然有5个，超过了。那我肯定得去1的下层找吧，去10、11、12这些前缀找找，即1的后面要添0，那就要*10。而由于要去1的下层，那必定经过1了，所以count+1
+    			prefix *= 10;
+    			count++;
+    		}else {
+    			prefix++;                                  // 当前prefix下的不够数，那得去下一个prefix找。还是以题例来说，我想找第7个，但是1为前缀对应的数量（5）数出来不够，那我就跳过1为前缀的数字，到以2为前缀的找找看。当然了，既然跨过上一个前缀，那得加上它对应的总前缀数量
+    			count += curPrefixSum;                     
+    		}
+    	}
+        
+        // 循环退出的时候，count=k。此时的prefix就是答案
+    	return prefix;
+    }
+
+	private int sum(int n, int prefix) {
+        // 用long，不能用int。2的31次方是21亿左右，题中k限制在10的9次方（也就是10亿）。看上去不会超过，但是如果我要找10亿的下一个前缀，是不是*10就到百亿，越界了？
+		long cur = prefix;                                 // 当前的prefix，在树中是“一个root节点”。有可能有父节点（/10），也可能有子节点（*10...+1...）
+		long next = cur+1;                                 // 下一个prefix，在树中是“当前root节点的右边第一个兄弟节点”
+        
+		int count = 0;
+		while(cur <= n) {                                  // 只要不大于n这个上限就一直算，而不是限制count
+            // 如果当前探索的出发点的子节点形成完全十叉树，min会取next，说明子树中就是有这么多个节点
+            //      min如果取到n+1，说明形成完全十叉树所需的节点比n还大，那么子树就是不完全的十叉树
+            //      显然不能依旧按照满二叉树来数，那取啥呢？当然是取上界n了
+            //          但是，n是不够的，会漏的。想象一下，2*10=20，20-10=10对吧，算出来是用掉了10个，可是20是在1的前缀下面吗？
+            //          问题是出在“1也是个1为前缀的数字”，所以“1、10、11...19”构成了10个
+            //              同理，如果构不成十叉树，那应该+1！！！也就是把“作为前缀root”的这个节点给数进去
+			count += Math.min(n+1, next) - cur;            // 下一前缀减去此前缀。即“我要去下一层了，先统计一下这一层经历了多少个数”。想象一下1和2、10和20（因为下面next*10，所以是20）
+            
+            // 如果说刚刚prefix是1，next是2，那么现在分别变成10和20。1为前缀的子节点增加10个，十叉树增加一层, 变成了两层
+	        // 如果说现在prefix是10，next是20，那么现在分别变成100和200。1为前缀的子节点增加100个，十叉树又增加了一层，变成了三层
+			cur *= 10;
+			next *= 10;                                    // 往下层走
+		}
+        
+		return count;
+	}
+}
