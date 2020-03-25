@@ -7,7 +7,11 @@
  * }
  */
 
-// 递归
+// 递归1，一个方法
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Reverse Linked List.
+// Memory Usage: 38.6 MB, less than 5.04% of Java online submissions for Reverse Linked List.
+
+// 递归2，两个方法
 // Runtime: 0 ms, faster than 100.00% of Java online submissions for Reverse Linked List.
 // Memory Usage: 38.6 MB, less than 5.04% of Java online submissions for Reverse Linked List.
 
@@ -16,7 +20,20 @@
 // Memory Usage: 38.2 MB, less than 5.04% of Java online submissions for Reverse Linked List.
 
 class Solution {
-    // 递归
+        // 递归1，一个方法
+    public ListNode reverseList(ListNode head) {
+		if(head==null || head.next==null) {
+			return head;
+		}
+        
+		ListNode cur = reverseList(head.next);
+		head.next.next = head;
+		head.next = null;
+        
+		return cur;
+	}
+    
+        // 递归2，两个方法
 //     public ListNode reverseList(ListNode head) {
 //         return recursive(head, null);
 //     }
@@ -32,20 +49,20 @@ class Solution {
 //         return recursive(oldNext, current);          // 注意它是有返回值的，直接return调用这个方法即可
 //     }
     
-    // 循环
-    public ListNode reverseList(ListNode head) {
-        // 起名为bubblePointer，因为它会随着循环，tail -> head，就像冒泡排序的过程一样
-        // 需要为null，不能是0，不然输出有误。因为它在第一个循环会被赋给tail.next，如果它不为null，那它就会被输出为0了（为null则不输出了，只不过从逻辑上来说它确实是最底的tail）
-        ListNode bubblePointer = null;      
+        // 循环
+//     public ListNode reverseList(ListNode head) {
+//         // 起名为bubblePointer，因为它会随着循环，tail -> head，就像冒泡排序的过程一样
+//         // 需要为null，不能是0，不然输出有误。因为它在第一个循环会被赋给tail.next，如果它不为null，那它就会被输出为0了（为null则不输出了，只不过从逻辑上来说它确实是最底的tail）
+//         ListNode bubblePointer = null;      
 
-        while(head != null){
-            // 每次考虑下一个位置的node就行，一开始总在思考后面两个位置的node，所以写不对
-            ListNode realNext = head.next;
-            head.next = bubblePointer;
-            bubblePointer = head;           // 就是这一步使得它逐步地：tail -> head
-            head = realNext;
-        }
+//         while(head != null){
+//             // 每次考虑下一个位置的node就行，一开始总在思考后面两个位置的node，所以写不对
+//             ListNode realNext = head.next;
+//             head.next = bubblePointer;
+//             bubblePointer = head;           // 就是这一步使得它逐步地：tail -> head
+//             head = realNext;
+//         }
 
-        return bubblePointer;               // 最终，它已经是head了，输出即可
-    }
+//         return bubblePointer;               // 最终，它已经是head了，输出即可
+//     }
 }
