@@ -1,0 +1,176 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// 栈
+// Runtime: 2 ms, faster than 9.70% of Java online submissions for Reverse Nodes in k-Group.
+// Memory Usage: 41.4 MB, less than 5.17% of Java online submissions for Reverse Nodes in k-Group.
+
+// 循环，尾插法
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Reverse Nodes in k-Group.
+// Memory Usage: 41.3 MB, less than 5.17% of Java online submissions for Reverse Nodes in k-Group.
+
+// 递归1，一个方法解决
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Reverse Nodes in k-Group.
+// Memory Usage: 40.8 MB, less than 5.17% of Java online submissions for Reverse Nodes in k-Group.
+
+// 递归2，两个方法解决
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Reverse Nodes in k-Group.
+// Memory Usage: 41.2 MB, less than 5.17% of Java online submissions for Reverse Nodes in k-Group.
+
+class Solution {
+        // 栈（使用了额外空间，不符合题目要求的常数空间，但是思想可以借鉴）
+//     public ListNode reverseKGroup(ListNode head, int k) {
+//         ListNode dummy = new ListNode(0);
+//         ListNode p = dummy;
+        
+//         Stack<ListNode> stack = new Stack<>();
+//         while (true) {          
+//             ListNode tmp = head;
+//             int count = 0;
+//             while (count < k && tmp != null) {      // k个一组入栈，用count计数
+//                 stack.add(tmp);
+//                 tmp = tmp.next;
+//                 count++;
+//             }        
+//             if (count != k) {                       // 如果不足k个就不交换，且说明已经到尾巴了，退出循环
+//                 p.next = head;
+//                 break;
+//             }
+            
+//             while (!stack.isEmpty()){               // 满足k个，那就逐一pop出来得到逆序
+//                 p.next = stack.pop();
+//                 p = p.next;
+//             }
+            
+//             p.next = tmp;       // 此时的tmp是“下一个k组的head”，因为是先stack.add(tmp)，然后tmp=tmp.next的，所以保留了“下一个k组的head的索引”
+//             head = tmp;         // head指过去，下一次循环tmp=head即可
+//         }
+        
+//         return dummy.next;
+//     }
+    
+        // 循环，尾插法
+//     public ListNode reverseKGroup(ListNode head, int k) {
+//         ListNode dummy = new ListNode(0);
+//         dummy.next = head;
+        
+//         ListNode pre = dummy;
+//         ListNode tail = dummy;
+        
+//         while (true) {
+//             int count = 0;
+//             while (count < k && tail != null) {     // 同理于stack解法
+//                 tail = tail.next;
+//                 count++;
+//             }
+//             if (tail == null) {                     // 同理于stack解法。这里就是“如果数n下为null了，那肯定到尾了，也不用给这批不足k个的反转”
+//                 break;
+//             }
+            
+//             ListNode head1 = pre.next;
+            
+//             while (pre.next != tail) {
+//                 ListNode cur = pre.next;
+//                 pre.next = cur.next;
+//                 cur.next = tail.next;
+//                 tail.next = cur;
+//             }
+            
+//             pre = head1;
+//             tail = head1;
+//         }
+        
+//         return dummy.next;
+//     }
+    
+        // 递归1，一个方法解决（不推荐，递归2更加好理解，和No.206的思路也比较一致）
+//     public ListNode reverseKGroup(ListNode head, int k) {
+//         ListNode cur = head;
+//         int count = 0;
+//         while (cur != null && count != k) {
+//             cur = cur.next;
+//             count++;
+//         }
+        
+//         if (count == k) {
+//             cur = reverseKGroup(cur, k);
+            
+//             while (count != 0) {
+//                 ListNode tmp = head.next;
+//                 head.next = cur;
+//                 cur = head;
+//                 head = tmp;
+                
+//                 count--;
+//             }
+            
+//             head = cur;
+//         }
+        
+//         return head;
+//     }
+    
+        // 递归2，两个方法解决。比较好理解一些
+        //      原理就是“k个一组进行反转链表，然后把它们拼接起来”
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+        
+        // 区间 [a, b) 
+        ListNode oldHead = head;            // 记录用。oldHead -> newTail
+        ListNode tail = head;               // 移动用。逐步向后/右前进
+        for (int i=0; i<k; i++) {
+            if (tail == null) {
+                return head;
+            }
+            
+            tail = tail.next;
+        }
+        
+        // 能走到这说明凑足了k个，对这段链表执行"No.206 反转链表（easy）"
+        ListNode newHead = reverseList(oldHead, tail);        // 得到一个newHead，即“这k个反转前的tail”
+        
+        // 拼接，此时oldHead已经是newTail了
+        oldHead.next = reverseKGroup(tail, k);                   // 递归反转后续链表，用next连接起来
+        
+        return newHead;
+    }
+    
+        // 这个子方法是沿用了"No.206: 反转链表" - 循环法
+//     public ListNode reverseList(ListNode head, ListNode tail) {
+//         ListNode pre = null;
+// 		ListNode tmp = null;
+// 		ListNode cur = head;
+        
+//         // 总之就是“先记录next，然后把cur指向pre，再把pre和cur前进一个位置。以此往复”。每次只要管当前节点就可以了，做好“不丢失next、切换next、前进”这三步～
+// 		while(cur != tail) {
+// 			tmp = cur.next;     // 记录cur的next
+// 			cur.next = pre;     // cur指向pre
+// 			pre = cur;          // pre前进一位
+// 			cur = tmp;          // cur前进一位
+// 		}
+        
+// 		return pre;
+//     }
+    
+        // 这个子方法是沿用了"No.206: 反转链表" - 递归法
+    public ListNode reverseList(ListNode head, ListNode tail) {
+		if(head==tail || head.next==tail) {
+			return head;
+		}
+        
+        // 如果忘记了，去看https://leetcode-cn.com/problems/reverse-linked-list/solution/dong-hua-yan-shi-206-fan-zhuan-lian-biao-by-user74/
+		ListNode cur = reverseList(head.next, tail);        // 先一直往前顶，直到尾（next=null）。递归函数每次返回的cur必定是最后一个节点
+		head.next.next = head;                              // head的下一个节点指向head。咋理解呢？比如4 -> 5，要怎么样让5指回给4呢？4.next=5，要变成5.next=4的话，那不就是4.next.next=4吗？然后，一定要把4.next这个索引消除掉，不然的话4 <-> 5，就形成链表环了！！
+		head.next = null;                                   // head的next要为null啊，不然“旧的next指引”没有消除啊，会链表环的
+        
+		return cur;                                         // 每次都返回cur，即最后一个节点
+	}
+}
