@@ -1,3 +1,6 @@
+// Runtime: 1 ms, faster than 100.00% of Java online submissions for String to Integer (atoi).
+// Memory Usage: 38.5 MB, less than 5.59% of Java online submissions for String to Integer (atoi).
+
 class Solution {
     public int myAtoi(String str) {
         int len = str.length();
