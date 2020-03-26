@@ -1,0 +1,177 @@
+// dfs。2ms在中文版可以超过94%用户
+// Runtime: 2 ms, faster than 42.88% of Java online submissions for Number of Islands.
+// Memory Usage: 42 MB, less than 39.54% of Java online submissions for Number of Islands.
+
+// bfs
+// Runtime: 4 ms, faster than 18.58% of Java online submissions for Number of Islands.
+// Memory Usage: 41.8 MB, less than 50.70% of Java online submissions for Number of Islands.
+
+// 并查集
+// Runtime: 3 ms, faster than 24.71% of Java online submissions for Number of Islands.
+// Memory Usage: 42.2 MB, less than 20.00% of Java online submissions for Number of Islands.
+
+class Solution {
+    
+    private static final int[][] directions = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+    private int rows;
+    private int cols;
+
+        // dfs
+    public int numIslands(char[][] grid) {
+        // 取row和col，二维数组必备
+        rows = grid.length;
+        if (rows == 0) {
+            return 0;
+        }
+        cols = grid[0].length;
+        
+        boolean[][] marked = new boolean[rows][cols];          // dfs遍历的辅助数组
+        
+        int count = 0;
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                if (!marked[i][j] && grid[i][j] == '1') {      // 每次触发这个逻辑，都是“一个孤立的岛”
+                    count++;
+                    dfs(grid, marked, i, j);
+                }
+            }
+        }
+        
+        return count;
+    }
+
+        // 从坐标为 (i,j) 的点开始进行深度优先遍历
+    private void dfs(char[][] grid, boolean[][] marked, int i, int j) {
+        marked[i][j] = true;
+        
+        for (int a=0; a<directions.length; a++) {       // 四面都看一遍
+            // 计算下一个要去的location(x,y)坐标
+            int newX = i + directions[a][0];
+            int newY = j + directions[a][1];
+            
+            // 不越界、未访问、是陆地
+            if (!outOfPanel(newX, newY) && grid[newX][newY] == '1' && !marked[newX][newY]) {
+                dfs(grid, marked, newX, newY);
+            }
+        }
+    }
+
+        // 不越界的判断，封装一下。
+    private boolean outOfPanel(int x, int y) {
+        return x<0 || x>rows-1 || y<0 || y>cols-1;
+    }
+    
+        // bfs。queue中保留着“未遍历的节点”，不一定总是“仅有第n次一起遍历到的才在里面”，因为第n-1次的子结果就是第n次，而第n-1次的结果可能并没有遍历完。不过呢，按照队列的顺序往外出就行了，“在这个queue中，同为第n次的不会排在第n+1次的后面”
+//     public int numIslands(char[][] grid) {
+//         rows = grid.length;
+//         if (rows == 0) {
+//             return 0;
+//         }
+//         cols = grid[0].length;
+//         boolean[][] marked = new boolean[rows][cols];
+//         int count = 0;
+//         for (int i = 0; i < rows; i++) {
+//             for (int j = 0; j < cols; j++) {
+//                 // 如果是岛屿中的一个点，并且没有被访问过
+//                 // 从坐标为 (i,j) 的点开始进行广度优先遍历
+//                 if (!marked[i][j] && grid[i][j] == '1') {
+//                     count++;
+//                     LinkedList<Integer> queue = new LinkedList<>();
+//                     // 小技巧：把坐标转换为一个数字
+//                     // 否则，得用一个数组存，在 Python 中，可以使用 tuple 存
+//                     queue.addLast(i * cols + j);
+//                     // 注意：这里要标记上已经访问过
+//                     marked[i][j] = true;
+//                     while (!queue.isEmpty()) {
+//                         int cur = queue.removeFirst();
+//                         int curX = cur / cols;
+//                         int curY = cur % cols;
+//                         // 得到 4 个方向的坐标
+//                         for (int k = 0; k < 4; k++) {
+//                             int newX = curX + directions[k][0];
+//                             int newY = curY + directions[k][1];
+//                             // 如果不越界、没有被访问过、并且还要是陆地，我就继续放入队列，放入队列的同时，要记得标记已经访问过
+//                             if (inArea(newX, newY) && grid[newX][newY] == '1' && !marked[newX][newY]) {
+//                                 queue.addLast(newX * cols + newY);
+//                                 // 【特别注意】在放入队列以后，要马上标记成已经访问过，语义也是十分清楚的：反正只要进入了队列，你迟早都会遍历到它
+//                                 // 而不是在出队列的时候再标记
+//                                 // 【特别注意】如果是出队列的时候再标记，会造成很多重复的结点进入队列，造成重复的操作，这句话如果你没有写对地方，代码会严重超时的
+//                                 marked[newX][newY] = true;
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+        
+//         return count;
+//     }
+
+//     private boolean inArea(int x, int y) {
+//         return x >= 0 && x < rows && y >= 0 && y < cols;
+//     }
+    
+//         // 并查集
+//     public int numIslands(char[][] grid) {  
+//         if (grid == null || grid.length == 0 || grid[0].length == 0)  {
+//             return 0;  
+//         }
+        
+//         int[][] directions = {{1, 0}, {0, 1}};      // 对于并查集来说，只需要考虑“右和下”即可
+        
+//         UnionFind uf = new UnionFind(grid);  
+//         int rows = grid.length;  
+//         int cols = grid[0].length;  
+//         for (int i = 0; i < rows; i++) {  
+//             for (int j = 0; j < cols; j++) {  
+//                 if (grid[i][j] == '1') {  
+//                     for (int[] d : directions) {
+//                         int x = i + d[0];
+//                         int y = j + d[1];
+//                         if (x >= 0 && x < rows && y >= 0 && y < cols && grid[x][y] == '1') {  
+//                             int id1 = i*cols+j;
+//                             int id2 = x*cols+y;
+//                             uf.union(id1, id2);  
+//                         }  
+//                     }  
+//                 }  
+//             }  
+//         }  
+//         return uf.count;  
+//     }
+    
+//     class UnionFind {
+//         int[] father;  
+//         int m, n;
+//         int count = 0;
+//         UnionFind(char[][] grid) {  
+//             m = grid.length;  
+//             n = grid[0].length;  
+//             father = new int[m*n];  
+//             for (int i = 0; i < m; i++) {  
+//                 for (int j = 0; j < n; j++) {  
+//                     if (grid[i][j] == '1') {
+//                         int id = i * n + j;
+//                         father[id] = id;
+//                         count++;
+//                     }
+//                 }  
+//             }  
+//         }
+//         public void union(int node1, int node2) {  
+//             int find1 = find(node1);
+//             int find2 = find(node2);
+//             if(find1 != find2) {
+//                 father[find1] = find2;
+//                 count--;
+//             }
+//         }
+//         public int find (int node) {  
+//             if (father[node] == node) {  
+//                 return node;
+//             }
+//             father[node] = find(father[node]);  
+//             return father[node];
+//         }
+//     }
+}
