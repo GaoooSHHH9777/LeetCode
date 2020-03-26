@@ -1,0 +1,47 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 1 ms, faster than 99.94% of Java online submissions for Path Sum II.
+// Memory Usage: 41.5 MB, less than 6.06% of Java online submissions for Path Sum II.
+
+class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> res = new ArrayList<>();
+
+        dfs(root, sum, res, new ArrayList<>());
+
+        return res;
+    }
+
+    private void dfs(TreeNode node, int sum, List<List<Integer>> res, List<Integer> path) {
+        if (node == null) {
+            return;
+        }
+
+        // 将沿途到节点加入到path中
+        int sumNeed = sum-node.val;
+        path.add(node.val);
+
+        // 遍历到叶节点
+        if (node.left == null && node.right == null) {
+            // 如果这是一条可行的路径，才复制path的结果到res
+            if (sumNeed == 0){
+                res.add(new ArrayList<>(path));
+                // return;      // 不能return。记得回溯算法那些，都不return的对吧？又忘了那
+            }
+        } else {
+            dfs(node.left, sumNeed, res, path);
+            dfs(node.right, sumNeed, res, path);
+        }
+
+        // 回溯
+        path.remove(path.size()-1);
+    }
+}
