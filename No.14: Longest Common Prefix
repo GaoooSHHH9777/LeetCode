@@ -1,0 +1,19 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Longest Common Prefix.
+// Memory Usage: 37.5 MB, less than 92.98% of Java online submissions for Longest Common Prefix.
+
+class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if(strs == null || strs.length == 0){
+            return "";
+        }
+        
+        String pre = strs[0];
+        for(int i=1; i<strs.length; i++){                   // 以["flower","flow","flight"]为例去想吧
+            while(strs[i].indexOf(pre) != 0){               // 只要当前的不匹配，就降
+                pre = pre.substring(0, pre.length()-1);
+            }
+        }
+        
+        return pre;
+    }
+}
