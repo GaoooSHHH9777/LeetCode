@@ -1,0 +1,35 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Path Sum.
+// Memory Usage: 39.4 MB, less than 5.88% of Java online submissions for Path Sum.
+    
+class Solution {
+    
+    /**
+     *  当然可以写一个(root, sum, currSum)的“加法递归”
+     *      不过呢，“减法递归”更加简洁，它不需要新开一个方法～
+     *      后面再遇到这种，尽量就写减法递归
+     */
+    
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) {            // 这行只是处理极端输入比如"[]"的，主体还是下面的逻辑
+            return false;
+        }
+        
+        int sumNeed = sum-root.val;
+        // 这题是“是否存在根节点到叶子节点的路径”，不是“二叉树里的任意路径”！
+        if (root.left == null && root.right == null) {                                  // 往下没有了
+            return sumNeed == 0;
+        }
+        
+        return hasPathSum(root.left, sumNeed) || hasPathSum(root.right, sumNeed);       // 这个“return或”非常值得借鉴
+    }
+}
