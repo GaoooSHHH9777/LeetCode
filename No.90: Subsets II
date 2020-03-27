@@ -1,0 +1,71 @@
+// 排序+回溯
+// Runtime: 1 ms, faster than 99.71% of Java online submissions for Subsets II.
+// Memory Usage: 39.9 MB, less than 5.88% of Java online submissions for Subsets II.
+
+// 循环
+// Runtime: 1 ms, faster than 99.71% of Java online submissions for Subsets II.
+// Memory Usage: 40.1 MB, less than 5.88% of Java online submissions for Subsets II.
+
+class Solution {
+        // 排序+回溯
+        //      要用ArrayList，用LinkedList就是2ms，击败25%。。。
+//     public List<List<Integer>> subsetsWithDup(int[] nums) {
+//         int len = nums.length;
+//         List<List<Integer>> res = new ArrayList<>();
+//         if(len == 0){
+//             return res;
+//         }
+        
+//         Arrays.sort(nums);                              // 得先排序啊。。。
+        
+//         dfs(nums, 0, res, new ArrayList<>());
+            
+//         return res;
+//     }
+    
+//     private void dfs(int[] nums, int begin, List<List<Integer>> res, List<Integer> cur){
+//         res.add(new ArrayList<>(cur));
+        
+//         for(int i=begin; i<nums.length; i++){
+//             if(i>begin && nums[i]==nums[i-1]){          // >begin，而不是>0！！
+//                 continue;
+//             }
+            
+//             cur.add(nums[i]);
+//             dfs(nums, i+1, res, cur);
+            
+//             cur.remove(cur.size()-1);
+//         }
+//     }
+    
+        // 循环
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<>());         // 先加进去一个空数组，输出结果需要[]这个结果，而且不加的话get不了
+        
+        Arrays.sort(nums);
+        
+        int nextStart = 1;                  // 新解的开始位置
+        for (int i=0; i<nums.length; i++) {
+            List<List<Integer>> cur = new ArrayList<>();
+            
+            // 遍历之前的所有结果。注意是res.size()
+            for (int j=0; j<res.size(); j++) {
+                if (i>0 && nums[i]==nums[i-1] && j<nextStart) {         // 如果不限定“j<nextStart”，就漏解了（相当于限定一个“运行区间”，不然的话“后面重复的”都直接跳过了，肯定漏解。比如arr=[1,2,2]，运行“2-a”的时候不可以直接跳过“2-b”对吧，那怎么做到呢？nextStart=index<2-b>即可）
+                    continue;
+                }
+                
+                List<Integer> list = res.get(j);
+                List<Integer> tmp = new ArrayList<>(list);
+                tmp.add(nums[i]);          // 加入新增数字
+                cur.add(tmp);
+            }
+
+            // 这两行不能颠倒，不然“newStart”的位置肯定不对。。
+            nextStart = res.size();        // 更新新解的开始位置
+            res.addAll(cur);
+        }
+        
+        return res;
+    }
+}
