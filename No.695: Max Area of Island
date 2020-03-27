@@ -1,0 +1,89 @@
+// 手撕的常规dfs
+// Runtime: 4 ms, faster than 20.97% of Java online submissions for Max Area of Island.
+// Memory Usage: 40.3 MB, less than 96.30% of Java online submissions for Max Area of Island.
+
+// 不带全局变量+不维护visited[]数组（原地修改）
+// Runtime: 1 ms, faster than 100.00% of Java online submissions for Max Area of Island.
+// Memory Usage: 41.4 MB, less than 85.19% of Java online submissions for Max Area of Island.
+
+class Solution {
+    
+    /**
+     *  并不是说看到第二种解法特别快就要选第二种
+     *      确实快了，但是它修改了入参（grid[][]）。最好不修改入参，因为在实际写代码的时候，也许这个入参是多处调用的，修改了之后可能会有意想不到的影响
+     *      第二种方法把遍历过的“陆地”改为“水”，1 -> 0。这种做法叫“沉岛”
+     *          当然了，也可以不“沉岛”而是改为2、3这种数字。但是实质上都是一样的，改变了入参，不推荐
+     */
+    
+//     int[][] directions = new int[][] {{-1,0}, {0,-1}, {1,0}, {0,1}};
+//     int rows;
+//     int cols;
+    
+        // 常规dfs
+//     public int maxAreaOfIsland(int[][] grid) {
+//         rows = grid.length;
+//         cols = grid[0].length;
+        
+//         int max = 0;
+//         boolean[][] visited = new boolean[rows][cols];
+        
+//         for(int i=0; i<rows; i++){
+//             for(int j=0; j<cols; j++){
+//                 if(grid[i][j]==1 && !visited[i][j]){
+//                     int curArea = dfs(grid, i, j, 0, visited);
+//                     max = Math.max(max, curArea);
+//                 }
+//             }
+//         }
+        
+//         return max;
+//     }
+    
+//     private int dfs(int[][] grid, int i, int j, int curArea, boolean[][] visited){
+//         visited[i][j] = true;
+//         curArea++;
+
+//         for(int a=0; a<directions.length; a++){
+//             int newX = i+directions[a][0];
+//             int newY = j+directions[a][1];
+//             if(!outOfBound(newX, newY) && grid[newX][newY]==1 && !visited[newX][newY]){
+//                 curArea = dfs(grid, newX, newY, curArea, visited);
+//             }
+//         }
+        
+//         return curArea;
+//     }
+    
+//     private boolean outOfBound(int i, int j){
+//         return i<0 || i>rows-1 || j<0 || j>cols-1;
+//     }
+    
+        // 不带全局变量+不维护visited[]数组（原地修改）
+    public int maxAreaOfIsland(int[][] grid) {
+        int maxSize = 0;
+        for (int n = 0; n < grid.length; n++){
+            for (int x = 0; x < grid[n].length; x++){
+                if (grid[n][x] == 1){
+                    int temp = dfsSize(grid, n, x, 0);
+                    if (temp > maxSize){
+                        maxSize = temp;
+                    }
+                }
+            }
+        }
+        return maxSize;
+    }
+    
+    private int dfsSize(int[][] grid, int row, int col, int count){
+        if (row >= 0 && col >= 0 && row < grid.length && col < grid[0].length && grid[row][col] == 1){
+            grid[row][col] = 0;
+            count++;
+            count = dfsSize(grid, row+1, col, count);
+            count = dfsSize(grid, row-1, col, count);
+            count = dfsSize(grid, row, col+1, count);
+            count = dfsSize(grid, row, col-1, count);
+        }
+        
+        return count;
+    }
+}
