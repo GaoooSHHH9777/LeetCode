@@ -1,0 +1,50 @@
+# Write your MySQL query statement below
+
+# 好理解的基础解法
+# Runtime: 760 ms, faster than 65.79% of MySQL online submissions for Department Top Three Salaries.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Department Top Three Salaries.
+
+# 略复杂的高效解法
+# Runtime: 437 ms, faster than 96.01% of MySQL online submissions for Department Top Three Salaries.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Department Top Three Salaries.
+
+# 好理解的基础解法
+# select d.Name Department, 
+#        e1.Name Employee, 
+#        e1.Salary
+# from Employee e1 
+# join Department d
+# on e1.DepartmentId = d.Id                           # join条件
+# where 3 >                                           # 其实也就是“某某select数量 < 3”。在这里就是“部门里比我工资高的人数小于3个，那我就是部门里前3高的工资”～
+#     (
+#     select count(distinct(e2.Salary)) 
+#     from Employee e2 
+#     where e2.Salary > e1.Salary 
+#     and e1.DepartmentId = e2.DepartmentId           # 比较的人要处于同一部门
+# )
+
+# 略复杂的高效解法
+/**
+ *  对于这种分组内取前几名的问题，可以先group by然后用having count()来筛选
+ *      找每个部门的工资前三名，那么先在子查询中用Employee和自己做连接，连接条件是【部门相同但是工资比我高】
+ *      那么接下来按照having count(Salary) <= 2来筛选的原理是：如果【跟我一个部门而且工资比我高的人数】不超过2个，那么我一定是部门工资前三
+ *          这样内层查询可以查询出所有符合要求的员工ID，接下来外层查询就简单了。
+ */
+select d.Name as Department,
+       e.Name as Employee,
+       e.Salary as Salary
+from Employee as e 
+join Department as d                                    # join或者left join都可以，速度也没差
+on e.DepartmentId = d.Id
+where e.Id in
+    (
+    select e1.Id                                        # 注意是e1.Id，逻辑上的取正取反
+    from Employee as e1 
+    left join Employee as e2                            # 这里必须left join，不然会漏掉每个部门最大那个数
+        on e1.Salary < e2.Salary                        # join - on - and
+        and e1.DepartmentId = e2.DepartmentId           # join - on - and
+        group by e1.Id
+        having count(distinct e2.Salary) < 3            # 用having过滤由group by语句返回的记录集
+)
+order by d.Id asc, 
+         e.Salary desc
