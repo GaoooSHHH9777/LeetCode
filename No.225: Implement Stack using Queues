@@ -1,0 +1,53 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Implement Stack using Queues.
+// Memory Usage: 37.7 MB, less than 6.67% of Java online submissions for Implement Stack using Queues.
+
+class MyStack {
+    
+    /**
+     *  2个队列的解法比较清晰
+     *  如果限定只能用1个队列，那就list.add(list.poll())
+     */
+    
+    Queue<Integer> queue;       // 一个队列足矣
+    int top;                    // top变量的引入，可以很好地解决top()方法（如果放到队列里维护，肯定麻烦多了）
+
+    /** Initialize your data structure here. */
+    public MyStack() {
+        queue = new LinkedList<>();            // 注意没有LinkedQueue哦。。是LinkedList
+    }
+    
+    /** Push element x onto stack. */
+    public void push(int x) {
+        queue.add(x);
+        top = x;
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    public int pop() {              // 假设arr=[1,2,3]，我要输出3，咋办？那就把[1,2]加到后面，然后输出[3]啊。。本来的for循环是i<len，现在i<len-1就好了。。
+        for(int i=0; i<queue.size()-1; i++) {
+            top = queue.poll();
+            queue.add(top);
+        }
+        
+        return queue.poll();        // 不能return top！！[1,2]的话现在top是2，要return下一个
+    }
+    
+    /** Get the top element. */
+    public int top() {
+        return top;
+    }
+    
+    /** Returns whether the stack is empty. */
+    public boolean empty() {
+        return queue.isEmpty();
+    }
+}
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack obj = new MyStack();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.top();
+ * boolean param_4 = obj.empty();
+ */
