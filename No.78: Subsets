@@ -1,0 +1,61 @@
+// 回溯算法dfs
+// Runtime: 1 ms, faster than 56.64% of Java online submissions for Subsets.
+// Memory Usage: 40.1 MB, less than 5.74% of Java online submissions for Subsets.
+
+// 位掩码
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Subsets.
+// Memory Usage: 39.9 MB, less than 5.74% of Java online submissions for Subsets.
+
+class Solution {
+        // 回溯算法dfs
+//     public List<List<Integer>> subsets(int[] nums) {
+//         int len = nums.length;
+//         List<List<Integer>> res = new LinkedList<>();
+//         if (len == 0) {
+//             return res;
+//         }
+        
+//         find(nums, 0, res, new LinkedList<>());
+        
+//         return res;
+//     }
+    
+//     private void find(int[] nums, int begin, List<List<Integer>> res, List<Integer> pre) {
+//         // 因为这里是用begin而不是depth来标识的，所以并不存在显式的递归中止条件。终止会是因为“begin超出了for循环”～
+//         //       当然，写个depth的解法也肯定是可以的
+//         // if(begin > nums.length){
+//         //     return;
+//         // }
+        
+//         res.add(new ArrayList<>(pre));
+        
+//         for (int i=begin; i<nums.length; i++) {
+//             pre.add(nums[i]);
+//             find(nums, i+1, res, pre);
+            
+//             pre.remove(pre.size()-1);
+//         }
+//     }
+    
+        // 位掩码
+        //       “集合的每个元素，都有可以选或不选，用二进制和位运算”。假设nums=[1,2,3,4]，二进制的0可以写成0000，代表一个数也不取，1=0001表示去第一个数也就是[1]，2=0010，表示取第二个数[2]，3=0011表示取1和2位[1,2]，4=0100表示[3]....15=1111表示[1,2,3,4]
+    public List<List<Integer>> subsets(int[] nums) {
+        int len = nums.length;
+        List<List<Integer>> res = new LinkedList<>();
+        
+        int n = 1 << len;                           // "<<"转换成二进制后向左移len位，右边（低位）用0补齐
+        for (int i=0; i<n; i++) {
+            List<Integer> cur = new LinkedList<>();
+            
+            for (int j=0; j<len; j++) {
+                if (((i >> j) & 1) == 1) {          // ">>"转换成二进制后向右移len位，左边（高位）用0补齐；"&"两者的各个位，若一者的n位为0，则该位为0，都为1才是1
+                    cur.add(nums[j]);
+                }
+            }
+            
+            res.add(cur);
+        }
+        
+        return res;
+    }
+}
