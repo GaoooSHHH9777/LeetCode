@@ -1,0 +1,62 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Implement Queue using Stacks.
+// Memory Usage: 37.3 MB, less than 6.25% of Java online submissions for Implement Queue using Stacks.
+
+class MyQueue {
+    
+    /**
+     *  必须得用两个栈了。一个输入，一个输出
+     */
+    
+    Stack<Integer> push;
+    Stack<Integer> pop;
+
+    /** Initialize your data structure here. */
+    public MyQueue() {
+        push = new Stack<>();
+        pop = new Stack<>();
+    }
+    
+    /** Push element x to the back of queue. */
+    public void push(int x) {
+        push.push(x);
+    }
+    
+    /** Removes the element from in front of queue and returns that element. */
+    public int pop() {
+        shift();
+        
+        return pop.pop();
+    }
+    
+    /** Get the front element. */
+    public int peek() {
+        shift();
+        
+        return pop.peek();
+    }
+    
+    // 辅助方法：一次性将 stackPush 里的所有元素倒入 stackPop
+    //      该操作只在 stackPop 里为空的时候才操作，否则会破坏出队入队的顺序
+    //          在 peek 和 pop 操作之前调用该方法
+    private void shift() {
+        if (pop.isEmpty()) {                // pop必须为空才转换！
+            while (!push.isEmpty()) {
+                pop.push(push.pop());
+            }
+        }
+    }
+    
+    /** Returns whether the queue is empty. */
+    public boolean empty() {
+        return push.isEmpty() && pop.isEmpty();
+    }
+}
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue obj = new MyQueue();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.peek();
+ * boolean param_4 = obj.empty();
+ */
