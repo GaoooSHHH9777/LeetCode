@@ -1,0 +1,58 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+
+// 解法1，HashSet，不满足空间复杂度要求
+// Runtime: 7 ms, faster than 27.29% of Java online submissions for Intersection of Two Linked Lists.
+// Memory Usage: 43.8 MB, less than 5.71% of Java online submissions for Intersection of Two Linked Lists.
+
+// 解法2，双指针，用了类似于“环形链表”的解法
+// Runtime: 1 ms, faster than 94.83% of Java online submissions for Intersection of Two Linked Lists.
+// Memory Usage: 42.5 MB, less than 5.71% of Java online submissions for Intersection of Two Linked Lists.
+
+public class Solution {
+        // 解法1，HashSet，不满足空间复杂度要求
+    // public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+    //     Set s = new HashSet();
+    //     ListNode p = headA;
+    //     ListNode q = headB;
+    
+    //     while(p!=null) {
+    //         s.add(p);
+    //         p = p.next;
+    //     }
+    //     while(q!=null) {
+    //         if(s.contains(q)) {
+    //             return q;
+    //         }
+    
+    //         q = q.next;
+    //     }
+    
+    //     return null;
+    // }
+
+        // 解法2，双指针，用了类似于“环形链表”的解法。注意new两个新的node，不要进行原地修改，题目说了“在返回结果后，两个链表仍须保持原有的结构”
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode a = headA;
+        ListNode b = headB;
+
+
+        // 解法的核心在于：当a的下一个为空时，就a就从b链表头开始遍历
+        //      说白了就是“既然一长一短，那我两个指针都走一遍<短&长>，即两根链表以<短+长>、<长+短>拼接起来了，是不是肯定能碰上？”
+        while(a != b) {
+            a = (a!=null) ? a.next : headB;
+            b = (b!=null) ? b.next : headA;
+        }
+
+		return a;
+    }
+}
