@@ -1,0 +1,227 @@
+// 写法1。仅设计一个额外的“node”class（建议这个）
+// Runtime: 12 ms, faster than 96.48% of Java online submissions for LRU Cache.
+// Memory Usage: 48.2 MB, less than 100.00% of Java online submissions for LRU Cache.
+
+// 写法2。设计了“哈希链表”和“node”两个额外的class（方便理解和抽象化，但是一些逻辑不是很认同，比如“get去调put方法”，虽然有些官方源码就会这样写。两者的大体实现方式没什么区别，可能速度差距就是在这个“get去调put方法”）
+// Runtime: 14 ms, faster than 50.85% of Java online submissions for LRU Cache.
+// Memory Usage: 47.7 MB, less than 100.00% of Java online submissions for LRU Cache.
+
+// 写法1。仅设计一个额外的“node”class（建议这个）
+class LRUCache {
+    private Map<Integer, DLinkedNode> map = new HashMap<>();
+    private DLinkedNode dummyHead;
+    private DLinkedNode dummyTail;
+    private int capacity;
+    private int count;
+
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        this.count = 0;
+
+        // dummyHead-prev和dummyTail-next可以不用定义，要定义也是null
+        dummyHead = new DLinkedNode(-2, -2);
+        dummyTail = new DLinkedNode(-2, -2);
+
+        // dummyHead和dummyTail最初互相指引
+        dummyHead.next = dummyTail;
+        dummyTail.prev = dummyHead;
+    }
+
+    public int get(int key) {
+        if(!map.containsKey(key)){
+            return -1;
+        }else{
+            DLinkedNode node = map.get(key);
+            this.moveToHead(node);
+
+            return node.value;
+        }
+    }
+
+
+    public void put(int key, int value) {
+        if(!map.containsKey(key)){
+            if(count == capacity){             // 如果已经满了的话，new一个节点直接加进去肯定不对，要先移除“最旧的”
+                int tailKey = this.popTail();
+                this.map.remove(tailKey);
+                count--;
+            }
+
+            DLinkedNode newNode = new DLinkedNode(key, value);
+
+            this.map.put(key, newNode);
+            this.addNode(newNode);
+            count++;
+        }else{
+            DLinkedNode node = map.get(key);
+            node.value = value;                // update the value.
+            this.moveToHead(node);
+        }
+    }
+    
+    /**
+     *  以下是辅助class和辅助void（辅助void是LRUCache类的，不是这个Node类的）
+     */
+    class DLinkedNode {
+        int key;
+        int value;
+        DLinkedNode prev;
+        DLinkedNode next;
+
+        DLinkedNode(int key, int value){
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private void addNode(DLinkedNode node) {        // 新加进来，那就只需要和dummyHead交互
+        node.prev = dummyHead;
+        node.next = dummyHead.next;
+
+        dummyHead.next.prev = node;
+        dummyHead.next = node;
+    }
+
+    private void removeNode(DLinkedNode node){
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void moveToHead(DLinkedNode node){          // 这里也是“删除已存在key的相应node，然后去dummyHead那里加一个新的”，这样就完成了“移到最新”
+        this.removeNode(node);
+        this.addNode(node);
+    }
+
+    private int popTail(){
+        DLinkedNode res = dummyTail.prev;
+        this.removeNode(res);
+
+        return res.key;
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+
+
+
+// 写法2。设计了“哈希链表”和“node”两个额外的class（方便理解和抽象化，但是一些逻辑不是很认同，比如“get去调put方法”，虽然有些官方源码就会这样写。两者的大体实现方式没什么区别，可能速度差距就是在这个“get去调put方法”）
+// class LRUCache {
+//     // 注意这个key是Integer，然后value是Node！！！如果不是的话，或者用set的话，你想想那能行吗？O(1)时间复杂度啊。如果<Integer, Integer>，那么无法实现LRU，因为next和prev指针都没法定位；如果用<Node>弄个HashSet，那么get(int key)的操作怎么进行？输入一个int怎么找到一个val为对应int的Node？重新维护一个Node的HashSet去contains？那为什么不直接<Integer, Node>的map呢～
+//     private HashMap<Integer, Node> map;     
+//     private DoubleList hashList;       // 双向的“哈希链表”
+//     private int cap;                   // 最大容量
+    
+//     public LRUCache(int capacity) {
+//         this.cap = capacity;
+//         map = new HashMap<>();
+//         hashList = new DoubleList();
+//     }
+    
+//     public int get(int key) {           // 题目说“key的value总是正数，如果不存在key则返回-1”
+//         if (!map.containsKey(key)){
+//             return -1;
+//         }
+        
+//         int val = map.get(key).val;     // Node的val如果是private，那得用到getter了
+//         put(key, val);                  // 调用put()方法把该数据提前
+
+//         return val;
+//     }
+    
+//     public void put(int key, int val) {
+//         Node x = new Node(key, val);
+        
+//         if (map.containsKey(key)) {     // 这里选择的是“直接删掉旧的key-value节点及其prev、next索引，然后new一个新的key-value节点放到最新的位置”
+//             hashList.remove(map.get(key));
+//         } else {
+//             if (cap == hashList.size()) {                  // 达到容量上限，移除“最旧的”
+//                 int lastKey = hashList.removeOldest();     // 把它从维护的“哈希链表”里移除，并且需要得知它key是多少
+//                 map.remove(lastKey);                       // map里也要移除，不然下次get会出错
+//             }
+//         }
+
+//         hashList.goLatest(x);
+//         map.put(key, x);        // contains的话就是reset，!contains的话就是add
+//     }
+
+//     /**
+//      *  以下是需要的辅助数据结构
+//      *      一个是"DoubleList -> 哈希链表"
+//      *      一个是"Node -> 哈希链表中的每个节点"
+//      */
+
+//     // LRU需要使用的“哈希链表”数据结构。哈希 -> get=O(1)、链表 -> put=O(1)
+//     class DoubleList {
+//         private Node dummyHead;
+//         private Node dummyTail; 
+//         private int size;
+
+//         public DoubleList() {
+//             // 这个“head”和“tail”都是假的，不会真实输出的，只为了标示“real-head”和"real-tail"。kv都设为-2，因为不存在值的结果是-1，不混淆（不过反正它们也不会输出，只是看个放心）
+//             dummyHead = new Node(-2, -2);
+//             dummyTail = new Node(-2, -2);
+//             dummyHead.next = dummyTail;
+//             dummyTail.prev = dummyHead;
+
+//             size = 0;           // 初始化size=0，dummyHead和dummyTail不算
+//         }
+
+//         public void goLatest(Node x) {
+//             x.next = dummyHead.next;
+//             x.prev = dummyHead;
+//             dummyHead.next.prev = x;
+//             dummyHead.next = x;
+
+//             size++;
+//         }
+
+//         public void remove(Node x) {        // remove，即“让它的前后节点跳过它，互相指引即可”
+//             x.prev.next = x.next;
+//             x.next.prev = x.prev;
+
+//             size--;
+//         }
+        
+//         public int removeOldest() {      // 删除链表中最旧的节点，并返回该节点的值。为什么要return该节点的值？因为维持get=O(1)的map里面也需要移除。为什么不先移除map里的然后再来这里移除，而是一定要改方法返回值呢？因为map“压根不知道最旧的是谁”
+//             if (dummyTail.prev == dummyHead) {
+//                 return -3;
+//             }
+            
+//             Node last = dummyTail.prev;
+//             remove(last);
+            
+//             return last.key;
+//         }
+        
+//         // 返回链表长度
+//         public int size() { 
+//             return size; 
+//         }
+//     }
+
+//     // LRU里的每个Node
+//     class Node {
+//         // 这些变量不要设为private，不然得写setter和getter，这里的重点不是getter和setter方法～
+//         int key;
+//         int val;
+//         Node prev;
+//         Node next;
+
+//         Node(int k, int v) {
+//             this.key = k;
+//             this.val = v;
+//         }
+//     }
+// }
+
+// /**
+//  * Your LRUCache object will be instantiated and called as such:
+//  * LRUCache obj = new LRUCache(capacity);
+//  * int param_1 = obj.get(key);
+//  * obj.put(key,value);
+//  */
