@@ -1,0 +1,51 @@
+// Runtime: 5 ms, faster than 79.26% of Java online submissions for Word Search.
+// Memory Usage: 42 MB, less than 23.47% of Java online submissions for Word Search.
+
+class Solution {
+
+    int[][] directions = new int[][] {{-1,0}, {0,-1}, {1,0}, {0,1}};
+    int rows;
+    int cols;
+
+    public boolean exist(char[][] board, String word) {
+        rows = board.length;
+        cols = board[0].length;
+
+        boolean[][] visited = new boolean[rows][cols];
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                if(dfs(board, word, 0, i, j, visited)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean dfs(char[][] board, String word, int wordIdx, int i, int j, boolean[][] visited){
+        if (wordIdx == word.length()-1) {
+            return board[i][j] == word.charAt(wordIdx);
+        }
+        if (board[i][j] == word.charAt(wordIdx)) {
+            visited[i][j] = true;
+            for (int k=0; k<4; k++) {
+                int newX = i+directions[k][0];
+                int newY = j+directions[k][1];
+                if (!outOfBound(newX, newY) && !visited[newX][newY]) {
+                    if (dfs(board, word, wordIdx+1, newX, newY, visited)) {        // 不能直接return这个dfs()的结果，不然第一个方向循环就结束了啊。。
+                        return true;
+                    }
+                }
+            }
+
+            visited[i][j] = false;      // 回溯呀。。。。直接为true的话，比如"ABC"不是想要的，可是"ABDC"是想要的，轮到D的时候不就直接跳过C了？那就错了
+        }
+
+        return false;
+    }
+
+    private boolean outOfBound(int i, int j){
+        return i<0 || i>rows-1 || j<0 || j>cols-1;
+    }
+}
