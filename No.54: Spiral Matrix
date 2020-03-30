@@ -1,0 +1,34 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Spiral Matrix.
+// Memory Usage: 37.8 MB, less than 5.21% of Java online submissions for Spiral Matrix.
+
+class Solution {
+        // 看不懂就看这个图。https://leetcode-cn.com/problems/spiral-matrix/solution/yi-chong-you-ya-de-bian-li-fang-shi-dai-ma-zheng-q/
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> res = new ArrayList<>();
+        
+        if (matrix.length == 0) {
+            return res;
+        }
+        
+        int r1 = 0, r2 = matrix.length - 1;
+        int c1 = 0, c2 = matrix[0].length - 1;
+        
+        // 每次遍历都留一格，即为了“转90度方向”
+        while (r1 <= r2 && c1 <= c2) {
+            for (int c = c1; c <= c2; c++) res.add(matrix[r1][c]);
+            for (int r = r1 + 1; r <= r2; r++) res.add(matrix[r][c2]);
+            
+            if (r1 < r2 && c1 < c2) {           // 如果不判断的话，单行或者单列的时候会多添加数字
+                for (int c = c2 - 1; c > c1; c--) res.add(matrix[r2][c]);
+                for (int r = r2; r > r1; r--) res.add(matrix[r][c1]);
+            }
+            
+            r1++;
+            r2--;
+            c1++;
+            c2--;
+        }
+        
+        return res;
+    }
+}
