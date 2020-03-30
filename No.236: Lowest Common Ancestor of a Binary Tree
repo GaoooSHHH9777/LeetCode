@@ -1,0 +1,32 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 4 ms, faster than 100.00% of Java online submissions for Lowest Common Ancestor of a Binary Tree.
+// Memory Usage: 41.9 MB, less than 5.55% of Java online submissions for Lowest Common Ancestor of a Binary Tree.
+
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root == null){
+            return null;
+        }
+        if(root == p || root == q){             // 可以把上面的root==null一起写下来，构成"if (root == null || root == p || root == q) return root"这样的简洁一行。分开写是为了便于理清逻辑
+            return root;
+        }
+        
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        
+        if(left != null && right != null){      // “左树能找到”且“右树能找到”，那肯定这是一个公共祖先。而由于这是递归的，会自底向上，那么最先得到这个结果的肯定是“最近公共祖先”
+            return root;
+        }else{                                  // 如果不写这个逻辑，那么就会漏掉“当前节点 + 左节点/右节点”的解。本应输出“当前节点”，漏解就输出null了
+            return left != null ? left : right;
+        }
+    }
+}
