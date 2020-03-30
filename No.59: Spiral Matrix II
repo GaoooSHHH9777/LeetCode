@@ -1,3 +1,6 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Spiral Matrix II.
+// Memory Usage: 37.9 MB, less than 8.33% of Java online submissions for Spiral Matrix II.
+
 class Solution {
     public int[][] generateMatrix(int n) {
         int l = 0, r = n - 1;
