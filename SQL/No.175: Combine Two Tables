@@ -1,0 +1,11 @@
+# Write your MySQL query statement below
+
+# 手撕的（sql问题的时间波动有点大，这个语句200ms~600ms结果都出现过）
+# Runtime: 222 ms, faster than 83.91% of MySQL online submissions for Combine Two Tables.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Combine Two Tables.
+
+# 手撕的
+select p.FirstName, p.LastName, a.City, a.State 
+from Person p
+left join Address a             # 注意left join和join的区别～
+on p.PersonId = a.PersonId
