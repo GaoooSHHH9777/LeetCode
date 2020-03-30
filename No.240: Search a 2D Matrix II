@@ -1,0 +1,40 @@
+// 正经解法：减而治之，实质上是二分搜索
+// Runtime: 4 ms, faster than 100.00% of Java online submissions for Search a 2D Matrix II.
+// Memory Usage: 45.5 MB, less than 88.68% of Java online submissions for Search a 2D Matrix II.
+
+class Solution {
+    
+        // 解法0-1：暴力O(n^2)，因为也没说限制时间复杂度啊
+    
+        // 解法0-2：整个matrix排序为一维数组来做
+    
+        // 正经解法：减而治之，实质上是二分搜索
+        //      从左下角看，是不是一个“向上递减，向右递增”的矩阵？那就是，如果cur > target那就“同row右col全部放弃”，如果cur < target那就“同col上row全部放弃”
+        //      从左下角开始的话，是不是可以视为“像一个x-y的二维坐标轴”？那不妨设计location = (x,y)
+        //      同理，从右上角走下来也可以（但是不能选左上角和右下角，因为不能构成二叉树结构）
+        //          为什么实质上是二分搜索呢？不如想象一下从左下角开始是棵二叉树，“y--对标root=root.left”、“x++对标root=root.right”（从这点来说，也许从右上角走下来更加神似二叉树结构）
+        //          时间复杂度O(log(mn))，可以想象为“一共m*n个节点的二叉树”，那么这样的二叉树走二分搜索是不是O(log(mn))啦？
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int rows = matrix.length;
+        if(rows == 0){
+            return false;
+        }
+        int cols = matrix[0].length;
+        
+        int x = 0;
+        int y = rows-1;
+        while(x <= cols-1 && y >= 0){
+            if(matrix[y][x] > target){
+                y--;
+            }else if(matrix[y][x] < target){
+                x++;
+            }else{
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+        // 还有一种“沿着对角线的二分查找”，时间复杂度O(min(M,N)(logM+logN))。思想是“行查找一下，列查找一下”，暂时不管了，时间复杂度不是很好
+}
