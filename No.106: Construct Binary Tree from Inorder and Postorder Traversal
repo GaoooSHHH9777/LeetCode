@@ -1,0 +1,44 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 1 ms, faster than 95.09% of Java online submissions for Construct Binary Tree from Inorder and Postorder Traversal.
+// Memory Usage: 41.8 MB, less than 14.54% of Java online submissions for Construct Binary Tree from Inorder and Postorder Traversal.
+
+class Solution {
+    
+    Map<Integer, Integer> inorderMap = new HashMap<>();
+    
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        int len = inorder.length;
+        for(int i=0; i<len; i++){
+            inorderMap.put(inorder[i], i);
+        }
+        
+        return recursive(inorder, 0, len-1, postorder, 0, len-1);
+    }
+    
+    private TreeNode recursive(int[] inorder, int inStart, int inEnd, int[] postorder, int postStart, int postEnd){
+        if(inStart > inEnd || postStart > postEnd){
+            return null;
+        }
+        
+        int rootVal = postorder[postEnd];
+        TreeNode root = new TreeNode(rootVal);
+        
+        int inRoot = inorderMap.get(rootVal);
+        int leftCount = inRoot - inStart;               // 要写个rightCount也是可以的
+        
+        // 别的参数都没问题，主要是“postStart与leftCount的相加问题”，要搞清楚到底哪个idx是“左树边缘”
+        root.left = recursive(inorder, inStart, inRoot-1, postorder, postStart, postStart+leftCount-1);         // 一开始写了postStart+leftCount
+        root.right = recursive(inorder, inRoot+1, inEnd, postorder, postStart+leftCount, postEnd-1);            // 一开始写了postStart+leftCount+1
+        
+        return root;
+    }
+}
