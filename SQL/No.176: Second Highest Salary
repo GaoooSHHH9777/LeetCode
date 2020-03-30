@@ -1,0 +1,44 @@
+# Write your MySQL query statement below
+
+# 主要吧，得考虑“只有一条数据，不存在第二高数据”的情况
+
+# 解法1：“ifnull(), null”语法
+# Runtime: 142 ms, faster than 88.39% of MySQL online submissions for Second Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Second Highest Salary.
+
+# 解法2：使用子查询，作为临时表，以此防止null
+# Runtime: 141 ms, faster than 89.64% of MySQL online submissions for Second Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Second Highest Salary.
+
+# 解法3：使用max()函数（不推荐）
+# Runtime: 130 ms, faster than 98.10% of MySQL online submissions for Second Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Second Highest Salary.
+
+# 解法1：“ifnull(), null”语法
+# SELECT IFNULL(
+#     (SELECT DISTINCT Salary
+#      FROM Employee
+#      ORDER BY Salary DESC
+#      LIMIT 1 OFFSET 1), NULL) AS SecondHighestSalary          
+                                                    
+                           # limit y offset x -> 从x开始的y条数据。不能写成offset x limit y，那会语法错误的
+                           # SQL查询语句中的 limit 与 offset 的区别：
+                           #       limit y 分句表示: 读取 y 条数据
+                           #       limit x, y 分句表示: 跳过 x 条数据，读取 y 条数据
+                           #       limit y offset x 分句表示: 跳过 x 条数据，读取 y 条数据
+     
+# 解法2：使用子查询，作为临时表，以此防止null
+SELECT (
+     SELECT DISTINCT Salary
+     FROM Employee
+     ORDER BY Salary DESC
+     LIMIT 1 OFFSET 1) AS SecondHighestSalary
+     
+# 解法3：使用max()函数（不推荐）
+#       其原理就是“我是小于real-max的所有数里面的max”
+# SELECT MAX(Salary) AS SecondHighestSalary 
+# FROM Employee 
+# WHERE Salary < (
+#     SELECT MAX(Salary) 
+#     FROM Employee
+# )
