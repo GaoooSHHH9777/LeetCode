@@ -1,0 +1,31 @@
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Search a 2D Matrix.
+// Memory Usage: 38.9 MB, less than 27.27% of Java online submissions for Search a 2D Matrix.
+
+class Solution {
+        // 一句话解释: 二维数组转一维
+        //      row = idx / n ， col = idx % n
+        //      时间复杂度O(log(mn)) = O(log(m) + log(n))
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int rows = matrix.length;
+        if(rows == 0){
+            return false;
+        }
+        int cols = matrix[0].length;
+        
+        int start = 0;
+        int end = rows * cols - 1;
+        while(start <= end){
+            int m = (start + end) / 2;
+            int cur = matrix[m / cols][m % cols];
+            if(cur < target){
+                start = m+1;
+            }else if(cur > target){
+                end = m-1;
+            }else{
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
