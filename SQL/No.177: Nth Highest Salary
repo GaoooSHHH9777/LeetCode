@@ -1,0 +1,78 @@
+# 解法1（不推荐，因为和题目限制要求不是很符合）
+# Runtime: 189 ms, faster than 86.32% of MySQL online submissions for Nth Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Nth Highest Salary.
+
+# 解法2
+# Runtime: 193 ms, faster than 83.24% of MySQL online submissions for Nth Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Nth Highest Salary.
+
+# 解法3
+# Runtime: 185 ms, faster than 89.20% of MySQL online submissions for Nth Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Nth Highest Salary.
+
+# 解法1（不推荐，因为和题目限制要求不是很符合）
+# CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+# BEGIN
+#   SET n = N-1;              # 这句是额外写入的，设置自定义变量（因此不是很符合题意，题意要求一句sql，这个方法是一个变量+一句sql）
+#   RETURN (
+#       # Write your MySQL query statement below.
+      
+#       SELECT DISTINCT Salary 
+#       FROM Employee 
+#       ORDER BY Salary DESC 
+#       LIMIT n, 1
+#   );
+# END
+
+# 解法2
+#       先查出前N薪水，然后min()函数取最小
+#       总数有可能不够N，count一下比较即可
+# CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+# BEGIN
+#   RETURN (   
+#       # Write your MySQL query statement below.
+      
+#       SELECT IF(count<N, NULL, min) 
+#       FROM (                                # 找“前N大的薪水”里的“最小值”，并且“数好数量，便于处理数据不足的情况”
+#           SELECT MIN(Salary) AS min, 
+#                  COUNT(1) AS count
+#           FROM (                            # 找前N大的薪水
+#               SELECT DISTINCT Salary
+#               FROM Employee 
+#               ORDER BY Salary DESC 
+#               LIMIT N
+#           ) a                               # 子查询需要取名
+#       ) b                                   # 子查询需要取名
+#   );
+# END
+
+# 解法3
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  RETURN (   
+      # Write your MySQL query statement below.
+      
+      SELECT e1.Salary
+      FROM (
+          SELECT DISTINCT Salary 
+          FROM Employee
+      ) e1
+      WHERE N-1 = (
+          SELECT COUNT(*) FROM (
+              SELECT DISTINCT Salary 
+              FROM Employee) e2 
+          WHERE e2.Salary > e1.Salary
+      )
+      LIMIT 1
+      
+      # 可以精简成这么短，但是速度慢下来很多很多（504、1241、526、384、753、315、232、288ms）
+      # SELECT e1.Salary
+      # FROM Employee e1
+      # WHERE N-1 = (
+      #     SELECT COUNT(DISTINCT(Salary))
+      #     FROM Employee e2
+      #     WHERE e2.Salary > e1.Salary
+      # )
+      # LIMIT 1
+  );
+END
