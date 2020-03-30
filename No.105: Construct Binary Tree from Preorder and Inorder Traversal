@@ -13,37 +13,32 @@
 
 class Solution {
     
-    // 没做出来。思路有，但是死活不知道怎么写，越写越复杂、越写越乱
-    
     Map<Integer, Integer> inorderMap = new HashMap<>();
-    int[] preorder;
-    int[] inorder;
-
+    
     public TreeNode buildTree(int[] preorder, int[] inorder) {
-        this.preorder = preorder;
-        this.inorder = inorder;
-
         for(int i=0; i<inorder.length; i++){
             inorderMap.put(inorder[i], i);
         }
         
-        return recursive(0, preorder.length-1, 0, inorder.length-1);
+        return recursive(preorder, 0, preorder.length-1, inorder, 0, inorder.length-1);
     }
-    
-    private TreeNode recursive(int preStart, int preEnd, int inStart, int inEnd){
+
+        // 从大局上看，主要就是逐步切割[preStart, preEnd]和[inStart, inEnd]这两个区间
+    private TreeNode recursive(int[] preorder, int preStart, int preEnd, int[] inorder, int inStart, int inEnd){
         if(preStart > preEnd || inStart > inEnd){
             return null;
         }
 
-        TreeNode currentRoot = new TreeNode(preorder[preStart]);       // 从前序arr中读取当前这次递归的root，即最左侧没用过的数字。（第一次是pre[0]，往后就不一定是哪个了，所以要靠一个preStart参数来标记）
-        int rootIndexOfIn = inorderMap.get(currentRoot.val);                   // 获取这个root-value在中序arr中的index，方便后面的递归使用，即分别需要index-1和index+1的位置
-        int leftBranchNums = rootIndexOfIn - inStart;
+        int curRootVal = preorder[preStart];
+        TreeNode root = new TreeNode(curRootVal);
+        int inRoot = inorderMap.get(curRootVal);        // pre[]能得到“根结点”，但是不知道它在in[]里面的位置，所以获取一下，以“继续往树的深层走”
+        int leftCount = inRoot - inStart;               // cur-root的左树有多少个节点。显而易见，是in[]里面的root-idx和start-idx两者的差值。想不通就拿题例看一下
 
-        // 这两个递归里的参数很需要琢磨
-        // TODO... 也许可以有一个offset-limit的写法（in和pre的offset不一样，但是limit一样）
-        currentRoot.left = recursive(preStart+1, preStart+leftBranchNums, inStart, rootIndexOfIn-1);
-        currentRoot.right = recursive(preStart+leftBranchNums+1, preEnd, rootIndexOfIn+1, inEnd);
+        // 分割[preStart, preEnd]区间，它肯定是完全由cur-root的左树和右树构成。这一步就是”我已知左树需要用多少count了，于是靠这个count切割区间，继续下发给左树和右树”
+        //      参数的话想想就能理解，需要注意的是“要下发左树和右树，你就得跳过cur-root-idx”
+        root.left = recursive(preorder, preStart+1, preStart+leftCount, inorder, inStart, inRoot-1);
+        root.right = recursive(preorder, preStart+leftCount+1, preEnd, inorder, inRoot+1, inEnd);
 
-        return currentRoot;
+        return root;
     }
 }
