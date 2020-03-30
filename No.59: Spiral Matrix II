@@ -1,0 +1,26 @@
+class Solution {
+    public int[][] generateMatrix(int n) {
+        int l = 0, r = n - 1;
+        int t = 0, b = n - 1;
+        
+        int[][] matrix = new int[n][n];
+        
+        int num = 1;
+        int tar = n * n;
+        while(num <= tar){
+            for(int i = l; i <= r; i++) matrix[t][i] = num++; // 从left列开始，走向right
+            t++;
+            
+            for(int i = t; i <= b; i++) matrix[i][r] = num++; // 从top+1行开始，走向bottom
+            r--;
+            
+            for(int i = r; i >= l; i--) matrix[b][i] = num++; // 从right-1列开始，走向left
+            b--;
+            
+            for(int i = b; i >= t; i--) matrix[i][l] = num++; // 从bottom-1行开始，走向top
+            l++;
+        }
+        
+        return matrix;
+    }
+}
