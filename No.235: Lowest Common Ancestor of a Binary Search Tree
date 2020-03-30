@@ -1,0 +1,29 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 4 ms, faster than 91.70% of Java online submissions for Lowest Common Ancestor of a Binary Search Tree.
+// Memory Usage: 40.7 MB, less than 5.10% of Java online submissions for Lowest Common Ancestor of a Binary Search Tree.
+
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        return recursive(root, p, q);
+    }
+
+        // 用好二叉搜索树的特性“left < root < right” -> 皆小于则向左，皆大于则向右，不满足前两者的话一定构成了“一左一右”，即找到了“最近的公共祖先”
+    private TreeNode recursive(TreeNode root, TreeNode p, TreeNode q){
+        if(root.val > p.val && root.val > q.val){
+            return recursive(root.left, p, q);
+        }else if(root.val < p.val && root.val < q.val){
+            return recursive(root.right, p, q);
+        }else{
+            return root;
+        }
+    }
+}
