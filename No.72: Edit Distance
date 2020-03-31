@@ -1,0 +1,63 @@
+// Runtime: 4 ms, faster than 94.92% of Java online submissions for Edit Distance.
+// Memory Usage: 39.4 MB, less than 5.88% of Java online submissions for Edit Distance.
+
+class Solution {
+    
+    //    ''  h  o  r  s  e                                 ''  h  o  r  s  e
+    // ''  0  0  0  0  0  0                              ''  0  1  2  3  4  5
+    //  r  0  1  2  2  3  4             ----->            r  1  1  2  2  3  4 
+    //  o  0  2  1  2  3  4                               o  2  2  1  2  3  4
+    //  s  0  3  2  2  2  3                               s  3  3  2  2  2  3
+    
+    /**
+     *  错误1：看上面的图（左为自己回忆的二维矩阵图，右为真正能用的）。问题在于，''到''是0，''到'h'还是0吗？明显+1啊，''到'ho'同理
+     *  错误2：初始化少了最后一个位置，即“第一行最right的位置”和“第一列最bottom的位置”漏了
+     *  错误3：if(word1.charAt(i-1) == word2.charAt(j-1))   --->   dp[i][j] = Math.min(Math.min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1])是错的！！正确写法是dp[i][j] = dp[i-1][j-1]
+     *
+     *      最关键的错误在于“3”，前两个磨一磨也可以发现错误的，第3个导致思路越来越偏，都想着去记录"zoologicoarchaeologist"、"zoogeologist"这个用例里面的'o'是否使用过了。。
+     */
+    
+    /**
+     *  有一个可以借鉴的思维：将不同的“位置来源”，视为“不同操作”。其实edit-distance好像有一个“add=1，remove=3，replace=5”的类似题目，不记得在哪了，好像是剑指offer
+     *          来自dp[i-1][j-1]：replace。因为w1的前i-1个和w2的前j-1个可能都相同，只是第i个和第j个不一样，那替换一次就好了
+     *          来自dp[i-1][j]  ：delete。若w1的前i-1个和w2的前j个相同，此时w1新增第i个，那对此第i个执行删除即可。同理这个也可以是insert
+     *          来自dp[i][j-1]  ：insert。若w1的前i个和w2的第j-1个相同，此时w2新增第j个，那此时i也新增一个即可。同理这个也可以是delete
+     */
+    
+    public int minDistance(String word1, String word2) {
+        int len1 = word1.length();
+        int len2 = word2.length();
+        if(len1 == 0 && len2 == 0){
+            return 0;
+        }else if(len1 == 0){
+            return len2;
+        }else if(len2 == 0){
+            return len1;
+        }
+        
+        int[][] dp = new int[len1+1][len2+2];
+        
+        // <len+1啊。。。。。。不是<len啊。。。
+        for(int i=1; i<len1+1; i++){
+            dp[i][0] = dp[i-1][0] + 1;
+        }
+        for(int j=1; j<len2+1; j++){    
+            dp[0][j] = dp[0][j-1] + 1;
+        }
+        
+        for(int i=1; i<len1+1; i++){
+            for(int j=1; j<len2+1; j++){
+                if(word1.charAt(i-1) == word2.charAt(j-1)){                                     // 这里最重要！！！
+                    // dp[i][j] = Math.min(Math.min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1]);     // 这样写必错！！！
+                    // dp[i][j] = Math.min(Math.min(dp[i-1][j]+1, dp[i][j-1]+1), dp[i-1][j-1]); // 这样才对（从“insert”、“delete”的角度来说，你新增一个字符，怎么可能仍和[i-1][j]、[i][j-1]的结果保持一致呢？
+                    dp[i][j] = dp[i-1][j-1];                                                    // 这样也对（更好，能直接体现“replace”的思想）
+                }else{
+                    int threeMin = Math.min(Math.min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1]);
+                    dp[i][j] = threeMin + 1;
+                }
+            }
+        }
+        
+        return dp[len1][len2];
+    }
+}
