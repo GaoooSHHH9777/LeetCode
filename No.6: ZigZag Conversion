@@ -1,0 +1,30 @@
+// Runtime: 5 ms, faster than 72.75% of Java online submissions for ZigZag Conversion.
+// Memory Usage: 40.3 MB, less than 37.24% of Java online submissions for ZigZag Conversion.
+
+class Solution {
+    public String convert(String s, int numRows) {
+        char[] c = s.toCharArray();
+        int len = c.length;
+        
+        StringBuilder[] sb = new StringBuilder[numRows];
+        for (int i=0; i<sb.length; i++){
+            sb[i] = new StringBuilder();
+        }
+        
+        int i = 0;
+        while(i < len){
+            for (int idx = 0; idx < numRows && i < len; idx++){         // 垂直方向下降⬇️
+                sb[idx].append(c[i++]);
+            }
+            for (int idx = numRows-2; idx >= 1 && i < len; idx--){      // 斜边方向右上↗️
+                sb[idx].append(c[i++]);
+            }
+        }
+        
+        for(int k=1; k<sb.length; k++){
+            sb[0].append(sb[k]);
+        }
+        
+        return sb[0].toString();
+    }
+}
