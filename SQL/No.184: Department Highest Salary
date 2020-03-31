@@ -1,0 +1,74 @@
+# Write your MySQL query statement below
+
+# 手撕的，join
+# Runtime: 767 ms, faster than 35.60% of MySQL online submissions for Department Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Department Highest Salary.
+
+# 解法2（推荐），group by + in()
+# Runtime: 294 ms, faster than 86.70% of MySQL online submissions for Department Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Department Highest Salary.
+
+# 解法3，max()函数 + group by
+# Runtime: 390 ms, faster than 60.85% of MySQL online submissions for Department Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Department Highest Salary.
+
+# 解法4，not exists
+# Runtime: 387 ms, faster than 61.36% of MySQL online submissions for Department Highest Salary.
+# Memory Usage: 0B, less than 100.00% of MySQL online submissions for Department Highest Salary.
+
+# 手撕的，join
+# select d.Name as Department, 
+#        e1.Name as Employee, 
+#        e1.Salary as Salary
+# from Department d
+# join Employee e1
+# on d.Id = e1.DepartmentId
+# where 0 = (
+#     select count(distinct(e2.Salary))
+#     from Employee e2
+#     where e2.Salary > e1.Salary
+#     and e2.DepartmentId = e1.DepartmentId
+# )
+
+# 解法2（推荐），group by + in()
+SELECT D.Name AS Department,
+       E.Name AS Employee,
+       E.Salary 
+from Employee E,
+	 Department D 
+WHERE E.DepartmentId = D.id 
+AND (DepartmentId, Salary) in (
+    SELECT DepartmentId, 
+           max(Salary)
+    FROM Employee 
+    GROUP BY DepartmentId
+)
+
+# 解法3，max()函数 + group by
+# SELECT D.Name AS Department, 
+#        E.Name AS Employee,
+#        E.Salary 
+# FROM Employee E,
+# 	 Department D,
+# 	 (SELECT DepartmentId,
+#              max(Salary) as max 
+#       FROM Employee 
+#       GROUP BY DepartmentId
+#      ) T
+# WHERE E.DepartmentId = T.DepartmentId 
+#   AND E.Salary = T.max
+#   AND E.DepartmentId = D.id
+
+# 解法4，not exists
+# SELECT D.Name as Department,
+#        A.Name as Employee,
+#        A.Salary 
+# FROM Employee A,
+# 	 Department D   
+# WHERE A.DepartmentId = D.Id 
+# AND NOT EXISTS (
+#     SELECT 1 
+#     FROM Employee B 
+#     WHERE B.Salary > A.Salary 
+#       AND A.DepartmentId = B.DepartmentId
+# ) 
