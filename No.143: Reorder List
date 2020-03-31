@@ -1,0 +1,131 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// 循环（推荐）。merge()方法可以优化，达到1ms击败99.62%
+// Runtime: 2 ms, faster than 39.48% of Java online submissions for Reorder List.
+// Memory Usage: 42.7 MB, less than 6.82% of Java online submissions for Reorder List.
+
+// 递归（不推荐，仅作了解）
+// Runtime: 1 ms, faster than 99.62% of Java online submissions for Reorder List.
+// Memory Usage: 46.8 MB, less than 6.82% of Java online submissions for Reorder List.
+
+class Solution {
+    
+        // 方法0.1：遍历整个链表，加入一个List<ListNode>中，然后i=0、j=size()-1，逐一拼接
+    
+        // 方法0.2：链表分两半left & right，right加入一个stack，然后left.next & stack.pop()即可
+    
+        // 循环（推荐）。merge()方法可以优化，达到1ms击败99.62%
+        //      三步：找链表中点分为left和right、right反转链表、left和反转的right合并
+    public void reorderList(ListNode head) {
+        if(head == null){
+            return;
+        }
+        
+        ListNode slow = head;
+        ListNode fast = head;
+        while(fast.next != null && fast.next.next != null){
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        ListNode next = slow.next;
+        slow.next = null;
+        
+        ListNode head1 = head;
+        ListNode head2 = reverseList(next);
+        
+        merge(head1, head2);
+    }
+    
+    private ListNode reverseList(ListNode l1){
+        ListNode newHead = null;
+        while (l1 != null) {
+            ListNode next = l1.next;
+            l1.next = newHead;
+            newHead = l1;
+            l1 = next;
+        }
+        
+        return newHead;
+    }
+    
+    private void merge(ListNode l1, ListNode l2){
+//         ListNode dummyHead = new ListNode(0);
+//         ListNode cur = dummyHead;
+        
+//         boolean goL1 = true;
+//         while(l1 != null && l2 != null){
+//             if(goL1){
+//                 cur.next = l1;
+//                 l1 = l1.next;
+//             }else{
+//                 cur.next = l2;
+//                 l2 = l2.next;
+//             }
+            
+//             cur = cur.next;
+//             goL1 = !goL1;
+//         }
+        
+//         if(l1 != null){
+//             cur.next = l1;
+//         }
+//         if(l2 != null){
+//             cur.next = l2;
+//         }
+        
+//         return dummyHead.next;
+        
+            // 上面的merge可以简化成这样，简化后1ms击败99.62%
+        while (l2 != null) {
+            ListNode next = l1.next;
+            l1.next = l2;
+            l1 = l2;
+            l2 = next;
+        }
+    }
+    
+        // 递归（不推荐，仅作了解）
+//     public void reorderList(ListNode head) {
+//         if (head == null) {
+//             return;
+//         }
+        
+//         int len = 0;
+//         ListNode h = head;
+//         while (h != null) {
+//             h = h.next;
+//             len++;
+//         }
+
+//         reorderListHelper(head, len);
+//     }
+
+//     private ListNode reorderListHelper(ListNode head, int len) {
+//         if (len == 1) {
+//             ListNode outTail = head.next;
+//             head.next = null;
+//             return outTail;
+//         }
+//         if (len == 2) {
+//             ListNode outTail = head.next.next;
+//             head.next.next = null;
+//             return outTail;
+//         }
+        
+//         ListNode tail = reorderListHelper(head.next, len-2);
+        
+//         ListNode subHead = head.next;                               // 中间链表的头结点
+//         head.next = tail;
+//         ListNode outTail = tail.next;  //上一层 head 对应的 tail
+//         tail.next = subHead;
+        
+//         return outTail;
+//     }
+}
