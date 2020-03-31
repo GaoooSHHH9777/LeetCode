@@ -1,0 +1,37 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 2 ms, faster than 98.70% of Java online submissions for Insertion Sort List.
+// Memory Usage: 39.4 MB, less than 20.51% of Java online submissions for Insertion Sort List.
+
+class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        ListNode dummyHead = new ListNode(0);
+        dummyHead.next = head;
+        
+        while(head != null && head.next != null){
+            if(head.val <= head.next.val){
+                head = head.next;
+                continue;
+            }
+            
+            ListNode pre = dummyHead;                   // 面对链表，“从头开始”就得这样做
+            while(pre.next.val < head.next.val){
+                pre = pre.next;
+            }
+            
+            ListNode next = head.next;
+            head.next = head.next.next;
+            next.next = pre.next;
+            pre.next = next;
+        }
+    
+        return dummyHead.next;
+    }
+}
