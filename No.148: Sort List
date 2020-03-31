@@ -1,0 +1,154 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// 递归。但是题目要求常数级空间复杂度O(1)，所以不可以使用递归！
+// Runtime: 3 ms, faster than 96.64% of Java online submissions for Sort List.
+// Memory Usage: 41.7 MB, less than 10.53% of Java online submissions for Sort List.
+
+// 循环
+// Runtime: 5 ms, faster than 36.18% of Java online submissions for Sort List.
+// Memory Usage: 41.9 MB, less than 5.26% of Java online submissions for Sort List.
+
+class Solution {
+    
+        /**
+         *  大体上来说是这样：
+         *      [4,3,1,7,8,9,2,11,5,6]
+         *      step=1: (3->4)->(1->7)->(8->9)->(2->11)->(5->6)
+         *      step=2: (1->3->4->7)->(2->8->9->11)->(5->6)
+         *      step=4: (1->2->3->4->7->8->9->11)->5->6
+         *      step=8: (1->2->3->4->5->6->7->8->9->11)
+         */
+    
+        // 递归。但是题目要求常数级空间复杂度O(1)，所以不可以使用递归！
+//     public ListNode sortList(ListNode head) {
+//         if (head == null || head.next == null)
+//             return head;
+
+//         // step 1. cut the list to two halves
+//         ListNode prev = null, slow = head, fast = head;
+//         while (fast != null && fast.next != null) {
+//             prev = slow;
+//             slow = slow.next;
+//             fast = fast.next.next;
+//         }
+//         prev.next = null;
+
+//         // step 2. sort each half
+//         ListNode l1 = sortList(head);
+//         ListNode l2 = sortList(slow);
+
+//         // step 3. merge l1 and l2
+//         return mergeTwoLists(l1, l2);
+//     }
+    
+//         // 来自于“No.21: 合并两个有序链表（easy）”
+//     private ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+//         ListNode dummyHead = new ListNode(0);
+//         ListNode current = dummyHead;
+
+//         while(l1 != null && l2 != null){
+//             if(l1.val <= l2.val){
+//                 current.next = l1;
+//                 l1 = l1.next;
+//             }else{
+//                 current.next = l2;
+//                 l2 = l2.next;
+//             }
+            
+//             current = current.next;
+//         }
+
+//         if(l1 != null){
+//             current.next = l1;
+//         }
+//         if(l2 != null){
+//             current.next = l2;
+//         }
+
+//         return dummyHead.next;
+//     }
+    
+        // 循环
+    public ListNode sortList(ListNode head) {
+        ListNode dummyHead = new ListNode(0);
+        dummyHead.next = head;
+        
+        // 先统计长度f
+        ListNode p = dummyHead.next;
+        int length = 0;
+        while(p != null){
+            p = p.next;
+            length++;
+        }
+        
+        // 循环开始切割和合并
+        for(int size=1; size<length; size*=2){              // 合并长度 1 -> 2 -> 4 -> 8 -> ... -> 整个length。每一轮循环都是从dummyHead.next开始，即“从头开始”，所以时间复杂度会是O(n)*O(logn)=O(nlogn)
+            ListNode cur = dummyHead.next;
+            ListNode tail = dummyHead;
+            
+            while(cur != null){
+                ListNode left = cur;
+                ListNode right = cut(cur, size);            // 链表切掉size 剩下的返还给right。切掉的size是归属给left的，即一步完成了“切size个节点给left，并且把right定位到新的位置”
+                cur = cut(right, size);                     // 链表切掉size 剩下的返还给cur。切掉的size是归属给right的，即一步完成了“切size个节点给right，并且把cur定位到新的位置”
+                tail.next = mergeTwoLists(left, right);     // 因为left和right都是两段“被截断”的链表，所以直接视为“No.21: 合并两个有序链表（easy）”即可。让它们拼接好，然后tail.next把它们的结果续上即可
+                
+                while(tail.next != null){
+                    tail = tail.next;                       // 保持最尾端
+                }
+            }
+        }
+        
+        return dummyHead.next;
+    }
+
+        // 将链表L切掉前n个节点 并返回后半部分的链表头
+    private ListNode cut(ListNode head, int n) {
+        ListNode p = head;
+        while(--n > 0 && p != null){        // 往前走n-1步
+            p = p.next;
+        }
+        
+        if(p == null){
+            return null;
+        }
+        
+        ListNode next = p.next;
+        p.next = null;                      // “断链”，注意是p.next来断，不是“next.next”，不然返回的不就是单个节点了吗。。
+        
+        return next;
+    }
+
+        // 来自于“No.21: 合并两个有序链表（easy）”
+    private ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+
+        while(l1 != null && l2 != null){
+            if(l1.val <= l2.val){
+                current.next = l1;
+                l1 = l1.next;
+            }else{
+                current.next = l2;
+                l2 = l2.next;
+            }
+            
+            current = current.next;
+        }
+
+        if(l1 != null){
+            current.next = l1;
+        }
+        if(l2 != null){
+            current.next = l2;
+        }
+
+        return dummyHead.next;
+    }
+}
