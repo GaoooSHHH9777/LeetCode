@@ -1,0 +1,64 @@
+// 单个HashSet巧解
+// Runtime: 21 ms, faster than 5.09% of Java online submissions for Valid Sudoku.
+// Memory Usage: 40.6 MB, less than 98.55% of Java online submissions for Valid Sudoku.
+
+// 高效的数组解法
+// Runtime: 1 ms, faster than 100.00% of Java online submissions for Valid Sudoku.
+// Memory Usage: 39.6 MB, less than 98.55% of Java online submissions for Valid Sudoku.
+
+class Solution {
+        // 单个HashSet巧解。思想是给每个出现的数字“打标签”，以row ｜ col ｜ block命名三个标签，一旦出现重复，就return false
+//     public boolean isValidSudoku(char[][] board) {
+//         Set seen = new HashSet();
+        
+//         for (int i=0; i<9; ++i) {
+//             for (int j=0; j<9; ++j) {
+//                 if (board[i][j] != '.') {
+//                     String b = "(" + board[i][j] + ")";
+                    
+//                     // '4' in row 7 is encoded as "(4)7".
+//                     // '4' in column 7 is encoded as "7(4)".
+//                     // '4' in the top-right block is encoded as "0(4)2".
+//                     if (!seen.add(b + i) || !seen.add(j + b) || !seen.add(i/3 + b + j/3)){
+//                         return false;
+//                     }
+//                 }
+//             }
+//         }
+        
+//         return true;
+//     }
+    
+        // 高效的数组解法
+    public boolean isValidSudoku(char[][] board) {
+        boolean[][] row = new boolean[9][9];
+        boolean[][] col = new boolean[9][9];
+        boolean[][] block = new boolean[9][9];
+
+        for (int i=0; i<9; i++) {
+            for (int j=0; j<9; j++) {
+                if (board[i][j] != '.') {
+                    int num = board[i][j] - '1';            // 减去1，和数组下标0～8对应
+                    
+                    // box_group = row / box_size
+                    // box_index = (row / box_size) * box_group + col / box_size
+                    // “i是行标，j是列标。行标决定一组block的起始位置（因为block为3行，所以除3取整得到组号，又因为每组block为3个，所以需要乘3），列标再细分出是哪个block（因为block是3列，所以除3取整）”
+                    //      比如说(0,1)会是block0，(1,3)是block1，(2,8)是block2，它们都是第一组block（都在第一个3行之内）
+                    //      (3,1)、(4,4)、(5,5)分别是block3、block4、block5，同理
+                    //      i/3是为了计算“在第几个3行之内”，i/3再*3是为了“分清楚边界”，+j/3是为了“区分同3行之内的不同blocks”
+                    int blockIndex = i/3*3 + j/3;
+                    
+                    if (row[i][num] || col[j][num] || block[blockIndex][num]) {
+                        return false;
+                    } else {
+                        row[i][num] = true;
+                        col[j][num] = true;
+                        block[blockIndex][num] = true;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+}
