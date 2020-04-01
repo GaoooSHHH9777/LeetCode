@@ -1,0 +1,57 @@
+// 数学解法
+// Runtime: 7 ms, faster than 75.67% of Java online submissions for Palindrome Number.
+// Memory Usage: 38.8 MB, less than 5.02% of Java online submissions for Palindrome Number.
+
+// 类似于链表的“折半解法”
+// Runtime: 6 ms, faster than 100.00% of Java online submissions for Palindrome Number.
+// Memory Usage: 39.3 MB, less than 5.02% of Java online submissions for Palindrome Number.
+
+class Solution {
+        
+        // 方法0：转换成String，但是题目不允许。为啥不允许呢？因为转换成String就可以.charAt()双指针头+尾一一比较，太简单了
+        
+        // 数学解法
+//     public boolean isPalindrome(int x) {
+//         if(x < 0){
+//             return false;
+//         }
+
+//         int pow = 1;
+//         while(x / pow >= 10){           // 关键：>=10，而不是>0
+//             pow *= 10;
+//         }
+
+//         while(x > 0){
+//             int left = x / pow;
+//             int right = x % 10;
+//             if(left != right){
+//                 return false;
+//             }
+
+//             x -= pow * left;
+//             x /= 10;
+//             // 上面2行可以用以下一行表示
+//             // x = (x % pow) / 10;
+
+//             pow /= 100;
+//         }
+
+//         return true;
+//     }
+
+        // 类似于链表的“折半解法”，反转数字后半段来判断
+    public boolean isPalindrome(int x) {
+        if (x < 0 || (x % 10 == 0 && x != 0)) {
+            return false;
+        }
+        
+        int revertedNumber = 0;
+        while (x > revertedNumber) {
+            revertedNumber = revertedNumber * 10 + x % 10;
+            x /= 10;
+        }
+        
+        // “当数字长度为奇数时，可以通过 revertedNumber/10 去除处于中位的数字。例如，当输入为 12321 时，在 while 循环的末尾我们可以得到 x = 12，revertedNumber = 123，由于处于中位的数字不影响回文（它总是与自己相等），所以我们可以简单地将其去除。”
+        return x == revertedNumber || x == revertedNumber / 10;
+    }
+}
