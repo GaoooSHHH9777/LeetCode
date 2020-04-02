@@ -23,6 +23,12 @@ class Solution {
          *              先将p.idx-1与s的词首char比较，相等的话p不变、s减掉首元素。例如s = "aabb"、p = "a*bb"，保持p不变、去掉s的词首char即'a'，再比较(s="abb", p="a*bb")
          */
     
+        /**
+         *  如果忘了，建议回看的题解：
+         *      https://leetcode.com/problems/regular-expression-matching/discuss/191830/Java-DP-solution-beats-100-with-explanation
+         *      https://leetcode-cn.com/problems/regular-expression-matching/solution/javahui-su-he-dong-tai-gui-hua-xiang-xi-dai-ma-zhu/
+         */
+    
         // 回溯，时间复杂度O((n+m)*2^(n+m/2))
         //      核心思想就是“不断地从头部剪短s和p的”。即只要它们的头部匹配，就移除掉，继续判断后续的内容
         //      说是回溯，回溯在哪呢？就是isMatch(s, p.substring(2)) || (firstMatch && isMatch(s.substring(1), p))这行呗。出现'*'的判断里，有两种情况，先是判断“寓意前一个char需要出现0次”能否成功，成功的话就延续走、不成功的话回退false、走“寓意前一个char需要出现1或多次”这个逻辑
