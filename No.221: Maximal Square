@@ -1,0 +1,70 @@
+// 动态规划1.0
+// Runtime: 4 ms, faster than 84.04% of Java online submissions for Maximal Square.
+// Memory Usage: 42.2 MB, less than 100.00% of Java online submissions for Maximal Square.
+
+// 动态规划2.0
+// Runtime: 4 ms, faster than 84.04% of Java online submissions for Maximal Square.
+// Memory Usage: 43.4 MB, less than 91.18% of Java online submissions for Maximal Square.
+
+class Solution {
+        // 动态规划1.0
+//     public int maximalSquare(char[][] matrix) {
+//         int rows = matrix.length;
+//         if(rows == 0){              // 这个判断写在cols之前。不然输入“[]”的时候，matrix[0]就是ArrayIndexOutOfBound的
+//             return 0;
+//         }
+//         int cols = matrix[0].length;
+        
+//         int[][] dp = new int[rows+1][cols+1];           // dp[i][j]表示matrix[i-1][j-1]所能构成的最大正方形边长   
+//                                                         // 因为要取threeMin，需要多留一行、一列给初始条件（也就都是0呗）。相当于已经预处理新增第一行、第一列均为0
+        
+//         int max = 0;
+//         for (int i=1; i<rows+1; i++) {
+//             for (int j=1; j<cols+1; j++) {
+//                 if (matrix[i-1][j-1] == '1'){
+//                     int threeMin = Math.min(dp[i-1][j-1], Math.min(dp[i][j-1], dp[i-1][j]));
+//                     dp[i][j] = threeMin + 1;
+                    
+//                     max = Math.max(max, dp[i][j]);
+//                 }
+//                 // else{                                // 这个逻辑可以不写，因为二维数组本身默认就是0，它写或不写都能过。但是一维dp里面就必须要维护这个值了
+//                 //     dp[i][j] = 0;
+//                 // }
+//             }
+//         }
+        
+//         return max * max;
+//     }
+    
+        // 动态规划2.0
+    public int maximalSquare(char[][] matrix) {
+        int rows = matrix.length;
+        if(rows == 0){
+            return 0;
+        }
+        int cols = matrix[0].length;
+        
+        int[] dp = new int[cols+1];
+        int northWest = 0;                               // 左上角那个
+        
+        int max = 0;
+        for (int i=1; i<rows+1; i++) {
+            northWest = 0;                               // 遍历每行时，还原回辅助的原值0。可以不加这一步，因为“初始化第0行的都是0”，j=1开始遍历进去就是0
+            for (int j=1; j<cols+1; j++) {
+                if (matrix[i-1][j-1] == '1'){
+                    int nextNorthWest = dp[j];           // 这里的dp[j]等于二维的dp[i-1][j]，即“正上方那个”。那这个横行逐列遍历的时候，这次的“正上方”是不是就是“下次的左上方”了？
+//                  int threeMin = Math.min(dp[i-1][j-1], Math.min(dp[i][j-1], dp[i-1][j]));        // 二维的写法摆出来，方便理解
+                    int threeMin = Math.min(northWest, Math.min(dp[j-1], dp[j]));                   // northWest是左上角那个，j-1是同行不同列（左边）那个，j是同列不同行（上面）那个
+                    dp[j] = threeMin + 1;
+                    
+                    max = Math.max(max, dp[j]);
+                    northWest = nextNorthWest;           // 遍历完“当前列”了，把“当前列的正上方”赋值为“右边一列的左上方”
+                }else{
+                    dp[j] = 0;                           // 二维dp没有这一步，因为二维数组本身默认就是0，遇到matrix里的位置为直接跳过就行。但是一维数组就不能跳过了
+                }
+            }
+        }
+        
+        return max * max;
+    }
+}
