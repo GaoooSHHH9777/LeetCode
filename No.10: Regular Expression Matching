@@ -1,0 +1,129 @@
+// 回溯，时间复杂度O((n+m)*2^(n+m/2))
+// Runtime: 65 ms, faster than 22.34% of Java online submissions for Regular Expression Matching.
+// Memory Usage: 40.1 MB, less than 37.37% of Java online submissions for Regular Expression Matching.
+
+// 动态规划写法1，时间复杂度O(mn)。这里dp[][]for循环的i和j等同于charAt()的idx，它不好的地方在于dp[i+1][j+1] = dp[i+1][j-1]...这个逻辑不容易看出来“j-1 = (j+1)-2”，其他都很好
+// Runtime: 4 ms, faster than 75.44% of Java online submissions for Regular Expression Matching.
+// Memory Usage: 40 MB, less than 37.37% of Java online submissions for Regular Expression Matching.
+
+// 动态规划写法2（推荐），时间复杂度O(mn)。这里dp[][]for循环的i和j等同于charAt()的idx+1，但是dp[i][j] = dp[i][j-2]...更便于从isMatch(s, p.substring(2))这样转换过去思考
+// Runtime: 4 ms, faster than 75.44% of Java online submissions for Regular Expression Matching.
+// Memory Usage: 39.6 MB, less than 37.37% of Java online submissions for Regular Expression Matching.
+
+class Solution {
+    
+        /**
+         *  总的来说，p.idx有三种情况嘛，'x'、'.'、'*'
+         *      1：'x'。s.idx = p.idx的话，肯定true，反之false
+         *      2：'.'。也肯定是true
+         *      3：'*'。问题主要是在于第三种，分两种情况讨论
+         *          3.1：'*'寓意前一个char需要出现0次
+         *              那就保持s不变，将p减掉两个元素。例如s = "bc"、p = "a*bc"的话，保持s不变、减掉p的"a*"，再比较(s="bc", p="bc")
+         *          3.2：'*'寓意前一个char需要出现1或多次
+         *              先将p.idx-1与s的词首char比较，相等的话p不变、s减掉首元素。例如s = "aabb"、p = "a*bb"，保持p不变、去掉s的词首char即'a'，再比较(s="abb", p="a*bb")
+         */
+    
+        // 回溯，时间复杂度O((n+m)*2^(n+m/2))
+        //      核心思想就是“不断地从头部剪短s和p的”。即只要它们的头部匹配，就移除掉，继续判断后续的内容
+        //      说是回溯，回溯在哪呢？就是isMatch(s, p.substring(2)) || (firstMatch && isMatch(s.substring(1), p))这行呗。出现'*'的判断里，有两种情况，先是判断“寓意前一个char需要出现0次”能否成功，成功的话就延续走、不成功的话回退false、走“寓意前一个char需要出现1或多次”这个逻辑
+//     public boolean isMatch(String s, String p) {
+//         if (p.isEmpty()){                               // p为空、s也为空则true；p为空、s不为空则false
+//             return s.isEmpty();
+//         }
+        
+//         // 判断s和p的首字符是否匹配
+//         //      注意要先判断s不为空
+//         //          同一个idx相同那肯定是true，然后p.idx='.'的话也肯定是true
+//         boolean firstMatch = !s.isEmpty() && (s.charAt(0)==p.charAt(0) || p.charAt(0)=='.');
+        
+//         // length>1得写前面。。
+//         if (p.length()>1 && p.charAt(1)=='*'){         // 如果p的第一个元素的下一个元素是*，则分别对两种情况进行判断
+//             // 注：substring(int beginIndex)
+//             return isMatch(s, p.substring(2)) || (firstMatch && isMatch(s.substring(1), p));
+//         }else {                                        // 走到这的话，那肯定不是'*'，也就是说判断'x'和'.'的情况。如果当前s和p的首字符相等，继续探索下一个首字母是否相等（只有当前的首字母相等了，才有必要看接下去的是不是能达成true，不然直接返回false就好了）
+//             return firstMatch && isMatch(s.substring(1), p.substring(1));
+//         }
+//     }
+    
+        // 动态规划写法1，时间复杂度O(mn)。这里dp[][]for循环的i和j等同于charAt()的idx，它不好的地方在于dp[i+1][j+1] = dp[i+1][j-1]...这个逻辑不容易看出来“j-1 = (j+1)-2”，其他都很好
+//     public boolean isMatch(String s, String p) {
+//         if(s==null || p==null){         // length=0的情况不用判断，因为走下去会得到true
+//             return false;
+//         }
+        
+//         int rows = s.length();
+//         int cols = p.length();
+        
+//         // 为啥len是rows+1和cols+1，为啥dp[0][0]是true呢？想象一下“编辑距离”的矩阵图不就知道啦？就是''和''、'a'、'b'那样的第一行/第一列呗
+//         boolean[][] dp = new boolean[rows+1][cols+1];
+//         dp[0][0] = true;
+//         for (int j=2; j<cols+1; j++){
+//             // 第一行初始化思路：如果不为空的p想要匹配上为空的s，因为此时p已经不为空，则需要p是"a*"、"b*"、"c*"。。。这种形式的才能匹配上
+//             if(p.charAt(j-1)=='*' && dp[0][j-2]){
+//                 dp[0][j] = true;
+//             }
+//             // dp[0][j] = p.charAt(j-1)=='*' && dp[0][j-2];         // 可以就这一行，但是可读性不好
+//         }
+        
+//         // 它从0开始循环，因为是与idx()对应的
+//         for (int i=0; i<s.length(); i++){
+//             for (int j=0; j<p.length(); j++){
+//                 if (p.charAt(j) == '*'){
+//                     // 两种情况: 1.s不变[i+1],p移除两个元素[j+1-2]。
+//                     //          2.比较s的i元素和p的j-1(因为此时j元素为*)元素,相等则移除首元素[i+1-1],p不变。
+//                     dp[i+1][j+1] = dp[i+1][j-1] || (dp[i][j+1] && firstMatch(s, p, i, j-1));
+//                 }else {
+//                     //s的i元素和p的j元素是否相等,相等则移除s的i元素[i+1-1]和p的j元素[j+1-1]
+//                     dp[i+1][j+1] = dp[i][j] && firstMatch(s, p, i, j);
+//                 }
+//             }
+//         }
+//         return dp[s.length()][p.length()];
+//     }
+    
+//     private boolean firstMatch(String s, String p, int i, int j){
+//         return s.charAt(i)==p.charAt(j) || p.charAt(j)=='.';
+//     }
+    
+        // 动态规划写法2（推荐），时间复杂度O(mn)。这里dp[][]for循环的i和j等同于charAt()的idx+1，但是dp[i][j] = dp[i][j-2]...更便于从isMatch(s, p.substring(2))这样转换过去思考
+    public boolean isMatch(String s, String p) {
+        if (p==null || s==null) {
+            return false;
+        }
+        
+        int rows = s.length();
+        int cols = p.length();
+        boolean dp[][] = new boolean[rows+1][cols+1];
+        dp[0][0] = true;
+        
+        // 为什么推荐这个写法，因为这里初始化也是根据idx()-1的逻辑来走的。。。
+        for (int j=2; j<cols+1; j++) {
+            // 第一行初始化思路：如果不为空的p想要匹配上为空的s，因为此时p已经不为空，则需要p是"a*"、"b*"、"c*"。。。这种形式的才能匹配上
+            if(p.charAt(j-1)=='*' && dp[0][j-2]){
+                dp[0][j] = true;
+            }
+            // dp[0][j] = p.charAt(j-1)=='*' && dp[0][j-2];          // 可以就这一行，但是可读性不好
+        }
+        
+        // dp[][]里面的i是s.idx(i-1)，j是p.idx(j-1)
+        // 它从1开始循环，因为是与idx()+1对应的
+        for (int i=1; i<rows+1; i++){                                // 这块跟着回溯的逻辑走下来就行
+            for (int j=1; j<cols+1; j++){
+                if(p.charAt(j-1) == '*'){
+                    // dp[i][j-2]对标 isMatch(s, p.substring(2))
+                    // firstMatch()对标 boolean firstMatch = !s.isEmpty() && (s.charAt(0)==p.charAt(0) || p.charAt(0)=='.');
+                    // dp[i-1][j]对标 isMatch(s.substring(1), p)
+                    dp[i][j] = dp[i][j-2] || (firstMatch(s, p, i-1, j-2) && dp[i-1][j]); 
+                }else {
+					dp[i][j] = firstMatch(s, p, i-1, j-1) && dp[i-1][j-1];
+                }
+            }
+        }
+        
+        return dp[rows][cols];
+    }
+    
+    private boolean firstMatch(String s, String p, int i, int j){
+        return s.charAt(i)==p.charAt(j) || p.charAt(j)=='.';
+    }
+}
