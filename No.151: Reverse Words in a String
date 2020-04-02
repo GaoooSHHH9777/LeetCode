@@ -1,0 +1,72 @@
+// Runtime: 2 ms, faster than 82.91% of Java online submissions for Reverse Words in a String.
+// Memory Usage: 39.7 MB, less than 25.80% of Java online submissions for Reverse Words in a String.
+
+class Solution {
+    public String reverseWords(String s) {
+        if (s == null) {
+            return null;
+        }
+
+        char[] a = s.toCharArray();
+        int n = a.length;
+
+        /**
+         *  总的来说就是，把整个str都反转，然后再对每个subStr进行反转，最后处理那些无意义的空格（看例2和例3）
+         */
+        reverse(a, 0, n-1);
+        
+        reverseWords(a, n);
+        
+        return cleanSpaces(a, n);
+    }
+    
+    private void reverse(char[] a, int i, int j) {
+        while (i < j) {         // <=也对，不过<就够了
+            char t = a[i];
+            a[i++] = a[j];
+            a[j--] = t;
+        }
+    }
+  
+    private void reverseWords(char[] a, int n) {
+        int i = 0;
+        int j = 0;
+
+        while (i < n) {
+            while (i<n && a[i]==' ') {      // 跳过空格，找到第x个单词的首字母（x不声明，每次外面的大循环while走进来这个内while循环，遇到的就是第x、x+1、x+2个）
+                i++;
+            }
+            
+            j = i;                          // j=i，从这里开始找到“一整个单词”。不直接使用i的原因是：i要用于后面reverse()的定位“start”，不能动
+            while (j<n && a[j]!=' ') {
+                j++;
+            }
+            
+            reverse(a, i, j-1);             // 反转
+            
+            i = j+1;                        // 原解是“i=j”，但是“j+1”更好。总之意思就是“跳过这个已经reverse的单词，它的index=(i,j)，开始新位置的搜索”
+        }
+    }
+    
+    private String cleanSpaces(char[] a, int n) {           // 删除多重空格、词首空格、词尾空格
+        int i = 0;
+        int j = 0;
+
+        while (j < n) {
+            while (j<n && a[j]==' ') {
+                j++;                        // 跳过总词词首的空格，或是中间词词首的连续前缀空格。直至找到一个新词的词首字母
+            }
+            while (j<n && a[j]!=' ') {
+                a[i++] = a[j++];            // 跳过那些无意义空格，输入有意义的内容
+            }
+            while (j<n && a[j]==' ') {
+                j++;                        // 跳过连续后缀空格。直至找到一个新词的词首字母
+            }
+            if (j < n) {
+                a[i++] = ' ';               // 跳过连续后缀空格之后，j指向的位置是下一个新词的首字母。如果这时候进入下一个while循环呢，那肯定不对，会缺空格。所以“给上一个词尾赋上一个空格”。如果后缀空格只有一个，这个也是对的，没问题
+            }
+        }
+
+        return new String(a).substring(0, i);               // 构造器new String(char[])
+    }
+}
