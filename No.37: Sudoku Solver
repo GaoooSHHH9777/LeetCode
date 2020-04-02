@@ -1,0 +1,65 @@
+// dfs回溯
+// Runtime: 3 ms, faster than 92.83% of Java online submissions for Sudoku Solver.
+// Memory Usage: 36.9 MB, less than 21.05% of Java online submissions for Sudoku Solver.
+    
+class Solution {
+    
+        // 还有一种1ms的位运算解法，不好理解，就算了
+    
+        // dfs回溯。清晰易懂，思路也是延续的“No.36: 有效的数独（medium）”
+    public void solveSudoku(char[][] board) {
+        boolean[][] row = new boolean[9][9];
+        boolean[][] col = new boolean[9][9];
+        boolean[][] block = new boolean[9][9];
+
+        for (int i=0; i<9; i++) {
+            for (int j=0; j<9; j++) {
+                if (board[i][j] != '.') {
+                    int num = board[i][j] - '1';
+                    row[i][num] = true;
+                    col[j][num] = true;
+                    block[i/3*3 + j/3][num] = true;
+                }
+            }
+        }
+        // 上面的都和“No.36: 有效的数独（medium）”同理，哪里不懂就回去看
+            
+        dfs(board, 0, 0, row, col, block);
+    }
+
+    private boolean dfs(char[][] board, int i, int j, boolean[][] row, boolean[][] col, boolean[][] block) {
+        while (board[i][j] != '.') {        // 这个过程始终寻找“下一个需要填充的位置”，先在“同一行”里找，直至“j溢出cols限制”，再“换行”，等到“i溢出rows限制”，那就是true了
+            if (++j >= 9) {                 // 9是col的length。意思是如果col >= 9，那就该换行了
+                i++;
+                j = 0;
+            }
+            if (i >= 9) {              
+                return true;
+            }
+        }
+        
+        for (int num=0; num<9; num++) {
+            int blockIndex = i/3*3 + j/3;
+            
+            if (!row[i][num] && !col[j][num] && !block[blockIndex][num]) {
+                board[i][j] = (char) ('1' + num);       // 因为上面第15行“board[i][j] - '1'”（目的是与数组的0～8兼容），所以要加一个1回来
+                
+                row[i][num] = true;
+                col[j][num] = true;
+                block[blockIndex][num] = true;
+                
+                if (dfs(board, i, j, row, col, block)) {
+                    return true;
+                } else {                                // 回溯呗
+                    board[i][j] = '.';
+                    
+                    row[i][num] = false;
+                    col[j][num] = false;
+                    block[blockIndex][num] = false;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
