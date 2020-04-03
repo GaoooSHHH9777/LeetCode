@@ -1,0 +1,70 @@
+// 解法1：借助Set。时间复杂度O(n)、空间复杂度O(n)。空间复杂度不满足要求，可以再优化
+// Runtime: 1 ms, faster than 28.77% of Java online submissions for First Missing Positive.
+// Memory Usage: 38.1 MB, less than 6.85% of Java online submissions for First Missing Positive.
+
+// 解法2：将数组视为哈希表。时间复杂度O(n)、空间复杂度O(1)
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for First Missing Positive.
+// Memory Usage: 37.4 MB, less than 6.85% of Java online submissions for First Missing Positive.
+
+class Solution {
+    
+        /**
+         *  首先，不需要考虑0和负数，即只需要考虑num > 0的数字，这个很好理解对吧
+         *  然后，有一个关键信息：首次缺失的正数一定是num <= n+1的。为什么呢？因为假设全部是正数（0不算正数），在0～n-1的idx里用1～n去填满，那是不是1～n的val里面毫无缺失？但是肯定n+1会缺失了，即num = n+1。反之，如果1～n里面有val缺失，那么这个缺失的值也是num < n+1的。所以，总的来说就是num <= n+1呗
+         */
+    
+        // 解法1：借助Set。时间复杂度O(n)、空间复杂度O(n)。空间复杂度不满足要求，可以再优化
+//     public int firstMissingPositive(int[] nums) {
+//         int len = nums.length;
+
+//         Set<Integer> set = new HashSet<>();
+//         for (int num: nums) {
+//             set.add(num);
+//         }
+
+//         // 在这里判断的就是“1～n是否有缺失，如果有，那就return”，而因为是i逐渐递增的，第一个触发的就是“最小的”
+//         for (int i=1; i<len+1; i++) {           // 从1到n+1，而不是从0到n，因为0不算正数
+//             if (!set.contains(i)){
+//                 return i;
+//             }
+//         }
+
+//         // 如果能走到这里，就说明“1～n无缺失”，那缺的是啥呢？就是n+1呗
+//         return len+1;
+//     }
+    
+        // 解法2：将数组视为哈希表。时间复杂度O(n)、空间复杂度O(1)
+        //      为啥会这么做呢？不如想想，常数空间复杂度O(1)的时候，该怎么实现记忆存储？
+        //      将arr作为HashSet呗，idx就是这个HashSet里面所有的key。当需要判断时，用idx对应的val去比较，如果val = idx+1，那就是contains，否则就是！contains
+    public int firstMissingPositive(int[] nums) {
+        int len = nums.length;
+
+        for (int i=0; i<len; i++) {
+            /**
+        	 *  为什么用while？因为交换后，原本i位置的old-nums[i]已经交换到了别的地方，而交换过来的new-nums[i]未必是适合这个位置的
+        	 *      如果用if，那么进行一次交换后，i就进入下一个i+1循环，此时old-nums[i]在的new-idx肯定是正确的，但是交换过来的new-nums[i]是不是适配于i这个idx呢？不知道啊。所以需要对这个new-nums[i]也找到它的“归宿”。
+             *      说白了，old-nums[i]是“主动寻址”的，它能保证正确；但是new-nums[i]是“被动寻址”交换过来的，可能正确也可能不正确，那就需要“把它不正确的情况也掰正确了”
+             *          它可能是正确的（就像[1,2,0]这个arr），也可能是错误的（就像[3,4,-1,1]这个arr）
+             */
+            
+            // nums[i] < 1或者nums[i] > len的话，就舍弃（即num <= 0和num > n+1的情况呗，因为只考虑num > 1的为正数情况）
+            while (nums[i]>0 && nums[i]<len+1 && nums[nums[i]-1]!=nums[i]) {            // nums[nums[i]-1] != nums[i]的意思是没有被相同值占有过
+                swap(nums, nums[i]-1, i);                                               // 例如数值3应该放在idx=2的位置上
+            }
+        }
+
+        for (int i=0; i<len; i++) {         // arr里面，idx存储的val = idx+1。因为idx是0～n-1，正数val是1～n
+            if (nums[i] != i+1) {           // 只要val与idx+1不符合，就是所求的“第一个消失正数”
+                return i+1;
+            }
+        }
+        
+        return len+1;                       // 同理，走到这里，说明“1～n都齐了”，那第一个缺失的整数是啥呢？就是n+1呗
+    }
+
+    private void swap(int[] nums, int index1, int index2) {
+        int temp = nums[index1];
+        nums[index1] = nums[index2];
+        nums[index2] = temp;
+    }
+}
