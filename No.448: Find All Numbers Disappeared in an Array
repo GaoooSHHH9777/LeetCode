@@ -1,0 +1,28 @@
+// 解法1：原地修改，空间复杂度O(1)
+// Runtime: 5 ms, faster than 81.57% of Java online submissions for Find All Numbers Disappeared in an Array.
+// Memory Usage: 47.9 MB, less than 75.47% of Java online submissions for Find All Numbers Disappeared in an Array.
+
+class Solution {
+    
+        // 解法0：HashSet。时间复杂度O(n)、空间复杂度O(n)
+    
+        // 解法1：原地修改，空间复杂度O(1)
+        //      思想就是：数组中存在的数字，给它对应的idx（要减去1以对应数组的下标）“打标记”，然后一遍下来“没有被打标记”的肯定就是不存在的数字了
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        int len = nums.length;
+        List<Integer> res = new LinkedList<>();
+        
+        for(int i=0; i<len; i++){               // 数组存的是是1~n，数组idx是0~n-1，所以对应的idx就得减去1
+            int idx = (nums[i]-1) % len;        // 逻辑是来说是不需要取模的对吧。但是实际运行中，由于空间复杂度O(1)，是直接动原数组的，如果不进行取模的话，就会出现错的答案
+            nums[idx] += len;
+        }
+        
+        for(int i=0; i<len; i++){
+            if(nums[i] <= len){
+                res.add(i+1);
+            }
+        }
+        
+        return res;
+    }
+}
