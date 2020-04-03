@@ -1,0 +1,56 @@
+// 手撕的
+// Runtime: 5 ms, faster than 93.60% of Java online submissions for Find All Duplicates in an Array.
+// Memory Usage: 48.1 MB, less than 44.44% of Java online submissions for Find All Duplicates in an Array.
+
+// 另一种写法，很像“No.41：缺失的第一个正数（hard）”
+// Runtime: 4 ms, faster than 97.61% of Java online submissions for Find All Duplicates in an Array.
+// Memory Usage: 48.2 MB, less than 41.67% of Java online submissions for Find All Duplicates in an Array.
+
+class Solution {
+        // 手撕的
+//     public List<Integer> findDuplicates(int[] nums) {
+//         int len = nums.length;
+        
+//         List<Integer> res = new LinkedList<>();
+        
+//         for(int i=0; i<len; i++){
+//             int idx = (nums[i]-1) % len;
+//             nums[idx] += len;
+//         }
+        
+//         for(int i=0; i<len; i++){
+//             if(nums[i] > len*2){      
+//                 res.add(i+1);
+//             }
+//         }
+        
+//         return res;
+//     }
+    
+        // 另一种写法，很像“No.41：缺失的第一个正数（hard）”
+    public List<Integer> findDuplicates(int[] nums) {
+        int len = nums.length;
+        
+        List<Integer> res = new ArrayList<>();
+        
+        for (int i=0; i<len; i++) {                         // 主要是这里很像～
+            while (nums[nums[i]-1] != nums[i]) {            // 为什么用while呢？因为old-nums[i]交换过去了之后，nums[idx]位置可以保证是正确的，但是new-nums[i]是正确的吗？不一定，可能是“恰巧正确”，但是大多数情况肯定是不正确，所以也要让这个new-nums[i]“去到它适配的位置”
+                swap(nums, nums[i]-1, i);
+            }
+        }
+        
+        for (int i=0; i<len; i++) {
+            if (nums[i]-1 != i) {
+                res.add(nums[i]);
+            }
+        }
+        
+        return res;
+    }
+
+    private void swap(int[] nums, int idx1, int idx2) {
+        int temp = nums[idx1];
+        nums[idx1] = nums[idx2];
+        nums[idx2] = temp;
+    }
+}
