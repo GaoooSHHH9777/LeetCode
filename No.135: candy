@@ -1,0 +1,154 @@
+// 暴力搜索
+// Runtime: 1170 ms, faster than 5.01% of Java online submissions for Candy.
+// Memory Usage: 40.2 MB, less than 95.45% of Java online submissions for Candy.
+
+// 双向遍历，从左到右来一遍，再从右到左来一遍，用两个数组记录。类似于“No：32 最长有效括号（hard）”
+// Runtime: 2 ms, faster than 95.57% of Java online submissions for Candy.
+// Memory Usage: 40.7 MB, less than 45.45% of Java online submissions for Candy.
+
+// 双向遍历，用一个数组记录
+// Runtime: 2 ms, faster than 95.57% of Java online submissions for Candy.
+// Memory Usage: 40.1 MB, less than 100.00% of Java online submissions for Candy.
+
+// 一趟遍历 + O(1)空间
+// Runtime: 2 ms, faster than 95.57% of Java online submissions for Candy.
+// Memory Usage: 40.8 MB, less than 27.27% of Java online submissions for Candy.
+
+class Solution {
+    
+        /**
+         *  这道题归类为贪心算法，贪心在哪呢？
+         *      实际上，每次可以给100颗糖，也可以给评分较高者多100颗糖而不是1颗。在这个逻辑上来说，是贪心的，即“为了获得最少总数的糖果，糖果的分配每次都是增加1的”
+         */
+    
+        // 暴力搜索
+//     public int candy(int[] ratings) {
+//         int len = ratings.length;
+        
+//         int[] candies = new int[len];
+//         Arrays.fill(candies, 1);
+        
+//         int sum = 0;
+        
+//         boolean update = true;
+//         while (update) {
+//             update = false;                 // 如果在某一次遍历中不再发生修改，那就可以停止遍历了
+            
+//             for (int i=0; i<len; i++) {
+//                 if (i>0 && ratings[i]>ratings[i-1] && candies[i]<=candies[i-1]) {
+//                     candies[i] = candies[i-1] + 1;
+//                     update = true;
+//                 }
+//                 if (i<len-1 && ratings[i]>ratings[i+1] && candies[i]<=candies[i+1]) {
+//                     candies[i] = candies[i+1] + 1;
+//                     update = true;
+//                 }
+//             }
+//         }
+        
+//         for (int candy: candies) {          // 统计
+//             sum += candy;
+//         }
+        
+//         return sum;
+//     }
+    
+        // 双向遍历，从左到右来一遍，再从右到左来一遍，用两个数组记录。类似于“No：32 最长有效括号（hard）”
+//     public int candy(int[] ratings) {
+//         int len = ratings.length;
+        
+//         int[] left2right = new int[len];
+//         int[] right2left = new int[len];
+//         Arrays.fill(left2right, 1);
+//         Arrays.fill(right2left, 1);
+        
+//         for (int i=1; i<len; i++) {
+//             if (ratings[i] > ratings[i-1]) {
+//                 left2right[i] = left2right[i-1] + 1;
+//             }
+//         }
+//         for (int i=len-2; i>-1; i--) {
+//             if (ratings[i] > ratings[i+1]) {
+//                 right2left[i] = right2left[i+1] + 1;
+//             }
+//         }
+        
+//         int sum = 0;
+//         for (int i=0; i<len; i++) {
+//             sum += Math.max(left2right[i], right2left[i]);          // 为什么是max不是min呢？试想一下，如果已完成“从左到右”，那是不是目前的结果是“左边最小的解”？此时再“从右到左”，如果把“已有的左边最小解”再去缩小，是不是就破坏了“从左到右的正确解”？那就只剩下了不变、增大两个选择，而为了全局都满足，又必须符合“从右到左的解”。同理于“从左到右的解会对从右到左的解产生什么影响”。所以，就是取max了，为了“两个都符合”，就是取max了
+//             /**
+//              *  但是为什么这样“左右各一轮、再合并结果”就是正确的呢？看起来很玄学
+//              *      实际上，当得到了“从左到右”的解之后，是无法再优化的对吧？再优化就是错误的解了。那么合并之后就是“不变 / 增大”两种可能性，如果想要再优化这个“不变 / 增大”的结果，那该从哪里入手呢？不变的肯定不需要取动，那就取动“增大”的，那这个“增大的”从哪里来的？是“从右到左”来的，是“从右到左的最优解”，无法去“减小这个增大的值”。所以合并之后就是最优解了～
+//              */
+//         }
+        
+//         return sum;
+//     }
+    
+        // 双向遍历，用一个数组记录
+//     public int candy(int[] ratings) {
+//         int len = ratings.length;
+        
+//         int[] candies = new int[len];
+//         Arrays.fill(candies, 1);
+        
+        
+//         for (int i=1; i<len; i++) {
+//             if (ratings[i] > ratings[i-1]) {
+//                 candies[i] = candies[i-1] + 1;
+//             }
+//         }
+        
+//         int sum = candies[len-1];                       // 要非常注意这一行！！！
+        
+//         for (int i=len-2; i>-1; i--) {
+//             if (ratings[i] > ratings[i+1]) {
+//                 candies[i] = Math.max(candies[i], candies[i+1] + 1);
+//             }
+            
+//             sum += candies[i];
+//         }
+        
+//         return sum;
+//     }
+    
+        // 一趟遍历 + O(1)空间
+        //      总的来说就是分成若干个“平台、峰、谷”，它们都是candy数量不变/递增/递减的
+        //          峰的数量取决于max(上坡length, 下坡length)，而已知峰(高)和长度(底)，可以用求和公式求出“这个包含上坡和下坡的峰谷，需要的总糖果数是多少”
+    public int candy(int[] ratings) {
+        int len = ratings.length;
+        
+        int i = 1;
+        int s = 1;
+        int sum = 1;                                                
+        
+        while(i < len){
+            while(i<len && ratings[i]==ratings[i-1]){
+                i++;
+                sum++;
+            }
+            s = i;
+            
+            while(i<len && ratings[i]>ratings[i-1]){                // bottom -> peak，peak not included
+                i++;
+            }
+            int leftLen = i-s;
+            s = i;
+            
+            while(i<len && ratings[i]<ratings[i-1]){                // peak -> bottom，peak not included
+                i++;
+            }
+            int rightLen = i-s;
+            s = i;
+            
+            int peak = Math.max(leftLen, rightLen) + 1;
+            sum += count(leftLen) + count(rightLen) + peak - 1;     // 为嘛要-1呢？因为“这一个山谷的右底部”会和“下一个山谷的左底部”重叠一个candy=1的“谷底”位置～
+        }
+        
+        return sum;
+    }
+    
+    private int count(int n){
+        return n*(n+1) / 2;
+    }
+}
