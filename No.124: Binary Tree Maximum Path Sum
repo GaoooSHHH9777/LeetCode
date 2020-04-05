@@ -1,0 +1,37 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 时间复杂度O(n)，空间复杂度O(logn)（需要开辟一个与二叉树等高的栈空间）
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Binary Tree Maximum Path Sum.
+// Memory Usage: 41.4 MB, less than 8.33% of Java online submissions for Binary Tree Maximum Path Sum.
+
+class Solution {
+
+    int maxSum = Integer.MIN_VALUE;
+
+    public int maxPathSum(TreeNode root) {
+        recursive(root);
+        
+        return maxSum;
+    }
+
+    private int recursive(TreeNode cur) {
+        if (cur == null) {
+            return 0;
+        }
+
+        int leftVal = Math.max(recursive(cur.left), 0);
+        int rightVal = Math.max(recursive(cur.right), 0);
+
+        maxSum = Math.max(maxSum, cur.val+leftVal+rightVal);
+
+        return cur.val + Math.max(leftVal, rightVal);               // return是给“树中的上一层”的数据，最大值并不靠return来产出，因为并不是“越深越大”，maxSum可能产出于树中间的某个位置
+    }
+}
