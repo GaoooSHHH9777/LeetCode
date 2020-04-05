@@ -1,0 +1,66 @@
+// 二维dp
+// Runtime: 13 ms, faster than 46.85% of Java online submissions for Coin Change.
+// Memory Usage: 39.1 MB, less than 5.33% of Java online submissions for Coin Change.
+
+// dfs + 剪枝
+// Runtime: 1 ms, faster than 100.00% of Java online submissions for Coin Change.
+// Memory Usage: 37.1 MB, less than 19.53% of Java online submissions for Coin Change.
+
+class Solution {
+        // 二维dp
+//     public int coinChange(int[] coins, int amount) {
+//         int[] count = new int[amount+1];
+        
+//         for(int i=1; i<amount+1; i++){
+//             count[i] = Integer.MAX_VALUE;
+//             for(int j=0; j<coins.length; j++){
+//                 if (i-coins[j] >= 0 && count[i-coins[j]] != Integer.MAX_VALUE){
+//                     int cur = count[i-coins[j]] + 1;
+//                     count[i] = Math.min(count[i], cur);
+//                 }
+//             }
+//         }
+
+//         if(count[amount] == Integer.MAX_VALUE){
+//             return -1;
+//         }else{
+//             return count[amount];
+//         }
+//     }
+    
+        // dfs + 剪枝
+        //      dfs搜索顺序为面值从大到小，同一面值数量由多到少，搜索过程中记录到此为止所花费的硬币数
+        //      总的来说，就是“从最后一个面值开始搜最优解，类似于贪心的思想”
+        //      而其中有两个剪枝，加速了这个“寻最小数量”的过程
+        //          剪枝1：直接凑足了面值，那肯定可以break吧，因为是从最大面值开始凑的，不可能还有更优解
+        //          剪枝2：当amount != 0，但已经使用的硬币数count即将与ans一样时（count >= ans-1）剪枝，因amount不为0，至少还要使用1枚硬币，则继续搜索得到的答案不会更优。即“更小面值的硬币们，不可能用更少的count来凑出来更大面值们凑出来的总面值”
+    int ans = Integer.MAX_VALUE;
+
+	public int coinChange(int[] coins, int amount) {
+		Arrays.sort(coins);
+        
+		subCoins(coins, coins.length-1, 0, amount);
+        
+		return ans == Integer.MAX_VALUE ? -1 : ans;
+	}
+
+	public void subCoins(int[] coins, int lastIdx, int count, int amount) {
+		if (lastIdx < 0) {
+			return;
+		}
+
+		for (int i=amount/coins[lastIdx]; i>-1; i--) {      // 注意这个除法，可以保证“最大面值先用最大数量”
+			int remain = amount - i*coins[lastIdx];
+			int ncount = count + i;
+			if (remain == 0) {                              // 剪枝1
+				ans = Math.min(ncount, ans);
+				break;
+			}
+			if (ncount >= ans-1) {                          // 剪枝2。ans可能会被其他的递归过程所更新，所以这样可以得到全局最优解、且对不可能更优的解剪枝
+				break;
+			}
+            
+			subCoins(coins, lastIdx-1, ncount, remain);
+		}
+	}
+}
