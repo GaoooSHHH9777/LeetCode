@@ -1,0 +1,53 @@
+//（英文版是锁的看不了）
+// 执行用时: 16 ms, 在所有 Java 提交中击败了84.59%的用户
+// 内存消耗: 36.5 MB, 在所有 Java 提交中击败了14.29%的用户
+
+class Solution {
+    public int numberOfPatterns(int m, int n) {
+        // 利用对称的性质可以优化算法，从1、3、7、9出发的手势数量是相同的，同理从2、4、6、8 出发的也是。因此对这些相同的组我们只需要对结果乘以4即可。(0,0)开始就是代表1、3、7、9，(0,1)开始就是代表2、4、6、8，(1,1)就是代表5
+        return 4 * (dfs(new boolean[3][3], m, n, 0, 0, 0) + dfs(new boolean[3][3], m, n, 0, 0, 1)) + dfs(new boolean[3][3], m, n, 0, 1, 1);
+    }
+
+    private int dfs(boolean[][] visit, int least, int most, int count, int x, int y) {     // 以(x,y)开始，在已经有count的情况下，寻找合法的个数
+        int res = 0;
+
+        
+        count++;
+        if (count >= least) {
+            res++;
+        }
+        if (count == most) {
+            return res;
+        }
+
+        // 每一次新的情况进来，都是“我这段路径满足长度要求了，我试探一下能不能在这条路径的基础上再探索出一条或多条新的路径”。比如“1-2-3”满足要求了，再试探一下“1-2-3-4”、“1-2-3-5-4”这些行不行，以此dfs。每当“搜寻完毕”之后，都回溯为false，不挡其他dfs路径的路
+
+        visit[x][y] = true;                                            // 这行不能往上面移
+        for (int i=0; i<3; i++) {
+            for (int j=0; j<3; j++) {
+                if (canVisit(visit, x, y, i, j)) {                     // from (x,y) to (i,j)
+                    res += dfs(visit, least, most, count, i, j);       // 从(x,y)开始的下一个位置
+                }
+            }
+        }
+
+        visit[x][y] = false;                                           // 回溯
+
+        return res;
+    }
+
+    private boolean canVisit(boolean[][] visit, int x1, int y1, int x2, int y2) {
+        if (visit[x2][y2]) {                                // 已访问过
+            return false;
+        }
+
+        if (Math.abs(x1-x2)<2 && Math.abs(y1-y2)<2) {       // 直接相邻，比如1-2、1-4、1-5
+            return true;
+        }
+        if (Math.abs(x1-x2)!=1 && Math.abs(y1-y2)!=1) {     // 不直接相邻，比如1-3、1-6、1-7、1-8、1-9。那就取决于中间路过的元素，如果中间路过的位置是visited=true，那就是true
+            return visit[(x1+x2)/2][(y1+y2)/2];
+        }
+
+        return true;
+    }
+}
