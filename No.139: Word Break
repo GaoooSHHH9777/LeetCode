@@ -1,0 +1,74 @@
+// 记忆化搜索
+// Runtime: 5 ms, faster than 77.83% of Java online submissions for Word Break.
+// Memory Usage: 39.3 MB, less than 5.08% of Java online submissions for Word Break.
+
+// dp
+// Runtime: 6 ms, faster than 66.98% of Java online submissions for Word Break.
+// Memory Usage: 39.8 MB, less than 5.08% of Java online submissions for Word Break.
+
+class Solution {
+        // 暴力搜素（超时）
+//     public boolean wordBreak(String s, List<String> wordDict) {
+//         return word_Break(s, new HashSet(wordDict), 0);
+//     }
+//     private boolean word_Break(String s, Set<String> wordDict, int start) {
+//         if (start == s.length()) {
+//             return true;
+//         }
+//         for (int end = start + 1; end <= s.length(); end++) {
+//             if (wordDict.contains(s.substring(start, end)) && word_Break(s, wordDict, end)) {
+//                 return true;
+//             }
+//         }
+        
+//         return false;
+//     }
+    
+        // 记忆化搜索。对“重叠子问题：以当前char为前缀的所有字符串是否匹配”进行记录
+//     public boolean wordBreak(String s, List<String> wordDict) {
+//         return word_Break(s, new HashSet(wordDict), 0, new Boolean[s.length()]);
+//     }
+    
+//     private boolean word_Break(String s, Set<String> wordDict, int start, Boolean[] memo) {
+//         if (start == s.length()) {
+//             return true;
+//         }
+//         if (memo[start] != null) {
+//             return memo[start];
+//         }
+//         for (int end=start+1; end<s.length()+1; end++) {
+//             if (wordDict.contains(s.substring(start, end)) && word_Break(s, wordDict, end, memo)) {         // 这两个条件一起则构成了“从start到s.length全都是符合的”，memo[]数组会从右边的位置开始逐一往左填（start从大到小进行填）
+//                 // return memo[start] = true;       // 可以只写这一行，但可读性不好
+//                 memo[start] = true;
+
+//                 return true;
+//             }
+//         }
+        
+//         // 如果上面“一个都不能触发true”，那就是false
+//         // return memo[start] = false;              // 可以只写这一行，但可读性不好
+//         memo[start] = false;
+
+//         return false;
+//     }
+    
+        // dp
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> wordDictSet = new HashSet(wordDict);
+        
+        int len = s.length();
+        boolean[] dp = new boolean[len+1];          // dp[]意思是“到这个idx位置的所有字符，是否满足要求”
+        dp[0] = true;                               // 0的位置等同于''，空字符串
+        
+        for (int i=1; i<len+1; i++) {               // 因为substring的idx从0开始计，是[0,len)这样的，包括左区间、但不包括右区间
+            for (int j=0; j<i; j++) {
+                // 把dp[j]写左边会更快一些，不然要经过contains()和substring()两个方法再去检查dp[j]的话，浪费时间
+                if (dp[j] && wordDictSet.contains(s.substring(j, i))) {         // “前j个字符满足要求” 且 “从第j个到第i个满足要求”。这个j可能有多种，比如说“abcde”可以被拆分为“ab”+“cde”或者“abc”+“de”，取全部满足的即可～
+                    dp[i] = true;
+                }
+            }
+        }
+        
+        return dp[len];
+    }
+}
