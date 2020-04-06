@@ -1,0 +1,35 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Remove Duplicates from Sorted List II.
+// Memory Usage: 39.3 MB, less than 6.98% of Java online submissions for Remove Duplicates from Sorted List II.
+
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        
+        ListNode cur = dummy;           // 因为需要“留住<重复段的first>.prev的索引”
+        
+        while (cur.next!=null && cur.next.next!=null) {         // <可能重复的first>、<可能重复的second>
+            if (cur.next.val == cur.next.next.val) {
+                ListNode temp = cur.next;
+                while (temp!=null && temp.next!=null && temp.val==temp.next.val) {
+                    temp = temp.next;                           // 搜索出所有的“与first重复的val”
+                }
+                
+                cur.next = temp.next;                           // 拼接到cur.next去
+            } else {                                            // 如果不重复，那就前进一个位置
+                cur = cur.next;
+            }
+        }
+        
+        return dummy.next;
+    }
+}
