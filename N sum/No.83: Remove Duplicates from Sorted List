@@ -1,0 +1,48 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+
+// 循环
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Remove Duplicates from Sorted List.
+// Memory Usage: 39 MB, less than 7.14% of Java online submissions for Remove Duplicates from Sorted List.
+
+// 递归（推荐）
+// Runtime: 1 ms, faster than 9.60% of Java online submissions for Remove Duplicates from Sorted List.
+// Memory Usage: 41.3 MB, less than 7.14% of Java online submissions for Remove Duplicates from Sorted List.
+
+class Solution {
+        // 循环（推荐）
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode cur = head;
+
+        while (cur!=null && cur.next!=null) {
+            if (cur.next.val == cur.val) {
+                cur.next = cur.next.next;
+            } else {
+                cur = cur.next;
+            }
+        }
+
+        return head;
+    }
+    
+        // 递归
+//     public ListNode deleteDuplicates(ListNode head) {
+//         if(head==null || head.next==null){
+//             return head;
+//         }
+        
+//         head.next = deleteDuplicates(head.next);
+        
+//         if(head.val == head.next.val) {
+//             head = head.next;
+//         }
+        
+//         return head;
+//     }
+}
