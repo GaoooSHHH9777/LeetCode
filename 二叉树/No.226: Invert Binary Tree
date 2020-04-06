@@ -1,0 +1,60 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+// 递归 + 前序
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Invert Binary Tree.
+// Memory Usage: 37.1 MB, less than 5.10% of Java online submissions for Invert Binary Tree.
+
+// 循环（层次遍历）
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Invert Binary Tree.
+// Memory Usage: 39.2 MB, less than 5.10% of Java online submissions for Invert Binary Tree.
+
+class Solution {
+    // public TreeNode invertTree(TreeNode root) {
+    //     if(root == null){
+    //         return null;
+    //     }
+
+    //     TreeNode realLeft = root.left;
+    //     root.left = invertTree(root.right);
+    //     root.right = invertTree(realLeft);
+
+    //     return root;
+    // }
+
+        // 循环（层次遍历）
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode curNode = queue.poll();
+
+            if (curNode.left != null || curNode.right != null) {        // 只要其中之一非空，就要交换
+                TreeNode temp = curNode.left;
+                curNode.left = curNode.right;
+                curNode.right = temp;
+
+                if (curNode.left != null) {
+                    queue.offer(curNode.left);
+                }
+                if (curNode.right != null) {
+                    queue.offer(curNode.right);
+                }
+            }
+        }
+
+        return root;
+    }
+}
