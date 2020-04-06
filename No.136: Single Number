@@ -1,0 +1,23 @@
+// 高效解法：异或运算
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Single Number.
+// Memory Usage: 40.4 MB, less than 88.89% of Java online submissions for Single Number.
+
+class Solution {
+    
+        // 解法0.1：暴力搜索，两个for循环，O(n^2)
+    
+        // 解法0.2：排序，O(nlogn)
+    
+        // 解法0.3：哈希表，O(n)
+    
+        // 高效解法：异或运算
+    public int singleNumber(int[] nums) {
+        int ans = nums[0];
+        
+        for (int i=1; i<nums.length; i++) {
+            ans ^= nums[i];
+        }
+        
+        return ans;
+    }
+}
