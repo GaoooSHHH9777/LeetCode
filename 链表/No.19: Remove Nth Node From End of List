@@ -11,8 +11,13 @@
 // Memory Usage: 37.6 MB, less than 6.37% of Java online submissions for Remove Nth Node From End of List.
 
 class Solution {
+
+    /**
+     *  说白了，我一个fast-pointer从head先走n步，然后一个slow-pointer开始从head走
+     *      这样的话fast和slow保持n的距离，等到fast=null的时候，slow不就是“倒数第N个”吗？
+     */
+
     public ListNode removeNthFromEnd(ListNode head, int n) {
-        
         ListNode dummyHead = new ListNode(6666);
         dummyHead.next = head;
         
