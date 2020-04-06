@@ -22,9 +22,4 @@ class Solution {
             }
 
             map.put(s.charAt(right), right);
-            max = Math.max(max, right-left+1);      // 例：2~4的是3个位置，然而4-2=2，所以+1
-        }
-
-        return max;
-    }
-}
+            max = Math.max(max, right-left+1);      // 例：2~4
