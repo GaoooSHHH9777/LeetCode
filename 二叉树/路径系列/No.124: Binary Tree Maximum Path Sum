@@ -27,6 +27,7 @@ class Solution {
             return 0;
         }
 
+        // 为啥max(?,0)呢？因为节点的值可能是负数啊。。总路径和为负那就不要了，“不要了”体现在代码上那就是0呗
         int leftVal = Math.max(recursive(cur.left), 0);
         int rightVal = Math.max(recursive(cur.right), 0);
 
