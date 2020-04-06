@@ -40,11 +40,14 @@ public class Solution {
     //     return null;
     // }
 
+        /**
+         *  “若相交，链表A： a+c, 链表B : b+c. a+c+b+c = b+c+a+c 。则会在公共处c起点相遇。若不相交，a +b = b+a 。因此相遇处是NULL”
+         */
+
         // 解法2，双指针，用了类似于“环形链表”的解法。注意new两个新的node，不要进行原地修改，题目说了“在返回结果后，两个链表仍须保持原有的结构”
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
         ListNode a = headA;
         ListNode b = headB;
-
 
         // 解法的核心在于：当a的下一个为空时，就a就从b链表头开始遍历
         //      说白了就是“既然一长一短，那我两个指针都走一遍<短&长>，即两根链表以<短+长>、<长+短>拼接起来了，是不是肯定能碰上？”
