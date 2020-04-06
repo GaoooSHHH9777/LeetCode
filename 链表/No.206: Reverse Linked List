@@ -21,18 +21,18 @@
 
 class Solution {
         // 递归1，一个方法
-    public ListNode reverseList(ListNode head) {
-		if(head==null || head.next==null) {
-			return head;
-		}
+    // public ListNode reverseList(ListNode head) {
+	// 	if(head==null || head.next==null) {
+	// 		return head;
+	// 	}
         
-        // 如果忘记了，去看https://leetcode-cn.com/problems/reverse-linked-list/solution/dong-hua-yan-shi-206-fan-zhuan-lian-biao-by-user74/
-		ListNode cur = reverseList(head.next);        // 先一直往前顶，直到尾（next=null）。递归函数每次返回的cur必定是最后一个节点
-		head.next.next = head;                              // head的下一个节点指向head。咋理解呢？比如4 -> 5，要怎么样让5指回给4呢？4.next=5，要变成5.next=4的话，那不就是4.next.next=4吗？然后，一定要把4.next这个索引消除掉，不然的话4 <-> 5，就形成链表环了！！
-		head.next = null;                                   // head的next要为null啊，不然“旧的next指引”没有消除啊，会链表环的
+    //     // 如果忘记了，去看https://leetcode-cn.com/problems/reverse-linked-list/solution/dong-hua-yan-shi-206-fan-zhuan-lian-biao-by-user74/
+	// 	ListNode cur = reverseList(head.next);        // 先一直往前顶，直到尾（next=null）。递归函数每次返回的cur必定是最后一个节点
+	// 	head.next.next = head;                              // head的下一个节点指向head。咋理解呢？比如4 -> 5，要怎么样让5指回给4呢？4.next=5，要变成5.next=4的话，那不就是4.next.next=4吗？然后，一定要把4.next这个索引消除掉，不然的话4 <-> 5，就形成链表环了！！
+	// 	head.next = null;                                   // head的next要为null啊，不然“旧的next指引”没有消除啊，会链表环的
         
-		return cur;                                         // 每次都返回cur，即最后一个节点
-	}
+	// 	return cur;                                         // 每次都返回cur，即最后一个节点
+	// }
     
         // 递归2，两个方法
 //     public ListNode reverseList(ListNode head) {
@@ -51,19 +51,17 @@ class Solution {
 //     }
     
         // 循环
-//     public ListNode reverseList(ListNode head) {
-//         // 起名为bubblePointer，因为它会随着循环，tail -> head，就像冒泡排序的过程一样
-//         // 需要为null，不能是0，不然输出有误。因为它在第一个循环会被赋给tail.next，如果它不为null，那它就会被输出为0了（为null则不输出了，只不过从逻辑上来说它确实是最底的tail）
-//         ListNode bubblePointer = null;      
+    public ListNode reverseList(ListNode head) {
+        ListNode ptr = null;      
 
-//         while(head != null){
-//             // 每次考虑下一个位置的node就行，一开始总在思考后面两个位置的node，所以写不对
-//             ListNode realNext = head.next;
-//             head.next = bubblePointer;
-//             bubblePointer = head;           // 就是这一步使得它逐步地：tail -> head
-//             head = realNext;
-//         }
+        while(head != null){
+            // 每次考虑下一个位置的node就行，一开始总在思考后面两个位置的node，所以写不对
+            ListNode oldNext = head.next;
+            head.next = ptr;
+            ptr = head;           // 就是这一步使得它逐步地：tail -> head
+            head = oldNext;
+        }
 
-//         return bubblePointer;               // 最终，它已经是head了，输出即可
-//     }
+        return ptr;               // 最终，它已经是head了，输出即可
+    }
 }
