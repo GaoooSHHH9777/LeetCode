@@ -35,7 +35,7 @@ class Solution {
             fast = fast.next.next;
         }
         ListNode next = slow.next;
-        slow.next = null;
+        slow.next = null;                           // 切断链表，很重要！
         
         ListNode head1 = head;
         ListNode head2 = reverseList(next);
