@@ -15,19 +15,21 @@ class Solution {
         ListNode dummyHead = new ListNode(0);
         dummyHead.next = head;
         
-        while(head != null && head.next != null){
-            if(head.val <= head.next.val){
-                head = head.next;
+        ListNode cur = head;
+        while(cur != null && cur.next != null){
+            if(cur.val <= cur.next.val){              // 跳过“已排序完成的域”
+                cur = cur.next;
                 continue;
             }
             
-            ListNode pre = dummyHead;                   // 面对链表，“从头开始”就得这样做
-            while(pre.next.val < head.next.val){
+            ListNode pre = dummyHead;                 // 从“已排序完成的域的first”开始，看“已排序完成的域里是否能有大于cur的值，即cur是否需要加入这个域”
+            while(pre.next.val < cur.next.val){       // 始终以“.next”去追踪，不然的话无法实现“prev.next从oldNext切换到newNext”
                 pre = pre.next;
             }
             
-            ListNode next = head.next;
-            head.next = head.next.next;
+            // 找到第一个“可以放入的位置”之后，cur与cur.oldNext断开连接、接上cur.newNext，pre与pre.oldNext断开连接、接上cur.oldNext，cur.oldNext接上pre.oldNext
+            ListNode next = cur.next;
+            cur.next = cur.next.next;
             next.next = pre.next;
             pre.next = next;
         }
