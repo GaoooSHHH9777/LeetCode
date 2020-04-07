@@ -46,10 +46,14 @@ class Solution {
              *      说白了，old-nums[i]是“主动寻址”的，它能保证正确；但是new-nums[i]是“被动寻址”交换过来的，可能正确也可能不正确，那就需要“把它不正确的情况也掰正确了”
              *          它可能是正确的（就像[1,2,0]这个arr），也可能是错误的（就像[3,4,-1,1]这个arr）
              */
+
+            /**
+             *  为什么要采用交换的方式呢？因为存在负数且这个负数不知道范围，如果仍然像“No.448、No.268”一样去给正数nums[i]对应的位置（idx）加上len的话，负数的存在使得压根无法求解
+             */
             
             // nums[i] < 1或者nums[i] > len的话，就舍弃（即num <= 0和num > n+1的情况呗，因为只考虑num > 1的为正数情况）
-            while (nums[i]>0 && nums[i]<len+1 && nums[nums[i]-1]!=nums[i]) {            // nums[nums[i]-1] != nums[i]的意思是没有被相同值占有过
-                swap(nums, nums[i]-1, i);                                               // 例如数值3应该放在idx=2的位置上
+            while (nums[i]>0 && nums[i]<len+1 && nums[nums[i]-1]!=nums[i]) {            // 为什么需要nums[nums[i]-1] != nums[i]？不如想想等于了会怎么样？无限互相交换的死循环啊。。
+                swap(nums, nums[i]-1, i);
             }
         }
 
