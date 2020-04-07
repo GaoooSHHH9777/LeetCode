@@ -1,18 +1,28 @@
+// 解法1：贪心
 // Runtime: 1 ms, faster than 92.33% of Java online submissions for Best Time to Buy and Sell Stock II.
 // Memory Usage: 42.5 MB, less than 5.71% of Java online submissions for Best Time to Buy and Sell Stock II.
 
+// 解法2：动态规划。比较慢，但是思路挺好
+// Runtime: 8 ms, faster than 6.87% of Java online submissions for Best Time to Buy and Sell Stock II.
+// Memory Usage: 42.5 MB, less than 5.71% of Java online submissions for Best Time to Buy and Sell Stock II.
+
 class Solution {
+    
+        // 解法1：贪心。它可以理解为“直接将所有上升段全吃”，也可以理解为“每次大于前一天我就先做T、然后再当天购回”
     public int maxProfit(int[] prices) {
         int res = 0;
         
+        
         for (int i=1; i<prices.length; i++) {
-            res += Math.max(prices[i] - prices[i-1], 0);
+            if (prices[i] > prices[i-1]){
+                res += prices[i] - prices[i-1];
+            }
         }
         
         return res;
     }
     
-        // 动态规划。比较慢，只能超过9.92%，但是思路挺好
+        // 解法2：动态规划。比较慢，但是思路挺好
 //     public int maxProfit(int[] prices) {
 //         if (prices.length < 2) {
 //             return 0;
