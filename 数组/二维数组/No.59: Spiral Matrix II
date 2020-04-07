@@ -3,25 +3,27 @@
 
 class Solution {
     public int[][] generateMatrix(int n) {
-        int l = 0, r = n - 1;
-        int t = 0, b = n - 1;
+        int up_row = 0;
+        int down_row = n - 1;
+        int left_col = 0;
+        int right_col = n - 1;
         
         int[][] matrix = new int[n][n];
         
         int num = 1;
         int tar = n * n;
         while(num <= tar){
-            for(int i = l; i <= r; i++) matrix[t][i] = num++; // 从left列开始，走向right
-            t++;
+            for(int i = left_col; i <= right_col; i++) matrix[up_row][i] = num++; // 从left列开始，走向right
+            up_row++;
             
-            for(int i = t; i <= b; i++) matrix[i][r] = num++; // 从top+1行开始，走向bottom
-            r--;
+            for(int i = up_row; i <= down_row; i++) matrix[i][right_col] = num++; // 从top+1行开始，走向bottom
+            right_col--;
             
-            for(int i = r; i >= l; i--) matrix[b][i] = num++; // 从right-1列开始，走向left
-            b--;
+            for(int i = right_col; i >= left_col; i--) matrix[down_row][i] = num++; // 从right-1列开始，走向left
+            down_row--;
             
-            for(int i = b; i >= t; i--) matrix[i][l] = num++; // 从bottom-1行开始，走向top
-            l++;
+            for(int i = down_row; i >= up_row; i--) matrix[i][left_col] = num++; // 从bottom-1行开始，走向top
+            left_col++;
         }
         
         return matrix;
