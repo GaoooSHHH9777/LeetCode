@@ -1,0 +1,146 @@
+// 解法1：类似于二分的做法。时间复杂度O(log(mn))，甚至可以O(log(min(m,n)))
+// Runtime: 2 ms, faster than 99.83% of Java online submissions for Median of Two Sorted Arrays.
+// Memory Usage: 41.8 MB, less than 100.00% of Java online submissions for Median of Two Sorted Arrays.
+    
+// 解法2：把“No.215：数组中的第K个最大元素（medium）”的代码抄过来用了。时间复杂度O(m+n)
+// Runtime: 4 ms, faster than 17.11% of Java online submissions for Median of Two Sorted Arrays.
+// Memory Usage: 40.1 MB, less than 100.00% of Java online submissions for Median of Two Sorted Arrays.
+
+class Solution {
+        // 解法1：类似于二分的做法。时间复杂度O(log(mn))，甚至可以O(log(min(m,n)))
+//     int[] A;
+//     int[] B;
+
+//     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+//         this.A = nums1;
+//         this.B = nums2;
+        
+//         int sumLength = A.length + B.length;
+        
+//         if(sumLength % 2 == 0){
+//             double left = getKth(0, 0, sumLength/2);
+//             double right = getKth(0, 0, sumLength/2 + 1);
+//             return (left + right)/2;
+//         }else{
+//             return getKth(0, 0, sumLength/2 + 1);
+//         }
+//     }
+
+//     public double getKth(int aStart, int bStart, int k) {
+//         if (aStart > A.length - 1) {
+//             // If A is exhausted, return kth number in B
+//             return B[bStart + k - 1];       
+//         }
+//         if (bStart > B.length - 1) {
+//             // If B is exhausted, return kth number in A
+//             return A[aStart + k - 1];   
+//         }
+        
+//         if(k == 1){
+//             return Math.min(A[aStart], B[bStart]);
+//         }
+        
+//         // [2,4,6,8,10,12]，从arr[3]开始数两个数字，newIndex = 3+2-1 => arr[4]。所以要-1
+//         int midIndexA = aStart + k/2 - 1;
+//         int midIndexB = bStart + k/2 - 1;
+        
+//         int midValA = midIndexA < A.length ? A[midIndexA] : Integer.MAX_VALUE;
+//         int midValB = midIndexB < B.length ? B[midIndexB] : Integer.MAX_VALUE;
+        
+//         // Throw away half of the array from A or B. And cut k in half
+//         if (midValA < midValB) {             // 这里是<或者<=都可以
+//             // Check: aRight + bLeft 
+//             return getKth(midIndexA+1, bStart,      k - k/2);     // k - k/2并不等价于k/2，因为是int。比如1/2=0，但是1 - 1/2 = 1，是不一样的
+//         }else {
+//             // Check: bRight + aLeft
+//             return getKth(aStart,      midIndexB+1, k - k/2);     
+//         }
+//     }
+    
+        // 解法2：把“No.215：数组中的第K个最大元素（medium）”的代码抄过来用了。时间复杂度O(m+n)
+        //      做法就是“先合并数组”，且已知“合并数组的len，即可知midIdx”，那就直接“取合并数组的mid”就好了
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int len1 = nums1.length;
+        int len2 = nums2.length;
+        int sumLen = len1 + len2;
+        int[] numss = new int[sumLen];
+        
+        for(int i=0; i<len1; i++){
+            numss[i] = nums1[i];
+        }
+        
+        for(int i=0; i<len2; i++){
+            numss[len1+i] = nums2[i];
+        }
+        
+        if(sumLen%2 == 0){
+            int[] numsss = numss;
+            double left = findKthLargest(numss, sumLen/2);
+            double right = findKthLargest(numsss, sumLen/2 + 1);
+            
+            return (left+right) / 2;
+        }else{
+            return findKthLargest(numss, sumLen/2 + 1);
+        }
+    }
+    
+    public int findKthLargest(int[] nums, int k) {
+        int indexK = k-1;       // 在数组里找第K个，那index当然是k-1了
+        
+        // 把边界记录下来，会有变动～
+        int left = 0;
+        int right = nums.length-1;
+        
+        while(true) {
+            int pivotIndex = medianOfThree(nums, left, right);      // 三数取中
+            
+            int resultIndex = partition(nums, left, right, pivotIndex);
+            if(resultIndex > indexK){
+                right = resultIndex-1;
+            }else if(resultIndex < indexK){
+                left = resultIndex+1;
+            }else{          // resultIndex == indexK，这里return两者中哪个都可以的
+                return nums[resultIndex];
+            }
+        }
+    }
+    
+    private int partition(int[] nums, int left, int right, int pivotIndex) {
+        int pivotValue = nums[pivotIndex];
+        swap(nums, pivotIndex, right);      // 快排第一步：把pivot交换到最后一位去
+        
+        int index = left;
+        for(int i=left; i<right; i++) {
+            if(nums[i] > pivotValue) {      // 和快排不同的是：把大的往前（快排是把小的往前）。当然了，如果要来个逆序的快排，那就和这个的处理方式一样了
+                swap(nums, index++, i);
+            }
+        }
+        
+        swap(nums, right, index);           // 快排最后一步：把pivot换回去（即“置换完成后的那个区域的后面一个位置”，注意index是会++的～ 
+        
+        return index;
+    }
+    
+        // 三数取中。按调用顺序是不应该放在partition方法下面的，但是为了主体代码的连贯可读性，就放下面了
+    private int medianOfThree(int[] arr, int left, int right) {
+        int mid = left + (right-left)/2;
+        
+        if(arr[right] > arr[left]){
+            swap(arr, left, right);
+        }
+        if(arr[right] > arr[mid]){
+            swap(arr, right, mid);
+        }
+        if(arr[mid] > arr[left]){
+            swap(arr, left, mid);
+        }
+        
+        return mid;
+    }
+    
+    private void swap(int[] arr, int indexA, int indexB) {
+        int temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+}
