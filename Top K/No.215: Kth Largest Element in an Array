@@ -45,9 +45,8 @@ class Solution {
         int right = nums.length-1;
         
         while(true) {
-            int pivotIndex = medianOfThree(nums, left, right);      // 三数取中
+            int resultIndex = partition(nums, left, right);
             
-            int resultIndex = partition(nums, left, right, pivotIndex);
             if(resultIndex > indexK){
                 right = resultIndex-1;
             }else if(resultIndex < indexK){
@@ -58,18 +57,20 @@ class Solution {
         }
     }
     
-    private int partition(int[] nums, int left, int right, int pivotIndex) {
-        int pivotValue = nums[pivotIndex];
-        swap(nums, pivotIndex, right);      // 快排第一步：把pivot交换到最后一位去
+    private int partition(int[] nums, int left, int right) {
+        int pivotIdx = medianOfThree(nums, left, right);      // 三数取中    
+        int pivotVal = nums[pivotIdx];
+        
+        swap(nums, pivotIdx, right);                          // 快排第一步：把pivot交换到最后一位去
         
         int index = left;
         for(int i=left; i<right; i++) {
-            if(nums[i] > pivotValue) {      // 和快排不同的是：把大的往前（快排是把小的往前）。当然了，如果要来个逆序的快排，那就和这个的处理方式一样了
+            if(nums[i] > pivotVal) {                          // 和快排不同的是：把大的往前（快排是把小的往前）。当然了，如果要来个逆序的快排，那就和这个的处理方式一样了
                 swap(nums, index++, i);
             }
         }
         
-        swap(nums, right, index);           // 快排最后一步：把pivot换回去（即“置换完成后的那个区域的后面一个位置”，注意index是会++的～ 
+        swap(nums, right, index);                             // 快排最后一步：把pivot换回去（即“置换完成后的那个区域的后面一个位置”，注意index是会++的～ 
         
         return index;
     }
