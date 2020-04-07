@@ -1,6 +1,6 @@
 // 动态规划
-// Runtime: 107 ms, faster than 27.01% of Java online submissions for Longest Palindromic Substring.
-// Memory Usage: 43.1 MB, less than 6.86% of Java online submissions for Longest Palindromic Substring.
+// Runtime: 103 ms, faster than 27.98% of Java online submissions for Longest Palindromic Substring.
+// Memory Usage: 43 MB, less than 6.86% of Java online submissions for Longest Palindromic Substring.
 
 // Manacher
 // Runtime: 41 ms, faster than 44.97% of Java online submissions for Longest Palindromic Substring.
@@ -15,50 +15,36 @@ class Solution {
 
         boolean[][] dp = new boolean[len][len];
 
-        // 初始化（可以不用）
-        // for (int i = 0; i < len; i++) {
-        //     dp[i][i] = true;
-        // }
-
         int maxLen = 1;
         int start = 0;
 
-        
-        /**
-         *  这个双重for循环有三种写法，可以回头琢磨
-         */
-        
-        // for (int j=1; j<len; j++) {
-        //     for (int i=0; i<j; i++) {
-        // for (int j = 1; j < len; j++) {
-        //     for (int i = j - 1; i >= 0; i--) {
-        for (int i = len - 1; i >= 0; i--) {
-            for (int j = i; j < len; j++) {
-//                 if (s.charAt(i) == s.charAt(j)) {
-//                     if (j-i < 3) {        // 长度为1或者2的字符串，只要满足s.charAt(i) == s.charAt(j)，肯定是回文
-//                         dp[i][j] = true;
-//                     } else {                // 长度达到3的话，就得看“左右往内挤一格”是不是回文。这是本题动态规划方法省去的计算步骤
-//                         dp[i][j] = dp[i+1][j-1];
-//                     }
-//                 } else {
-//                     dp[i][j] = false;
-//                 }
-
-//                 // 只要 dp[i][j] == true 成立，就表示子串 s[i, j] 是回文，此时记录回文长度和起始位置
-//                 if (dp[i][j]) {
-//                     int curLen = j-i+1;
-//                     if (curLen > maxLen) {
-//                         maxLen = curLen;
-//                         start = i;
-//                     }
-//                 }
-                
-                // 上面注释掉的代码可以用以下的来表示，但是可读性会超级差
-                dp[i][j] = s.charAt(i) == s.charAt(j) && (j-i < 3 || dp[i+1][j-1]);
-                if (dp[i][j] && j-i+1 > maxLen) {
-                    maxLen = j-i+1;
-                    start = i;
+        for (int i=1; i<len; i++) {
+            for (int j=0; j<i; j++) {
+                if (s.charAt(i) == s.charAt(j)) {
+                    if (i-j < 3) {          // 长度为1或者2的字符串，只要满足s.charAt(i) == s.charAt(j)，肯定是回文
+                        dp[i][j] = true;
+                    } else {                // 长度达到3的话，就得看“左右往内挤一格，即左向右一格、右向左一格”是不是回文。这是本题动态规划方法省去的计算步骤
+                        dp[i][j] = dp[i-1][j+1];
+                    }
+                } else {
+                    dp[i][j] = false;
                 }
+
+                // 只要 dp[i][j] == true 成立，就表示子串 substring(i,j) 是回文，此时记录回文长度和起始位置
+                if (dp[i][j]) {
+                    int curLen = i-j+1;
+                    if (curLen > maxLen) {
+                        maxLen = curLen;
+                        start = j;
+                    }
+                }
+                
+                // 上面for-for底下的代码可以精简到以下，但是可读性很差
+                // dp[i][j] = s.charAt(i) == s.charAt(j) && (j-i < 3 || dp[i+1][j-1]);
+                // if (dp[i][j] && j-i+1 > maxLen) {
+                //     maxLen = j-i+1;
+                //     start = i;
+                // }
             }
         }
         
