@@ -8,14 +8,12 @@ class Solution {
         int left = 0;
         int right = height.length-1;
         
-        while(left < right){
-            int shorter = Math.min(height[left], height[right]);
-            max = Math.max(max, (right-left) * shorter);
-            
-            // 谁比较小，谁移动。移动方向：朝中间靠拢
-            if(height[left] == shorter){
+        while(left < right){             // 谁比较小，谁移动。移动方向：朝中间靠拢
+            if(height[left] < height[right]){
+                max = Math.max(max, (right-left) * height[left]);
                 left++;
             }else{
+                max = Math.max(max, (right-left) * height[right]);
                 right--;
             }
         }
