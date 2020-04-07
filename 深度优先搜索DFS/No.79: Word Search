@@ -3,6 +3,8 @@
 
 class Solution {
 
+        // 这道题可以看作dfs分类，也可以看作回溯分类。但是代码实现上几乎和经典的二维dfs相同，所以放到dfs里了
+
     int[][] directions = new int[][] {{-1,0}, {0,-1}, {1,0}, {0,1}};
     int rows;
     int cols;
