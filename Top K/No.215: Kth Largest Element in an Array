@@ -36,7 +36,10 @@ class Solution {
 //         return pq.poll();       // 这里return pq.peek()或者pq.poll()都是可以的
 //     }
     
-        // 快速选择-Quick Selection，O(N)。原理是基于快速排序的partition思想，pivot选择策略是“三数取中”
+        // 快速选择-Quick Selection，O(N)。原理是基于快速排序的partition思想，pivot选择策略是“三数取中”。比较重要的是，这里partition的方式是“大数在pivot左边”，也可以把(nums[i] > pivotVal)换成<，这样的话输出最后的K个就可以了
+        //      注意：这里并没有“把resultIdx左侧全部排好序”！！！只是找到了“哪个val会有k-1个比它小的数字”，仅此而已！
+        //      如果真正地要去给它们都排好序，那应该在>或者<之后，递归调用本方法。这样的话，其实就是递归快排的过程了（写在最下方）。因为有递归的O(logn)过程，所以快排的时间复杂度O(nlogn)=递归O(logn)*partition函数O(n)
+        //      同时，这样得到的结果，nums[]到resultIdx为止的所有数字，是“前K个大的数字”的结果！（这前K个大的数互相之间没有排过序，但是确实是前K个大的，因为第K个大的是pivot呀）
     public int findKthLargest(int[] nums, int k) {
         int indexK = k-1;       // 在数组里找第K个，那index当然是k-1了
         
@@ -75,7 +78,7 @@ class Solution {
         return index;
     }
     
-        // 三数取中。按调用顺序是不应该放在partition方法下面的，但是为了主体代码的连贯可读性，就放下面了
+        // 三数取中
     private int medianOfThree(int[] arr, int left, int right) {
         int mid = left + (right-left)/2;
         
@@ -97,4 +100,50 @@ class Solution {
         arr[indexA] = arr[indexB];
         arr[indexB] = temp;
     }
+    
+        /**
+         *  快速排序
+         */
+//     public int[] quickSort(int[] A, int n) {
+//         // write code here
+//         if (A == null || A.length < 2) {
+//             return A;
+//         }
+        
+//         process(A, 0, n - 1);
+        
+//         return A;
+//     }
+//     public static void process(int[] arr, int left, int right) {
+//         if (left > right) {
+//             return;
+//         }
+        
+//         int mid = partition(arr, left, right);
+        
+//         process(arr, left, mid - 1);
+//         process(arr, mid + 1, right);
+//     }
+//     public static int partition(int[] arr, int left, int right) {
+//         int pivotIdx = left + (int) (Math.random()*(right - left + 1));
+//         int pivotVal = arr[pivotIdx];
+        
+//         swap(arr, pivotIdx, right);
+        
+//         int pivot = left;
+//         for(int i=left; i<right; i++){
+//             if (arr[i] < pivotVal) {
+//                 swap(arr, pivot++, i);
+//             }
+//         }
+        
+//         swap(arr, pivot, right);
+        
+//         return pivot;
+//     }
+//     public static void swap(int[] arr, int left, int right) {
+//         int temp = arr[left];
+//         arr[left] = arr[right];
+//         arr[right] = temp;
+//     }
 }
