@@ -5,30 +5,37 @@ class Solution {
         // 看不懂就看这个图。https://leetcode-cn.com/problems/spiral-matrix/solution/yi-chong-you-ya-de-bian-li-fang-shi-dai-ma-zheng-q/
     public List<Integer> spiralOrder(int[][] matrix) {
         List<Integer> res = new ArrayList<>();
-        
-        if (matrix.length == 0) {
+        if (matrix == null || matrix.length == 0) {
             return res;
         }
-        
-        int r1 = 0, r2 = matrix.length - 1;
-        int c1 = 0, c2 = matrix[0].length - 1;
-        
-        // 每次遍历都留一格，即为了“转90度方向”
-        while (r1 <= r2 && c1 <= c2) {
-            for (int c = c1; c <= c2; c++) res.add(matrix[r1][c]);
-            for (int r = r1 + 1; r <= r2; r++) res.add(matrix[r][c2]);
+
+        int up_row = 0;
+        int down_row = matrix.length - 1;
+        int left_col = 0;
+        int right_col = matrix[0].length - 1;
+
+        while (true) {
+            // 从左到右
+            for (int i = left_col; i <= right_col; i++) res.add(matrix[up_row][i]);
+            up_row++;
+            if (up_row > down_row) break;
             
-            if (r1 < r2 && c1 < c2) {           // 如果不判断的话，单行或者单列的时候会多添加数字
-                for (int c = c2 - 1; c > c1; c--) res.add(matrix[r2][c]);
-                for (int r = r2; r > r1; r--) res.add(matrix[r][c1]);
-            }
-            
-            r1++;
-            r2--;
-            c1++;
-            c2--;
+            // 从上到下
+            for (int i = up_row; i <= down_row; i++) res.add(matrix[i][right_col]);
+            right_col--;
+            if (left_col > right_col) break;
+
+            // 从右到左
+            for (int i = right_col; i >= left_col; i--) res.add(matrix[down_row][i]);
+            down_row--;
+            if (up_row > down_row) break;
+
+            //从下到上
+            for (int i = down_row; i >= up_row; i--) res.add(matrix[i][left_col]);
+            left_col++;
+            if (left_col > right_col) break;
         }
-        
+
         return res;
     }
 }
