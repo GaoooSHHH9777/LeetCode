@@ -1,0 +1,64 @@
+// dp1.0
+// Runtime: 1 ms, faster than 70.88% of Java online submissions for Maximum Subarray.
+// Memory Usage: 39.5 MB, less than 7.98% of Java online submissions for Maximum Subarray.
+
+// dp2.0，一个变量
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for Maximum Subarray.
+// Memory Usage: 41.9 MB, less than 5.16% of Java online submissions for Maximum Subarray.
+
+class Solution {
+
+        // dp1.0
+//     public int maxSubArray(int[] nums) {
+//         int len = nums.length;
+//         if (len == 0) {
+//             return 0;
+//         }
+        
+//         int[] dp = new int[len];
+//         dp[0] = nums[0];
+        
+//         int max = dp[0];
+//         for (int i=1; i<len; i++) {
+//             // if (dp[i-1] > 0) {
+//             //     dp[i] = dp[i-1] + nums[i];
+//             // } else {
+//             //     dp[i] = nums[i];
+//             // }
+            
+//             // 上面的直接可以这样简写。也很明朗：什么时候a+b会小于b？a小于0的时候呗
+//             dp[i] = Math.max(nums[i], dp[i-1]+nums[i]);
+            
+//             max = Math.max(max, dp[i]);
+//         }
+        
+//         return max;
+//     }
+
+        // dp2.0，一个变量
+    public int maxSubArray(int[] nums) {
+        int len = nums.length;
+        
+        int preSum = nums[0];
+        
+        int max = nums[0];
+        for(int i=1; i<len; i++){
+//             if(preSum > 0){
+//                 preSum += nums[i];
+//             }else{
+//                 preSum = nums[i];
+//             }
+            
+            // 同理于dp1.0
+            preSum = Math.max(nums[i], preSum+nums[i]);
+            max = Math.max(max, preSum);
+        }
+        
+        return max;
+    }
+    
+        // 分而治之
+//     public int maxSubArray(int[] nums) {
+        
+//     }
+}
