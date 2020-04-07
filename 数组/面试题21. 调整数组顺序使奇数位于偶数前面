@@ -1,0 +1,32 @@
+// 执行用时: 2 ms, 在所有 Java 提交中击败了99.98%的用户
+// 内存消耗: 47.4 MB, 在所有 Java 提交中击败了100.00%的用户
+
+class Solution {
+
+    /**
+     *  双指针，left从头开始找奇数，right从尾开始找偶数
+     *      一旦有一对满足的<奇，偶>，就交换它们
+     *      重复这个过程直至left > right
+     */
+
+    public int[] exchange(int[] nums) {
+        int left = 0;
+        int right = nums.length - 1;
+
+        while (left < right) {
+            while (left < right && nums[left] % 2 != 0) {
+                left++;
+            }
+            while (left < right && nums[right] % 2 == 0) {
+                right--;
+            }
+            if (left < right) {
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+            }
+        }
+        
+        return nums;
+    }
+}
