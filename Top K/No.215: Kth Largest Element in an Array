@@ -44,7 +44,7 @@ class Solution {
         int left = 0;
         int right = nums.length-1;
         
-        while(left < right) {           // <就可以，不必<=
+        while(true) {
             int pivotIndex = medianOfThree(nums, left, right);      // 三数取中
             
             int resultIndex = partition(nums, left, right, pivotIndex);
@@ -56,8 +56,6 @@ class Solution {
                 return nums[resultIndex];
             }
         }
-        
-        return nums[indexK];
     }
     
     private int partition(int[] nums, int left, int right, int pivotIndex) {
