@@ -50,8 +50,8 @@ class Solution {
         int lowest = prices[0];
 
         for(int i=1; i<prices.length; i++){
-            lowest = Math.min(lowest, prices[i]);
             max = Math.max(max, prices[i]-lowest);
+            lowest = Math.min(lowest, prices[i]);
         }
         
         return max;
