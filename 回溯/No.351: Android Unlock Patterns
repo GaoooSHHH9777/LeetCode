@@ -40,10 +40,13 @@ class Solution {
             return false;
         }
 
-        if (Math.abs(x1-x2)<2 && Math.abs(y1-y2)<2) {       // 直接相邻，比如1-2、1-4、1-5
+        int gapX = Math.abs(x1-x2);
+        int gapY = Math.abs(y1-y2);
+
+        if (gapX<2 && gapY<2) {       // 直接相邻，比如1-2、1-4、1-5
             return true;
         }
-        if (Math.abs(x1-x2)!=1 && Math.abs(y1-y2)!=1) {     // 不直接相邻，比如1-3、1-6、1-7、1-8、1-9。那就取决于中间路过的元素，如果中间路过的位置是visited=true，那就是true
+        if (gapX!=1 && gapY!=1) {     // 不直接相邻，比如1-3、1-6、1-7、1-8、1-9。那就取决于中间路过的元素，如果中间路过的位置是visited=true，那就是true
             return visit[(x1+x2)/2][(y1+y2)/2];
         }
 
