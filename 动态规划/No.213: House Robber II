@@ -1,0 +1,29 @@
+// dp2.0
+// Runtime: 0 ms, faster than 100.00% of Java online submissions for House Robber II.
+// Memory Usage: 37.2 MB, less than 6.67% of Java online submissions for House Robber II.
+
+class Solution {
+    public int rob(int[] nums) {
+        if(nums.length == 0) return 0;
+        if(nums.length == 1) return nums[0];
+        
+        // 拆为两个arr，[first, final-1] & [second, final]。两个res求max就行
+        int robFromFirst = myRob(nums, 0, nums.length-1);
+        int robFromSecond = myRob(nums, 1, nums.length);
+
+        return Math.max(robFromFirst, robFromSecond);
+    }
+    
+    private int myRob(int[] nums, int start, int end) {
+        int prevRob = 0;        // 表示“上次已抢”，即“本次不可用”，需要把它在循环里过渡，过渡给"notrob"。即对于next来说，本次抢了之后不可用再抢，但对于next的next来说，本次抢了之后并不影响
+        int prevNotRob = 0;     // 表示"上次不抢"，即“本次可用”
+
+        for(int i=start; i<end; i++) {
+            int tmp = prevRob;
+            prevRob = Math.max(prevRob, prevNotRob+nums[i]);
+            prevNotRob = tmp;
+        }
+        
+        return prevRob;
+    }
+}
