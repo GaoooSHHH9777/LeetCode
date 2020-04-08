@@ -52,12 +52,24 @@ class Solution {
         
         // 大剪枝与小剪枝
         for(int i=currentIndex; i<candidates.length; i++){
-            if(candidates[i] > needCalculate) {     // 这是大剪枝
+            if(candidates[i] > needCalculate) {                         // 剪枝
                 break;
             }
             
             // 自己写的逻辑是"i>0"，但实际上是需要"i>currentIndex"。。。。。。。
-            if (i>currentIndex && candidates[i]==candidates[i-1]) {     // 这是小剪枝～
+            //      为什么是i>curIdx呢？如果以递归树来说，层级是这样的
+            //       1
+            //      / \
+            //     2   2            i>curIdx保证了同层级的重复遍历不会发生，即这种情况可以避免
+            //    /     \
+            //   5       5
+            //   
+            //       1
+            //      /
+            //     2                但是，对于不同层级，重复数字的遍历是畅通的
+            //    /
+            //   2  
+            if (i>currentIndex && candidates[i]==candidates[i-1]) {
                 continue;
             }
             
