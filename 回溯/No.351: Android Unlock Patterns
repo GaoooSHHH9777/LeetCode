@@ -11,7 +11,6 @@ class Solution {
     private int dfs(boolean[][] visit, int least, int most, int count, int x, int y) {     // 以(x,y)开始，在已经有count的情况下，寻找合法的个数
         int res = 0;
 
-        
         count++;
         if (count >= least) {
             res++;
