@@ -8,11 +8,11 @@
  * }
  */
 
-// 循环
+// 递归1
 // Runtime: 0 ms, faster than 100.00% of Java online submissions for House Robber III.
 // Memory Usage: 41.2 MB, less than 13.89% of Java online submissions for House Robber III.
 
-// 递归
+// 递归2
 // Runtime: 395 ms, faster than 31.80% of Java online submissions for House Robber III.
 // Memory Usage: 39.5 MB, less than 61.11% of Java online submissions for House Robber III.
 
@@ -29,7 +29,7 @@ class Solution {
      *      实际上，是要不断地求“子问题的最优解”，是一个“自底向上”的过程，所以是动态规划的解决方式
      */
     
-        // 循环
+        // 递归1
     public int rob(TreeNode root) {
         int[] res = robRecursion(root);
         
@@ -62,7 +62,7 @@ class Solution {
         return new int[]{rob, notrob};      // 0-选择当前节点的最大情况，1-不选当前节点的最大情况
     }
     
-        // 递归
+        // 递归2
 //     public int rob(TreeNode root) {
 //         if(root == null) return 0;
 //         if(root.left==null && root.right==null) return root.val;
