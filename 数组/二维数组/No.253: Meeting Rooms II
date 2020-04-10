@@ -1,0 +1,27 @@
+//（英文版是锁的看不了）
+// 执行用时: 9 ms, 在所有 Java 提交中击败了78.16%的用户
+// 内存消耗: 39.1 MB, 在所有 Java 提交中击败了6.67%的用户
+
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        if(intervals.length == 0){
+            return 0;
+        }
+
+        Arrays.sort(intervals, (a,b) -> a[0]-b[0]);
+        PriorityQueue<Integer> fastFinish = new PriorityQueue<>();          // 存放“所有会议的结束时间”
+
+        int rooms = 0;
+        for(int i=0; i<intervals.length; i++) {
+            fastFinish.add(intervals[i][1]);                                // 逐个添加“每场会议的结束时间”
+
+            if (intervals[i][0] < fastFinish.peek()) {                      // 某场会议开始时间早于“目前最早结束的会议”，那肯定早于所有会议的结束时间
+                rooms++;                                                    // 那就需要新开会议室
+            } else {                                                        // 某场会议开始时间晚于“目前最早结束的会议”，那堆顶的房间就是空的了啊
+                fastFinish.poll();                                          // 将“这场最早结束的会议”移出堆
+            }
+        }
+
+        return rooms;
+    }
+}
