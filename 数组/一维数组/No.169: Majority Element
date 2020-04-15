@@ -1,0 +1,37 @@
+// 解法1：排序，O(nlogn)
+// Runtime: 1 ms, faster than 99.89% of Java online submissions for Majority Element.
+// Memory Usage: 43.1 MB, less than 21.32% of Java online submissions for Majority Element.
+
+// 解法3：Boyer-Moore投票算法，O(n)
+// Runtime: 1 ms, faster than 99.89% of Java online submissions for Majority Element.
+// Memory Usage: 42.7 MB, less than 49.26% of Java online submissions for Majority Element.
+
+class Solution {
+    
+        // 解法0：HashMap，O(n)
+    
+        // 解法1：排序，O(nlogn)
+//     public int majorityElement(int[] nums) {
+//         Arrays.sort(nums);
+        
+//         return nums[nums.length/2];
+//     }
+    
+        // 解法2：分而治之，比较两个众数在整个区间内出现的次数来决定该区间的众数，O(nlogn)
+    
+        // 解法3：Boyer-Moore投票算法，O(n)。原理就是：每个“多数元素”和“其他元素”两两相互抵消，抵消到最后肯定还剩余至少1个“多数元素”，因为它是“more than n/2”
+    public int majorityElement(int[] nums) {
+        int candidate = nums[0];            // 候选人（nums里的某个val）
+        int count = 0;                      // 候选人的票数。遍历每个值，如果curVal == OldVal的话count++，否则count--。当count为0时，“将旧候选人更替，改为新候选人（即当前的val”，并且将count重置为0
+
+        for (int num: nums) {
+            if (count == 0) {
+                candidate = num;
+            }
+            
+            count += (num == candidate) ? 1 : -1;
+        }
+
+        return candidate;
+    }
+}
