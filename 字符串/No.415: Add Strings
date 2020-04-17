@@ -1,0 +1,31 @@
+// Runtime: 2 ms, faster than 96.95% of Java online submissions for Add Strings.
+// Memory Usage: 39.3 MB, less than 6.25% of Java online submissions for Add Strings.
+
+class Solution {
+    public String addStrings(String num1, String num2) {
+        StringBuilder res = new StringBuilder("");
+
+        int i = num1.length() - 1;
+        int j = num2.length() - 1;
+        
+        int carry = 0;              // 进位。比如14+16，因为4+6=10，所以carry=1、curIdxVal=0，append给StringBuilder；等到i--、j--后，1+1+carry=1+1+1=3，append给StringBuilder
+        while(i >= 0 || j >= 0){
+            int n1 = i >= 0 ? num1.charAt(i)-'0' : 0;
+            int n2 = j >= 0 ? num2.charAt(j)-'0' : 0;
+
+            int tmp = n1 + n2 + carry;
+            carry = tmp / 10;
+            int curIdxVal = tmp % 10;
+            res.append(curIdxVal);
+
+            i--;
+            j--;
+        }
+
+        if(carry == 1){                             // 检查idx=0的位置是否有进位
+            res.append(1);
+        }
+
+        return res.reverse().toString();            // 最后反转字符串即可
+    }
+}
