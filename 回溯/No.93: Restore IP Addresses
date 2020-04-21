@@ -1,0 +1,44 @@
+// Runtime: 2 ms, faster than 85.85% of Java online submissions for Restore IP Addresses.
+// Memory Usage: 39.9 MB, less than 6.98% of Java online submissions for Restore IP Addresses.
+
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        List<String> ans = new ArrayList<>();
+        if (s == null || s.length() == 0) {
+            return ans;
+        }
+        
+        dfs(s, 0, new ArrayList<>(), ans);
+        
+        return ans;
+    }
+    
+    private void dfs(String s, int pos, List<String> cur,  List<String> ans) {
+        if (cur.size() == 4) {
+            if (pos == s.length()) {
+                ans.add(String.join(".", cur));     // 用join组合List里的数据
+            }
+            
+            return;
+        }
+        
+        for (int i=1; i<=3; i++) {                  // 每个地址段最多3个数字
+            int toIdx = pos+i;
+            if (toIdx > s.length()) {
+                break;
+            }
+            
+            String segment = s.substring(pos, toIdx);
+            if (!invalidIP(segment, i)) {           // 判断是不是合法的ip地址
+                cur.add(segment);
+                dfs(s, toIdx, cur, ans);
+            
+                cur.remove(cur.size()-1);
+            }
+        }
+    }
+    
+    private boolean invalidIP(String segment, int i) {
+        return (segment.startsWith("0") && segment.length()>1 || (i==3 && Integer.parseInt(segment)>255));
+    }
+}
