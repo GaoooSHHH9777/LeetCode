@@ -1,0 +1,106 @@
+// 暴力解，O(n^2)
+// Runtime: 735 ms, faster than 7.59% of Java online submissions for Largest Rectangle in Histogram.
+// Memory Usage: 41.4 MB, less than 63.64% of Java online submissions for Largest Rectangle in Histogram.
+
+// （推荐）暴力解优化，用数组记录，O(n)
+// Runtime: 1 ms, faster than 99.94% of Java online submissions for Largest Rectangle in Histogram.
+// Memory Usage: 40.8 MB, less than 81.82% of Java online submissions for Largest Rectangle in Histogram.
+
+// 栈解法，O(n)
+// Runtime: 6 ms, faster than 88.63% of Java online submissions for Largest Rectangle in Histogram.
+// Memory Usage: 40.9 MB, less than 77.27% of Java online submissions for Largest Rectangle in Histogram.
+
+class Solution {
+
+        // 暴力解，O(n^2)。原理是“遍历所有矩形”，即每次找到“以curHeight为高度的最大矩形”。curHeight已知，那么area如何最大呢？那当然是找到对应的最大bottom了
+//     public int largestRectangleArea(int[] heights) {
+//         int len = heights.length;
+//         if (len == 0) {
+//             return 0;
+//         }
+
+//         int res = 0;
+//         for (int i=0; i<len; i++) {
+//             int curHeight = heights[i];
+            
+//             // 找到“以curHeight为高度，所能构成矩形的bottom”。所以需要一个left和一个right来定位这个bottom
+            
+//             int left = i;
+//             while (left > 0 && heights[left-1] >= curHeight) {
+//                 left--;
+//             }
+
+//             int right = i;
+//             while (right < len-1 && heights[right+1] >= curHeight) {
+//                 right++;
+//             }
+
+//             int bottom = right-left+1;
+//             res = Math.max(res, bottom*curHeight);
+//         }
+
+//         return res;
+//     }
+    
+        // （推荐）暴力解优化，用数组记录，O(n)。省去了“每个idx都要遍历两侧找bottom-left和bottom-right的过程”，改为“一次性找好，然后用arr记录好”
+    public int largestRectangleArea(int[] heights) {
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+        
+        int len = heights.length;
+        int[] left_i = new int[len];        // 以每个idx的curHeight为高，最远的bottom-left
+        int[] right_i = new int[len];       // 以每个idx的curHeight为高，最远的bottom-right
+        
+        // 所以下面这两个边界要定义一下。注意0-1是-1，len-1+1是len
+        left_i[0] = -1;
+        right_i[len-1] = len;
+        
+        int res = 0;
+        
+        for (int i=1; i<len; i++) {
+            int tmp = i-1;
+            while (tmp >= 0 && heights[tmp] >= heights[i]) {
+                tmp = left_i[tmp];
+            }
+            
+            left_i[i] = tmp;
+        }
+        
+        for (int i=len-2; i>=0; i--) {
+            int tmp = i+1;
+            while (tmp < len && heights[tmp] >= heights[i]) {
+                tmp = right_i[tmp];
+            }
+            
+            right_i[i] = tmp;
+        }
+        
+        for (int i=0; i<len; i++) {
+            res = Math.max(res, (right_i[i]-left_i[i]-1) * heights[i]);
+        }
+        
+        return res;  
+    }
+    
+        // 栈解法，O(n)
+//     public int largestRectangleArea(int[] heights) {
+//         int[] new_heights = new int[heights.length+2];
+//         for (int i=1; i<heights.length+1; i++) {
+//             new_heights[i] = heights[i-1];
+//         }
+        
+//         Deque<Integer> stack = new ArrayDeque<>();
+//         int res = 0;
+//         for (int i=0; i<new_heights.length; i++) {
+//             while (!stack.isEmpty() && new_heights[stack.peek()] > new_heights[i]) {
+//                 int cur = stack.pop();
+//                 res = Math.max(res, (i-stack.peek()-1) * new_heights[cur]);
+//             }
+            
+//             stack.push(i);
+//         }
+        
+//         return res;  
+//     }
+}
