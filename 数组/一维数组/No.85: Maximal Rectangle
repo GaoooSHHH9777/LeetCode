@@ -1,0 +1,69 @@
+// Runtime: 3 ms, faster than 90.64% of Java online submissions for Maximal Rectangle.
+// Memory Usage: 42.7 MB, less than 89.13% of Java online submissions for Maximal Rectangle.
+
+class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        int rows = matrix.length;
+        if (rows == 0) {
+            return 0;
+        }
+
+        int cols = matrix[0].length;
+        int[] heights = new int[cols];
+
+        int max = 0;
+        for (int row=0; row<rows; row++) {                  // 先char[][] -> int[][]，然后就简单了
+            for (int col=0; col<cols; col++) {
+                if (matrix[row][col] == '1') {
+                    heights[col] += 1;
+                } else {
+                    heights[col] = 0;
+                }
+            }
+
+            max = Math.max(max, largestRectangleArea(heights));
+        }
+
+        return max;
+    }
+
+    private int largestRectangleArea(int[] heights) {       // 直接复制No.84的代码来即可
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+
+        int len = heights.length;
+        int[] left_i = new int[len];        // 以每个idx的curHeight为高，最远的bottom-left
+        int[] right_i = new int[len];       // 以每个idx的curHeight为高，最远的bottom-right
+
+        // 所以下面这两个边界要定义一下。注意0-1是-1，len-1+1是len
+        left_i[0] = -1;
+        right_i[len-1] = len;
+
+        int res = 0;
+
+        for (int i=1; i<len; i++) {
+            int tmp = i-1;
+            while (tmp >= 0 && heights[tmp] >= heights[i]) {
+                tmp = left_i[tmp];
+            }
+
+            left_i[i] = tmp;
+        }
+
+        for (int i=len-2; i>=0; i--) {
+            int tmp = i+1;
+            while (tmp < len && heights[tmp] >= heights[i]) {
+                tmp = right_i[tmp];
+            }
+
+            right_i[i] = tmp;
+        }
+
+        for (int i=0; i<len; i++) {
+            res = Math.max(res, (right_i[i]-left_i[i]-1) * heights[i]);
+        }
+
+        return res;  
+    }
+}
