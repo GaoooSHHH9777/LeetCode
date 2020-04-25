@@ -1,0 +1,30 @@
+class Solution {
+    public String convertToBase7(int num) {
+        if(num == 0){
+            return "0";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        boolean negative = false;
+        
+        if(num < 0){            // 先将正数和负数一视同仁地处理，然后记录一下negative=true
+            num = num * -1;
+            negative = true;
+        }
+
+        while(num > 0){
+            int i = num % 7;
+            sb.append(i);
+
+            num /= 7;
+        }
+
+        if(negative){           // 如果是负数，就加个负号
+            sb.append("-");
+        }
+
+        sb.reverse();           // 这样得到的整个数字是反的，要反转一下
+
+        return sb.toString();
+    }
+}
