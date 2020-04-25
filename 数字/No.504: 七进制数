@@ -12,6 +12,7 @@ class Solution {
             negative = true;
         }
 
+        // 要是想不通，就想想二进制是咋算的？用除法的方式是怎么一个个算出来的？
         while(num > 0){
             int i = num % 7;
             sb.append(i);
