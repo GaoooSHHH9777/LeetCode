@@ -1,0 +1,41 @@
+class Solution {
+    public String addBinary(String a, String b) {
+        int i = a.length() - 1;
+        int j = b.length() - 1;
+
+        StringBuilder res = new StringBuilder();
+
+        int curSum;
+        int carry = 0;
+
+        while (i >= 0 || j >= 0) {          // 因为a和b的length并不一定相等，下面两个if判断同理
+            curSum = carry;
+
+            if (i >= 0) {
+                curSum += a.charAt(i) - '0';
+                i--;
+            }
+            if (j >= 0) {
+                curSum += b.charAt(j) - '0';
+                j--;
+            }
+
+            if (curSum > 1) {
+                curSum -= 2;
+                carry = 1;
+            } else {
+                carry = 0;
+            }
+
+            res.append(curSum);
+        }
+
+        if (carry == 1) {           // 检查最高位的进位
+            res.append(1);
+        }
+
+        res.reverse();              // 反转，必须步骤（不然就res.insert(0, curSum)这样来）
+
+        return res.toString();
+    }
+}
