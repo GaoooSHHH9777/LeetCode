@@ -1,0 +1,36 @@
+class Solution {
+
+        /**
+         *  用小顶堆（优先队列默认模式）而不是大顶堆，因为后者不符合O(nlogk)时间复杂度的
+         *      假设用大顶堆，那就需要把所有的word-count全部加入优先队列对吧？因为不可能每次size > k就去queue.poll()啊，大顶堆这样出去的是最大的元素。那么size最终会是distinct(words)这样，而不是k。而O(nlogk)的话就锁定了优先队列的大小为k，而不是distinct(words)
+         *      那就好办了，用小顶堆，size > k的时候queue.poll()即可
+         *          即在这个过程中，“永远维护着当前的前k个高频单词，直到distinct(words)遍历完成”
+         */
+
+    public List<String> topKFrequent(String[] words, int k) {
+        Map<String, Integer> map = new HashMap();
+        for (String word: words) {
+            map.put(word, map.getOrDefault(word, 0)+1);     // map.getOrDefault()方法，以后可以也这样用
+        }
+        
+        // 里面的comparator不能直接用(w1, w2) -> map.get(w1)-map.get(w2)，因为题意要求“如果不同的单词有相同出现频率，按字母顺序排序”
+        PriorityQueue<String> heap = new PriorityQueue<>((w1, w2) -> map.get(w1).equals(map.get(w2)) ? w2.compareTo(w1) : map.get(w1)-map.get(w2));
+
+        for (String word: map.keySet()) {
+            heap.add(word);
+
+            if (heap.size() > k) {          // 优先队列的大小为k，这样时间复杂度才是O(nlogk)
+                heap.poll();
+            }
+        }
+
+        List<String> ans = new ArrayList();
+        while (!heap.isEmpty()) {
+            ans.add(heap.poll());
+        }
+        
+        Collections.reverse(ans);           // 因为是最小堆，所以要逆序输出
+
+        return ans;
+    }
+}
