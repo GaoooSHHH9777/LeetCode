@@ -1,0 +1,28 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+        // 问题的关键在于：depth = 路径上的节点数量，而不是路径的长度（比如[1,2]得到的res应该是2而不是1）
+    public int minDepth(TreeNode root) {
+        if(root == null) {                                  // cur为空，则返回0
+            return 0;
+        }
+        if(root.left == null && root.right == null) {       // cur不为空，且cur的左右都为空，则返回1，注意depth的定义～
+            return 1;
+        }
+   
+        int m1 = minDepth(root.left);
+        int m2 = minDepth(root.right);
+        if(root.left == null || root.right == null) {       // cur不为空，且cur的左或右为空，则返回两者中非空者的深度（因为空者depth = 0，所以直接相加得到的是非空者的深度）。为什么这样呢，看用例[1,null,2]和[1,2]，需要考虑“根节点不能作为叶子节点”
+            return m1 + m2 + 1;
+        }
+        
+        return Math.min(m1,m2) + 1;                         // cur不为空，且cur的左右都不为空，那么返回较小者即可
+    }
+}
