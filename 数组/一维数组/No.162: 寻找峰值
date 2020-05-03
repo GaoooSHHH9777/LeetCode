@@ -1,0 +1,26 @@
+class Solution {
+
+    /**
+     *  其实这题和“No.33：搜索旋转排序数组”很像，都是用二分法来对mid进行决策。不过关键在于怎么把这个问题成功地抽象过来
+     *      简单来说就是，arr[mid]有两种情况：一是作为上升坡的一个点，二是作为下降坡的一个点（当arr[mid] > arr[mid+1]时并不一定是一个峰值，因为还要考虑arr[mid-1]）
+     *      对这两种情况进行二分搜索即可
+     */
+
+    public int findPeakElement(int[] nums) {
+        int l = 0;
+        int r = nums.length - 1;
+
+        while (l < r) {
+            int m = (l + r) / 2;
+
+            // 因为题目说了“nums[i] ≠ nums[i+1]”，所以不需要考虑nums[mid] = nums[mid+1]的情况
+            if (nums[m] > nums[m+1]) {          // mid处于下降坡
+                r = m;
+            } else {
+                l = m + 1;                      // mid处于上升坡
+            }
+        }
+
+        return l;
+    }
+}
