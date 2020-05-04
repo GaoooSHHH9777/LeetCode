@@ -1,0 +1,28 @@
+class Solution {
+        // 做两次反转。第一次全局反转，第二次反转各个单词，注意最后一个单词后面没有' '，所以在结束循环时再做一次单独的反转
+    public void reverseWords(char[] s) {
+        int len = s.length;
+        reverse(s, 0, len-1);
+
+        int start = 0;
+        for (int i=0; i<len; i++) {
+            if (s[i] == ' ') {
+                reverse(s, start, i-1);     // 为什么反转[start, i-1]这个范围？而下面start=i+1的话，i不考虑了吗？不如看看i是啥，' '需要反转吗？保留在原地即可
+                start = i + 1;
+            }
+        }
+
+        reverse(s, start, len-1);       // 翻转最后一个单词
+    }
+
+     private void reverse(char[] s, int start, int end) {
+        while (start < end) {
+            char tmp = s[start];
+            s[start] = s[end];
+            s[end] = tmp;
+
+            start++;
+            end--;
+        }
+    }
+}
