@@ -1,0 +1,58 @@
+class Solution {
+
+        /**
+         *  和网易笔试最后一道很接近
+         *      总的来说就是，先对weight作升序排序，再对同weight的height作降序排序
+         *      然后呢，对于所有的height，做一个“No.300：最长上升子序列”即可
+         *          这样就能得到最优的嵌套方案
+         */
+
+    public int maxEnvelopes(int[][] envelopes) {
+        int len = envelopes.length;
+
+        Arrays.sort(envelopes, (a, b) -> a[0]==b[0] ? b[1]-a[1] : a[0]-b[0]);
+
+        int[] height = new int[len];
+        for (int i=0; i<len; i++) {
+            height[i] = envelopes[i][1];
+        }
+
+        return lengthOfLIS(height);
+    }
+
+        // 抄自No.300，不懂就去看No.300
+    private int lengthOfLIS(int[] nums) {
+        int len = nums.length;
+        if (len < 2) {
+            return len;
+        }
+
+        int[] tails = new int[len];
+
+        int res = 0;
+        
+        for(int i=0; i<len; i++) {
+            int cur = nums[i];
+
+            int left = 0;
+            int right = res;
+            
+            while(left < right) {
+                int mid = (left + right) / 2;
+                if(tails[mid] < cur){
+                    left = mid + 1;
+                }else{                  
+                    right = mid;
+                }
+            }
+
+            tails[left] = cur; 
+            
+            if(right == res){
+                res++;
+            }
+        }
+        
+        return res;
+    }
+}
