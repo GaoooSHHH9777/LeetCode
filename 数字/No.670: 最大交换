@@ -1,0 +1,35 @@
+class Solution {
+    public int maximumSwap(int num) {
+        char[] c = String.valueOf(num).toCharArray();
+        int len = c.length;
+
+        int max = Integer.MIN_VALUE;
+        int maxIdx = 0;
+
+        int[] maxIdxes = new int[len];
+        maxIdxes[len-1] = len - 1;
+        
+        // 倒序循环，寻找每个idx后面的最大数的索引，并存储到arr里面
+        for (int i=len-1; i>=0; i--) {
+            int cur = c[i] - '0';
+            if (cur > max) {
+                max = cur;
+                maxIdx = i;
+            }
+
+            maxIdxes[i] = maxIdx;
+        }
+
+        for (int i=0; i<len; i ++) {
+            if (maxIdxes[i] != i && c[maxIdxes[i]] != c[i]) {
+                char tmp = c[i];
+                c[i] = c[maxIdxes[i]];
+                c[maxIdxes[i]] = tmp;
+
+                break;          // 只交换一次，所以满足就break，否则就错了
+            }
+        }
+
+        return Integer.parseInt(new String(c));
+    }
+}
