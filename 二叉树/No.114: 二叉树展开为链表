@@ -1,0 +1,42 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+        /**
+         *  总的来说，对于每个cur-node，都“把left放到right的原位置，然后将原right接到left的最底下（即left的最right节点）”
+         *      从cur-node到叶子结点之有可能会产生树杈，当前次循环不用管它，树杈交由树杈的root去循环解决掉（即会走上面那步）
+         */
+
+    public void flatten(TreeNode root) {
+        while (root != null) { 
+            if (root.left == null) {
+                root = root.right;
+            } else {
+                TreeNode pre = root.left;
+
+                while (pre.right != null) {
+                    pre = pre.right;
+                } 
+
+                pre.right = root.right;
+                root.right = root.left;
+                root.left = null;
+
+                root = root.right;
+            }
+        }
+    }
+}
